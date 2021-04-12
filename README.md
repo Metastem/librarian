@@ -1,5 +1,5 @@
 # librarian
-An alternative frontend for LBRY/Odysee.
+An alternative frontend for LBRY/Odysee. Inspired by Invidious.
 
 ## Features
 * Copylefted libre software under the AGPL
