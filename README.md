@@ -4,6 +4,7 @@ An alternative frontend for LBRY/Odysee.
 ## Features
 * Copylefted libre software under the AGPL
 * Lightweight
+* No ads
 * No tracking
 * No crypto garbage
 * JavaScript not required
