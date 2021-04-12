@@ -11,11 +11,14 @@ An alternative frontend for LBRY/Odysee. Inspired by Invidious.
 * No Code of Conduct
 * No Contributor License Agreement or Developer Certificate of Origin
 
+## Demo
+[Video](https://librarian.bcow.xyz/@MusicARetro:e/Rick+Astley+Never+Gonna+Give+You+Up:4)
+
 ## Screenshots
 TODO
 
 ## Instances
-TODO
+- https://librarian.bcow.xyz/
 
 ## Install
 TODO
