@@ -82,10 +82,18 @@ func GetVideo(channel string, video string) VideoResult {
 	videos := make([]map[string]interface{}, 0)
 	videoData.ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
+			tags := make([]string, 0)
+			value.Get("value.tags").ForEach(
+				func(key gjson.Result, value gjson.Result) bool {
+					tags = append(tags, value.String())
+					return true
+				},
+			)
+
 			videos = append(videos, map[string]interface{}{
 				"url":          value.Get("permanent_url").String(),
 				"channel":      value.Get("signing_channel.name").String(),
-				"tags":         value.Get("value.tags").String(),
+				"tags":         tags,
 				"channelPfp":   value.Get("signing_channel.value.cover.url").String(),
 				"title":        value.Get("value.title").String(),
 				"thumbnailUrl": value.Get("value.thumbnail.url").String(),
