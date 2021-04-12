@@ -85,6 +85,7 @@ func GetVideo(channel string, video string) VideoResult {
 			videos = append(videos, map[string]interface{}{
 				"url":          value.Get("permanent_url").String(),
 				"channel":      value.Get("signing_channel.name").String(),
+				"channelPfp":   value.Get("signing_channel.value.cover.url").String(),
 				"title":        value.Get("value.title").String(),
 				"thumbnailUrl": value.Get("value.thumbnail.url").String(),
 				"description":  value.Get("value.description").String(),
