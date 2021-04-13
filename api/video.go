@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tidwall/gjson"
 	"github.com/imabritishcow/librarian/config"
+	"github.com/tidwall/gjson"
 )
 
 type VideoResult struct {
@@ -95,7 +95,7 @@ func GetVideo(channel string, video string) VideoResult {
 			)
 
 			videos = append(videos, map[string]interface{}{
-				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+config.Domain, 1),
+				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+config.Domain+"/", 1),
 				"channel":      value.Get("signing_channel.name").String(),
 				"tags":         tags,
 				"channelPfp":   value.Get("signing_channel.value.cover.url").String(),
