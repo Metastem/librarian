@@ -43,7 +43,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"jsonrpc": "2.0",
 		"method":  "get",
 		"params": map[string]interface{}{
-			"uri":      "lbry://" + channel + "/" + video,
+			"uri":       "lbry://" + channel + "/" + video,
 			"save_file": false,
 		},
 		"id": time.Now().Unix(),
@@ -78,7 +78,7 @@ func GetVideo(channel string, video string) VideoResult {
 
 	videoData := gjson.Get(string(videoDataBody), "result")
 	videoStream := gjson.Get(string(videoStreamBody), "result.streaming_url")
-	
+
 	videos := make([]map[string]interface{}, 0)
 	videoData.ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
@@ -99,6 +99,11 @@ func GetVideo(channel string, video string) VideoResult {
 				"thumbnailUrl": value.Get("value.thumbnail.url").String(),
 				"description":  value.Get("value.description").String(),
 				"license":      value.Get("value.license").String(),
+				"video": map[string]interface{}{
+					"duration": value.Get("value.video.duration").Int(),
+					"height":   value.Get("value.video.height").Int(),
+					"width":    value.Get("value.video.width").Int(),
+				},
 			})
 
 			return true
