@@ -6,9 +6,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/tidwall/gjson"
+	"github.com/imabritishcow/librarian/config"
 )
 
 type VideoResult struct {
@@ -17,6 +19,8 @@ type VideoResult struct {
 }
 
 func GetVideo(channel string, video string) VideoResult {
+	config := config.GetConfig()
+
 	httpClient := http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -91,7 +95,7 @@ func GetVideo(channel string, video string) VideoResult {
 			)
 
 			videos = append(videos, map[string]interface{}{
-				"url":          value.Get("permanent_url").String(),
+				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+config.Domain, 1),
 				"channel":      value.Get("signing_channel.name").String(),
 				"tags":         tags,
 				"channelPfp":   value.Get("signing_channel.value.cover.url").String(),

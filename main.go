@@ -6,15 +6,20 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/imabritishcow/librarian/pages"
+	"github.com/imabritishcow/librarian/templates"
+	"github.com/imabritishcow/librarian/config"
 )
 
 func main() {
+	config := config.GetConfig()
+
 	r := mux.NewRouter()
 	r.HandleFunc("/{channel}/{video}", pages.VideoHandler)
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetFiles()))))
 
 	http.Handle("/", r)
 
-	err := http.ListenAndServe(":3000", nil)
+	err := http.ListenAndServe(":"+config.Port, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

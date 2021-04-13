@@ -11,7 +11,7 @@
   <meta name="keywords" content={{range $i, $tag :=.video.tags}}{{$tag}},{{end}}>
 
   <meta property="og:site_name" content="Librarian">
-  <meta property="og:url" content={{.video.permanent_url}}>
+  <meta property="og:url" content={{.video.url}}>
   <meta property="og:title" content={{.video.title}}>
   <meta property="og:image" content={{.video.thumbnailUrl}}>
   <meta property="og:description" content={{.video.description}}>
@@ -25,7 +25,7 @@
   <meta property="og:video:height" content={{.video.video.height}}>
 
   <meta name="twitter:card" content="player">
-  <meta name="twitter:url" content={{.video.permanent_url}}>
+  <meta name="twitter:url" content={{.video.url}}>
   <meta name="twitter:title" content={{.video.title}}>
   <meta name="twitter:description" content="">
   <meta name="twitter:image" content={{.video.thumbnailUrl}}>
@@ -34,8 +34,6 @@
   <meta name="twitter:player:width" content={{.video.video.width}}>
   <meta name="twitter:player:height" content={{.video.video.height}}>
   -->
-
-  <link rel="alternate" href={{.video.permanent_url}}>
 
   <title>{{.video.title}} - Librarian</title>
 </head>
