@@ -15,7 +15,7 @@ type Config struct {
 func GetConfig() *Config {
 	config := &Config{}
 
-	configFile, err := os.Open("../config.yaml")
+	configFile, err := os.Open("./config.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
