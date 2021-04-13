@@ -35,17 +35,24 @@
   <meta name="twitter:player:height" content={{.video.video.height}}>
   -->
 
+  <link rel="stylesheet" href="/static/css/plyr.css" />
+
   <title>{{.video.title}} - Librarian</title>
 </head>
 
 <body>
   <h1>Librarian</h1>
-  <video poster={{.video.thumbnailUrl}} controls=true width="1280" height="720">
+  <video id="player" poster={{.video.thumbnailUrl}} data-poster={{.video.thumbnailUrl}} controls=true width="1280" height="720">
     <source src={{.stream}} type="video/mp4">
   </video>
   <h2>{{.video.title}}</h2>
   <p>{{.video.channel}}</p>
   <p>{{.video.description}}</p>
+
+  <script src="/static/js/plyr.js"></script>
+  <script>
+    const player = new Plyr('#player');
+  </script>
 </body>
 
 </html>

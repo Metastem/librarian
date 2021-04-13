@@ -15,7 +15,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/{channel}/{video}", pages.VideoHandler)
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetFiles()))))
+	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
 
 	http.Handle("/", r)
 
