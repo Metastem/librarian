@@ -10,6 +10,7 @@ import (
 type Config struct {
 	Domain string `yaml:"domain"`
 	Port   string `yaml:"port"`
+	ApiUrl string `yaml:"apiUrl"`
 }
 
 func GetConfig() *Config {

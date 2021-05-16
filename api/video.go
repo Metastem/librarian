@@ -36,7 +36,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	videoDataReq, err := http.NewRequest(http.MethodPost, "https://api.lbry.tv/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
+	videoDataReq, err := http.NewRequest(http.MethodPost, config.ApiUrl + "/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +53,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamReq, err := http.NewRequest(http.MethodPost, "https://api.lbry.tv/api/v1/proxy?m=get", bytes.NewBuffer(getData))
+	videoStreamReq, err := http.NewRequest(http.MethodPost, config.ApiUrl + "/api/v1/proxy?m=get", bytes.NewBuffer(getData))
 	if err != nil {
 		log.Fatal(err)
 	}
