@@ -1,17 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/imabritishcow/librarian/config"
 	"github.com/imabritishcow/librarian/pages"
 	"github.com/imabritishcow/librarian/templates"
-	"github.com/imabritishcow/librarian/config"
 )
 
 func main() {
 	config := config.GetConfig()
+
+	fmt.Println("Librarian started on port "+config.Port)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/{channel}/{video}", pages.VideoHandler)
