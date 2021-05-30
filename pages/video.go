@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/imabritishcow/librarian/api"
+	"github.com/imabritishcow/librarian/config"
 	"github.com/imabritishcow/librarian/templates"
 )
 
@@ -22,6 +23,7 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 		"videos": videoData.Videos,
 		"stream": videoData.StreamUrl,
 		"video": videoData.Videos[0],
+		"config": config.GetConfig(),
 	})
 	if err != nil {
 		log.Fatal(err)

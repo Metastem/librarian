@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,7 +11,9 @@ import (
 	"time"
 
 	"github.com/imabritishcow/librarian/config"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/tidwall/gjson"
+	"mvdan.cc/xurls/v2"
 )
 
 type VideoResult struct {
@@ -36,7 +39,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	videoDataReq, err := http.NewRequest(http.MethodPost, config.ApiUrl + "/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
+	videoDataReq, err := http.NewRequest(http.MethodPost, config.ApiUrl+"/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +56,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamReq, err := http.NewRequest(http.MethodPost, config.ApiUrl + "/api/v1/proxy?m=get", bytes.NewBuffer(getData))
+	videoStreamReq, err := http.NewRequest(http.MethodPost, config.ApiUrl+"/api/v1/proxy?m=get", bytes.NewBuffer(getData))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,7 +84,7 @@ func GetVideo(channel string, video string) VideoResult {
 	}
 
 	videoData := gjson.Get(string(videoDataBody), "result")
-	videoStream := gjson.Get(string(videoStreamBody), "result.streaming_url")
+	videoStream := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
 
 	videos := make([]map[string]interface{}, 0)
 	videoData.ForEach(
@@ -94,14 +97,31 @@ func GetVideo(channel string, video string) VideoResult {
 				},
 			)
 
+			p := bluemonday.UGCPolicy()
+
+			description := value.Get("value.description").String()
+			description = p.Sanitize(description)
+			description = strings.ReplaceAll(description, "\n", "<br>")
+			links := xurls.Relaxed().FindAllString(description, 1)
+			for i := 0; i < len(links); i++ {
+				description = strings.ReplaceAll(description, links[i], "<a>"+links[i]+"</a>")
+			}
+
+			channelId := value.Get("signing_channel.short_url").String()
+			channelId = strings.ReplaceAll(channelId, "lbry://", "")
+			channelId = strings.ReplaceAll(channelId, "#", ":")
+
 			videos = append(videos, map[string]interface{}{
 				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+config.Domain+"/", 1),
-				"channel":      value.Get("signing_channel.name").String(),
+				"channel":      map[string]interface{}{
+					"name": value.Get("signing_channel.value.title").String(),
+					"id": channelId,
+					"pfp": value.Get("signing_channel.value.cover.url").String(),
+				},
 				"tags":         tags,
-				"channelPfp":   value.Get("signing_channel.value.cover.url").String(),
 				"title":        value.Get("value.title").String(),
-				"thumbnailUrl": value.Get("value.thumbnail.url").String(),
-				"description":  value.Get("value.description").String(),
+				"thumbnailUrl": template.URL(value.Get("value.thumbnail.url").String()),
+				"description":  template.HTML(description),
 				"license":      value.Get("value.license").String(),
 				"video": map[string]interface{}{
 					"duration": value.Get("value.video.duration").Int(),
@@ -115,7 +135,7 @@ func GetVideo(channel string, video string) VideoResult {
 	)
 
 	return VideoResult{
-		StreamUrl: videoStream.String(),
+		StreamUrl: videoStream,
 		Videos:    videos,
 	}
 }

@@ -36,18 +36,48 @@
   -->
 
   <link rel="stylesheet" href="/static/css/plyr.css" />
+  <link rel="stylesheet" href="/static/css/video.css" />
 
   <title>{{.video.title}} - Librarian</title>
 </head>
 
 <body>
-  <h1>Librarian</h1>
-  <video id="player" poster={{.video.thumbnailUrl}} data-poster={{.video.thumbnailUrl}} controls=true width="1280" height="720">
-    <source src={{.stream}} type="video/mp4">
-  </video>
-  <h2>{{.video.title}}</h2>
-  <p>{{.video.channel}}</p>
-  <p>{{.video.description}}</p>
+  <header>
+    <a href="/">
+      <h2>LIBRARIAN</h2>
+    </a>
+    <form action="/search">
+      <input type="text" placeholder="Search..." />
+      <input type="submit" value="Search" />
+    </form>
+  </header>
+
+  <br>
+
+  <main>
+    <div class="videoWrapper">
+      <video id="player" class="videoPlayer" poster={{.video.thumbnailUrl}} controls=true width="1280" height="720">
+        <source type="video/mp4" src="{{.stream}}">
+      </video>
+    </div>
+    <div>
+      <h2>{{.video.title}}</h2>
+
+      <div class="channel">
+        <a href="https://{{.config.Domain}}/{{.video.channel.id}}">
+          <img src={{.video.channel.pfp}} class="pfp" width="72" height="72" />
+        </a>
+        <a href="https://{{.config.Domain}}/{{.video.channel.id}}">
+          <p>
+            <b>{{.video.channel.name}}</b>
+            <br>
+            {{.video.channel.id}}
+          </p>
+        </a>
+      </div>
+      <p>{{.video.description}}</p>
+    </div>
+  </main>
 
   <script src="/static/js/plyr.js"></script>
   <script>
