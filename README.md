@@ -18,7 +18,11 @@ An alternative frontend for LBRY/Odysee. Inspired by Invidious.
 TODO
 
 ## Instances
-- https://librarian.bcow.xyz/
+Open an issue to have your instance listed here!
+
+| Website | Country | Cloudflare |
+|-|-|-|
+| [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US |  |
 
 ## Install
 TODO
