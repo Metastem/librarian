@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/imabritishcow/librarian/config"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 	"mvdan.cc/xurls/v2"
 )
@@ -22,8 +22,6 @@ type VideoResult struct {
 }
 
 func GetVideo(channel string, video string) VideoResult {
-	config := config.GetConfig()
-
 	httpClient := http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -39,7 +37,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	videoDataReq, err := http.NewRequest(http.MethodPost, config.ApiUrl+"/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
+	videoDataReq, err := http.NewRequest(http.MethodPost, viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,7 +54,7 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamReq, err := http.NewRequest(http.MethodPost, config.ApiUrl+"/api/v1/proxy?m=get", bytes.NewBuffer(getData))
+	videoStreamReq, err := http.NewRequest(http.MethodPost, viper.GetString("API_URL")+"/api/v1/proxy?m=get", bytes.NewBuffer(getData))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,7 +110,7 @@ func GetVideo(channel string, video string) VideoResult {
 			channelId = strings.ReplaceAll(channelId, "#", ":")
 
 			videos = append(videos, map[string]interface{}{
-				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+config.Domain+"/", 1),
+				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
 				"channel":      map[string]interface{}{
 					"name": value.Get("signing_channel.value.title").String(),
 					"id": channelId,

@@ -7,8 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/imabritishcow/librarian/api"
-	"github.com/imabritishcow/librarian/config"
 	"github.com/imabritishcow/librarian/templates"
+	"github.com/spf13/viper"
 )
 
 
@@ -23,7 +23,7 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 		"videos": videoData.Videos,
 		"stream": videoData.StreamUrl,
 		"video": videoData.Videos[0],
-		"config": config.GetConfig(),
+		"config": viper.AllSettings(),
 	})
 	if err != nil {
 		log.Fatal(err)
