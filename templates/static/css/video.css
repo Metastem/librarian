@@ -1,0 +1,42 @@
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  vertical-align: middle;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+main {
+  margin: 0 15vw 0 15vw;
+}
+
+.plyr,
+.videoWrapper{
+  position: relative;
+  max-height: 640px;
+}
+
+.channel {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.pfp {
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+@media only screen and (max-width: 812px) {
+  header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  main {
+    margin: 0;
+  }
+}

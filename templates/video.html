@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="thumbnail" content={{.video.thumbnailUrl}}>
+  <meta name="description" content={{.video.description}}>
+  <meta name="keywords" content={{range $i, $tag :=.video.tags}}{{$tag}},{{end}}>
+
+  <meta property="og:site_name" content="Librarian">
+  <meta property="og:url" content={{.video.url}}>
+  <meta property="og:title" content={{.video.title}}>
+  <meta property="og:image" content={{.video.thumbnailUrl}}>
+  <meta property="og:description" content={{.video.description}}>
+  <meta property="og:type" content="video.other">
+  <!-- TODO: Support embedding
+  <meta property="og:video:url" content="">
+  <meta property="og:video:secure_url" content="">
+  -->
+  <meta property="og:video:type" content="text/html">
+  <meta property="og:video:width" content={{.video.video.width}}>
+  <meta property="og:video:height" content={{.video.video.height}}>
+
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:url" content={{.video.url}}>
+  <meta name="twitter:title" content={{.video.title}}>
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content={{.video.thumbnailUrl}}>
+  <!-- TODO: Support embedding
+  <meta name="twitter:player" content="">
+  <meta name="twitter:player:width" content={{.video.video.width}}>
+  <meta name="twitter:player:height" content={{.video.video.height}}>
+  -->
+
+  <link rel="stylesheet" href="/static/css/plyr.css" />
+  <link rel="stylesheet" href="/static/css/video.css" />
+  <link rel="stylesheet" href="/static/fonts/roboto.css" />
+
+  <title>{{.video.title}} - Librarian</title>
+</head>
+
+<body>
+  <header>
+    <a href="/">
+      <h2>LIBRARIAN</h2>
+    </a>
+    <form action="/search">
+      <input type="text" placeholder="Search..." />
+      <input type="submit" value="Search" />
+    </form>
+  </header>
+
+  <br>
+
+  <main>
+    <div class="videoWrapper">
+      <video id="player" class="videoPlayer" poster={{.video.thumbnailUrl}} controls=true width="1280" height="720">
+        <source type="video/mp4" src="{{.stream}}">
+      </video>
+    </div>
+    <div>
+      <h2>{{.video.title}}</h2>
+
+      <div class="channel">
+        <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
+          <img src={{.video.channel.pfp}} class="pfp" width="72" height="72" />
+        </a>
+        <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
+          <p>
+            <b>{{.video.channel.name}}</b>
+            <br>
+            {{.video.channel.id}}
+          </p>
+        </a>
+      </div>
+      <p>{{.video.description}}</p>
+    </div>
+  </main>
+
+  <script src="/static/js/plyr.js"></script>
+  <script>
+    const player = new Plyr('#player');
+  </script>
+</body>
+
+</html>
