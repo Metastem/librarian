@@ -100,10 +100,7 @@ func GetVideo(channel string, video string) VideoResult {
 			description := value.Get("value.description").String()
 			description = p.Sanitize(description)
 			description = strings.ReplaceAll(description, "\n", "<br>")
-			links := xurls.Relaxed().FindAllString(description, 1)
-			for i := 0; i < len(links); i++ {
-				description = strings.ReplaceAll(description, links[i], "<a>"+links[i]+"</a>")
-			}
+			description = xurls.Relaxed().ReplaceAllString(description, "<a href=\"$1$3$4\">$1$3$4</a>")
 
 			channelId := value.Get("signing_channel.short_url").String()
 			channelId = strings.ReplaceAll(channelId, "lbry://", "")
