@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="/static/css/plyr.css" />
   <link rel="stylesheet" href="/static/css/video.css" />
   <link rel="stylesheet" href="/static/fonts/roboto.css" />
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
   <title>{{.video.title}} - Librarian</title>
 </head>
@@ -64,19 +65,40 @@
     <div>
       <h2>{{.video.title}}</h2>
 
-      <div class="channel">
-        <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
-          <img src={{.video.channel.pfp}} class="pfp" width="72" height="72" />
-        </a>
-        <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
-          <p>
-            <b>{{.video.channel.name}}</b>
-            <br>
-            {{.video.channel.id}}
-          </p>
-        </a>
+      <div class="videoMetaWrapper">
+        <div class="videoMeta">
+          <a href="{{.video.odyseeUrl}}">Watch on Odysee</a>
+          <br><br>
+          <!--soonTM
+            <a>Switch Librarian Instance</a>
+            <a>Embed Link</a>
+          -->
+          <a href="{{.stream}}">
+            <button>Download</button>
+          </a>
+          <br>
+          <p><span class="material-icons-outlined">visibility</span> {{.video.views}}</p>
+          <p><span class="material-icons-outlined">thumb_up</span> {{.video.likes}}</p>
+          <p><span class="material-icons-outlined">thumb_down</span> {{.video.dislikes}}</p>
+        </div>
+
+        <div class="videoDesc">
+          <div class="channel">
+            <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
+              <img src={{.video.channel.pfp}} class="pfp" width="72" height="72" />
+            </a>
+            <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
+              <p>
+                <b>{{.video.channel.name}}</b>
+                <br>
+                {{.video.channel.id}}
+              </p>
+            </a>
+          </div>
+          <p><b>Shared {{.video.date}}</b></p>
+          <p>{{.video.description}}</p>
+        </div>
       </div>
-      <p>{{.video.description}}</p>
     </div>
   </main>
 

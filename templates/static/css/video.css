@@ -30,6 +30,19 @@ main {
   object-fit: cover;
 }
 
+.videoMetaWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.videoMeta {
+  width: 20%;
+}
+
+.videoDesc {
+  width: 80%;
+}
+
 @media only screen and (max-width: 812px) {
   header {
     display: flex;

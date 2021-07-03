@@ -3,10 +3,12 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -106,18 +108,54 @@ func GetVideo(channel string, video string) VideoResult {
 			channelId = strings.ReplaceAll(channelId, "lbry://", "")
 			channelId = strings.ReplaceAll(channelId, "#", ":")
 
+			claimId := value.Get("claim_id").String()
+
+			viewCountRes, err := http.Get("https://api.lbry.com/file/view_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+claimId)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			viewCountBody, readErr1 := ioutil.ReadAll(viewCountRes.Body)
+			if readErr1 != nil {
+				log.Fatal(readErr1)
+			}
+
+			viewCount := gjson.Get(string(viewCountBody), "data.0").Int()
+
+			likeDislikeRes, err := http.PostForm("https://api.lbry.com/reaction/list", url.Values{
+				"claim_ids": []string{claimId},
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			likeDislikeBody, readErr1 := ioutil.ReadAll(likeDislikeRes.Body)
+			if readErr1 != nil {
+				log.Fatal(readErr1)
+			}
+
+			likeCount := gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".like").Int()
+			dislikeCount := gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int()
+
+			time := time.Unix(value.Get("value.release_time").Int(), 0)
+
 			videos = append(videos, map[string]interface{}{
-				"url":          strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
-				"channel":      map[string]interface{}{
+				"url":       strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
+				"odyseeUrl": strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://odysee.com/", 1),
+				"channel": map[string]interface{}{
 					"name": value.Get("signing_channel.value.title").String(),
-					"id": channelId,
-					"pfp": value.Get("signing_channel.value.cover.url").String(),
+					"id":   channelId,
+					"pfp":  value.Get("signing_channel.value.cover.url").String(),
 				},
 				"tags":         tags,
 				"title":        value.Get("value.title").String(),
 				"thumbnailUrl": template.URL(value.Get("value.thumbnail.url").String()),
 				"description":  template.HTML(description),
 				"license":      value.Get("value.license").String(),
+				"views":				viewCount,
+				"likes":				likeCount,
+				"dislikes":			dislikeCount,
+				"date":					time.Month().String()+" "+fmt.Sprint(time.Day())+", "+fmt.Sprint(time.Year()),
 				"video": map[string]interface{}{
 					"duration": value.Get("value.video.duration").Int(),
 					"height":   value.Get("value.video.height").Int(),
