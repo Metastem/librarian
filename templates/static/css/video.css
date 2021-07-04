@@ -6,7 +6,7 @@ header {
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 main {
@@ -14,7 +14,7 @@ main {
 }
 
 .plyr,
-.videoWrapper{
+.videoWrapper {
   position: relative;
   max-height: 640px;
 }
@@ -22,7 +22,12 @@ main {
 .channel {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 10px;
+}
+
+.pfpWrapper {
+  height: 56px;
 }
 
 .pfp {
