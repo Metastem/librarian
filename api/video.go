@@ -18,16 +18,24 @@ import (
 	"mvdan.cc/xurls/v2"
 )
 
-type VideoResult struct {
-	StreamUrl string
-	Videos    []map[string]interface{}
+type Video struct {
+	Url          string
+	LbryUrl      string
+	OdyseeUrl    string
+	ClaimId      string
+	Channel      Channel
+	Title        string
+	ThumbnailUrl template.URL
+	Description  template.HTML
+	License      string
+	Views        int64
+	Likes        int64
+	Dislikes     int64
+	Tags         []string
+	Date         string
 }
 
-func GetVideo(channel string, video string) VideoResult {
-	httpClient := http.Client{
-		Timeout: time.Second * 10,
-	}
-
+func GetVideo(channel string, video string) Video {
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -39,136 +47,117 @@ func GetVideo(channel string, video string) VideoResult {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	videoDataReq, err := http.NewRequest(http.MethodPost, viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", bytes.NewBuffer(resolveData))
+	videoDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
 		log.Fatal(err)
 	}
-	videoDataReq.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0")
-	videoDataReq.Header.Set("Content-Type", "application/json")
 
+	videoDataBody, err2 := ioutil.ReadAll(videoDataRes.Body)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	videoData := gjson.Get(string(videoDataBody), "result.lbry*")
+
+	tags := make([]string, 0)
+	videoData.Get("value.tags").ForEach(
+		func(key gjson.Result, value gjson.Result) bool {
+			tags = append(tags, value.String())
+			return true
+		},
+	)
+
+	description := videoData.Get("value.description").String()
+	description = bluemonday.UGCPolicy().Sanitize(description)
+	description = strings.ReplaceAll(description, "\n", "<br>")
+	description = xurls.Relaxed().ReplaceAllString(description, "<a href=\"$1$3$4\">$1$3$4</a>")
+
+	claimId := videoData.Get("claim_id").String()
+
+	time := time.Unix(videoData.Get("value.release_time").Int(), 0)
+
+	likeDislike := GetLikeDislike(claimId)
+
+	return Video{
+		Url:       strings.Replace(videoData.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
+		LbryUrl:   videoData.Get("canonical_url").String(),
+		OdyseeUrl: strings.Replace(videoData.Get("canonical_url").String(), "lbry://", "https://odysee.com/", 1),
+		ClaimId:   videoData.Get("claim_id").String(),
+		Channel: Channel{
+			Name:        videoData.Get("signing_channel.name").String(),
+			Title:       videoData.Get("signing_channel.value.title").String(),
+			Id:          videoData.Get("signing_channel.claim_id").String(),
+			Url:         strings.Replace(videoData.Get("signing_channel.canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
+			OdyseeUrl:   strings.ReplaceAll(videoData.Get("signing_channel.canonical_url").String(), "lbry://", "https://odysee.com/"),
+			CoverImg:    videoData.Get("signing_channel.value.cover.url").String(),
+			Description: videoData.Get("signing_channel.value.description").String(),
+			Thumbnail:   videoData.Get("signing_channel.value.thumbnail.url").String(),
+		},
+		Title:        videoData.Get("value.title").String(),
+		ThumbnailUrl: template.URL(videoData.Get("value.thumbnail.url").String()),
+		Description:  template.HTML(description),
+		License:      videoData.Get("value.license").String(),
+		Views:        GetVideoViews(claimId),
+		Likes:        likeDislike[0],
+		Dislikes:     likeDislike[1],
+		Tags:         tags,
+		Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
+	}
+}
+
+func GetVideoViews(claimId string) int64 {
+	viewCountRes, err := http.Get("https://api.lbry.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	viewCountBody, err2 := ioutil.ReadAll(viewCountRes.Body)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	return gjson.Get(string(viewCountBody), "data.0").Int()
+}
+
+func GetLikeDislike(claimId string) []int64 {
+	likeDislikeRes, err := http.PostForm("https://api.lbry.com/reaction/list", url.Values{
+		"claim_ids": []string{claimId},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	likeDislikeBody, err2 := ioutil.ReadAll(likeDislikeRes.Body)
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	return []int64{
+		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".like").Int(),
+		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int(),
+	}
+}
+
+func GetVideoStream(video string) string {
 	getDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "get",
 		"params": map[string]interface{}{
-			"uri":       "lbry://" + channel + "/" + video,
+			"uri":       video,
 			"save_file": false,
 		},
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamReq, err := http.NewRequest(http.MethodPost, viper.GetString("API_URL")+"/api/v1/proxy?m=get", bytes.NewBuffer(getData))
+	videoStreamRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=get", "application/json", bytes.NewBuffer(getData))
 	if err != nil {
 		log.Fatal(err)
 	}
-	videoStreamReq.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0")
-	videoStreamReq.Header.Set("Content-Type", "application/json")
 
-	videoDataRes, getErr1 := httpClient.Do(videoDataReq)
-	if getErr1 != nil {
-		log.Fatal(getErr1)
+	videoStreamBody, err2 := ioutil.ReadAll(videoStreamRes.Body)
+	if err2 != nil {
+		log.Fatal(err2)
 	}
 
-	videoDataBody, readErr1 := ioutil.ReadAll(videoDataRes.Body)
-	if err != nil {
-		log.Fatal(readErr1)
-	}
-
-	videoStreamRes, getErr2 := httpClient.Do(videoStreamReq)
-	if getErr2 != nil {
-		log.Fatal(getErr2)
-	}
-
-	videoStreamBody, readErr2 := ioutil.ReadAll(videoStreamRes.Body)
-	if err != nil {
-		log.Fatal(readErr2)
-	}
-
-	videoData := gjson.Get(string(videoDataBody), "result")
-	videoStream := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
-
-	videos := make([]map[string]interface{}, 0)
-	videoData.ForEach(
-		func(key gjson.Result, value gjson.Result) bool {
-			tags := make([]string, 0)
-			value.Get("value.tags").ForEach(
-				func(key gjson.Result, value gjson.Result) bool {
-					tags = append(tags, value.String())
-					return true
-				},
-			)
-
-			p := bluemonday.UGCPolicy()
-
-			description := value.Get("value.description").String()
-			description = p.Sanitize(description)
-			description = strings.ReplaceAll(description, "\n", "<br>")
-			description = xurls.Relaxed().ReplaceAllString(description, "<a href=\"$1$3$4\">$1$3$4</a>")
-
-			channelId := value.Get("signing_channel.short_url").String()
-			channelId = strings.ReplaceAll(channelId, "lbry://", "")
-			channelId = strings.ReplaceAll(channelId, "#", ":")
-
-			claimId := value.Get("claim_id").String()
-
-			viewCountRes, err := http.Get("https://api.lbry.com/file/view_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+claimId)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			viewCountBody, readErr1 := ioutil.ReadAll(viewCountRes.Body)
-			if readErr1 != nil {
-				log.Fatal(readErr1)
-			}
-
-			viewCount := gjson.Get(string(viewCountBody), "data.0").Int()
-
-			likeDislikeRes, err := http.PostForm("https://api.lbry.com/reaction/list", url.Values{
-				"claim_ids": []string{claimId},
-			})
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			likeDislikeBody, readErr1 := ioutil.ReadAll(likeDislikeRes.Body)
-			if readErr1 != nil {
-				log.Fatal(readErr1)
-			}
-
-			likeCount := gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".like").Int()
-			dislikeCount := gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int()
-
-			time := time.Unix(value.Get("value.release_time").Int(), 0)
-
-			videos = append(videos, map[string]interface{}{
-				"url":       strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
-				"odyseeUrl": strings.Replace(value.Get("canonical_url").String(), "lbry://", "https://odysee.com/", 1),
-				"channel": map[string]interface{}{
-					"name": value.Get("signing_channel.value.title").String(),
-					"id":   channelId,
-					"pfp":  value.Get("signing_channel.value.cover.url").String(),
-				},
-				"tags":         tags,
-				"title":        value.Get("value.title").String(),
-				"thumbnailUrl": template.URL(value.Get("value.thumbnail.url").String()),
-				"description":  template.HTML(description),
-				"license":      value.Get("value.license").String(),
-				"views":				viewCount,
-				"likes":				likeCount,
-				"dislikes":			dislikeCount,
-				"date":					time.Month().String()+" "+fmt.Sprint(time.Day())+", "+fmt.Sprint(time.Year()),
-				"video": map[string]interface{}{
-					"duration": value.Get("value.video.duration").Int(),
-					"height":   value.Get("value.video.height").Int(),
-					"width":    value.Get("value.video.width").Int(),
-				},
-			})
-
-			return true
-		},
-	)
-
-	return VideoResult{
-		StreamUrl: videoStream,
-		Videos:    videos,
-	}
+	return gjson.Get(string(videoStreamBody), "result.streaming_url").String()
 }

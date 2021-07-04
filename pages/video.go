@@ -17,12 +17,15 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
   w.WriteHeader(http.StatusOK)
 
 	videoData := api.GetVideo(vars["channel"], vars["video"])
+	videoStream := api.GetVideoStream(videoData.LbryUrl)
+	comments := api.GetComments(videoData.ClaimId, videoData.Channel.Id, videoData.Channel.Name)
 
 	videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
 	err := videoTemplate.Execute(w, map[string]interface{}{
-		"videos": videoData.Videos,
-		"stream": videoData.StreamUrl,
-		"video": videoData.Videos[0],
+		"stream": videoStream,
+		"video": videoData,
+		"comments": comments,
+		"commentsLength": len(comments),
 		"config": viper.AllSettings(),
 	})
 	if err != nil {

@@ -6,41 +6,28 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="thumbnail" content={{.video.thumbnailUrl}}>
-  <meta name="description" content={{.video.description}}>
-  <meta name="keywords" content={{range $i, $tag :=.video.tags}}{{$tag}},{{end}}>
+  <meta name="thumbnail" content={{.video.ThumbnailUrl}}>
+  <meta name="description" content={{.video.Description}}>
 
   <meta property="og:site_name" content="Librarian">
-  <meta property="og:url" content={{.video.url}}>
-  <meta property="og:title" content={{.video.title}}>
-  <meta property="og:image" content={{.video.thumbnailUrl}}>
-  <meta property="og:description" content={{.video.description}}>
+  <meta property="og:url" content={{.video.Url}}>
+  <meta property="og:title" content={{.video.Title}}>
+  <meta property="og:image" content={{.video.ThumbnailUrl}}>
+  <meta property="og:description" content={{.video.Description}}>
   <meta property="og:type" content="video.other">
-  <!-- TODO: Support embedding
-  <meta property="og:video:url" content="">
-  <meta property="og:video:secure_url" content="">
-  -->
-  <meta property="og:video:type" content="text/html">
-  <meta property="og:video:width" content={{.video.video.width}}>
-  <meta property="og:video:height" content={{.video.video.height}}>
 
   <meta name="twitter:card" content="player">
-  <meta name="twitter:url" content={{.video.url}}>
-  <meta name="twitter:title" content={{.video.title}}>
+  <meta name="twitter:url" content={{.video.Url}}>
+  <meta name="twitter:title" content={{.video.Title}}>
   <meta name="twitter:description" content="">
-  <meta name="twitter:image" content={{.video.thumbnailUrl}}>
-  <!-- TODO: Support embedding
-  <meta name="twitter:player" content="">
-  <meta name="twitter:player:width" content={{.video.video.width}}>
-  <meta name="twitter:player:height" content={{.video.video.height}}>
-  -->
+  <meta name="twitter:image" content={{.video.ThumbnailUrl}}>
 
   <link rel="stylesheet" href="/static/css/plyr.css" />
   <link rel="stylesheet" href="/static/css/video.css" />
   <link rel="stylesheet" href="/static/fonts/roboto.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
-  <title>{{.video.title}} - Librarian</title>
+  <title>{{.video.Title}} - Librarian</title>
 </head>
 
 <body>
@@ -58,16 +45,16 @@
 
   <main>
     <div class="videoWrapper">
-      <video id="player" class="videoPlayer" poster={{.video.thumbnailUrl}} controls=true width="1280" height="720">
+      <video id="player" class="videoPlayer" poster={{.video.ThumbnailUrl}} controls=true width="1280" height="720">
         <source type="video/mp4" src="{{.stream}}">
       </video>
     </div>
     <div>
-      <h2>{{.video.title}}</h2>
+      <h2>{{.video.Title}}</h2>
 
       <div class="videoMetaWrapper">
         <div class="videoMeta">
-          <a href="{{.video.odyseeUrl}}">Watch on Odysee</a>
+          <a href="{{.video.OdyseeUrl}}">Watch on Odysee</a>
           <br><br>
           <!--soonTM
             <a>Switch Librarian Instance</a>
@@ -77,27 +64,78 @@
             <button>Download</button>
           </a>
           <br>
-          <p><span class="material-icons-outlined">visibility</span> {{.video.views}}</p>
-          <p><span class="material-icons-outlined">thumb_up</span> {{.video.likes}}</p>
-          <p><span class="material-icons-outlined">thumb_down</span> {{.video.dislikes}}</p>
+          <p><span class="material-icons-outlined">visibility</span> {{.video.Views}}</p>
+          <p><span class="material-icons-outlined">thumb_up</span> {{.video.Likes}}</p>
+          <p><span class="material-icons-outlined">thumb_down</span> {{.video.Dislikes}}</p>
+          <p>License: {{.video.License}}</p>
         </div>
 
         <div class="videoDesc">
           <div class="channel">
-            <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
-              <img src={{.video.channel.pfp}} class="pfp" width="72" height="72" />
+            <a href="{{.video.Channel.Url}}">
+              {{if .video.Channel.Thumbnail}}
+              <img src="{{.video.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
+              {{else}}
+              <img src="https://odysee.com/public/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
+              {{end}}
             </a>
-            <a href="https://{{.config.DOMAIN}}/{{.video.channel.id}}">
+            <a href="{{.video.Channel.Url}}">
               <p>
-                <b>{{.video.channel.name}}</b>
+                {{if .video.Channel.Title}}
+                <b>{{.video.Channel.Title}}</b>
                 <br>
-                {{.video.channel.id}}
+                {{.video.Channel.Name}}
+                {{else}}
+                <b>{{.video.Channel.Name}}</b>
+                {{end}}
               </p>
             </a>
           </div>
-          <p><b>Shared {{.video.date}}</b></p>
-          <p>{{.video.description}}</p>
+          <p><b>Shared {{.video.Date}}</b></p>
+          <p>{{.video.Description}}</p>
         </div>
+      </div>
+
+      <h2>Comments ({{.commentsLength}})</h2>
+
+      <div>
+        {{range $index, $value := .comments}}
+        <div class="comment">
+          {{if $value.Channel.Thumbnail}}
+          <img src="{{$value.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
+          {{else}}
+          <img src="https://odysee.com/public/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
+          {{end}}
+          <div>
+            <a href="{{$value.Channel.Url}}">
+              <p>
+                {{if $value.Channel.Title}}
+                <b>{{$value.Channel.Title}}</b>
+                <br>
+                {{$value.Channel.Name}}
+                {{else}}
+                <b>{{$value.Channel.Name}}</b>
+                {{end}}
+              </p>
+            </a>
+            <p>{{$value.Comment}}</p>
+
+            {{if eq $value.RelTime "a long while ago"}}
+            <p>
+              {{$value.Time}} |
+              <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
+              <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
+            </p>
+            {{else}}
+            <p title="{{$value.Time}}">
+              {{$value.RelTime}} |
+              <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
+              <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
+            </p>
+            {{end}}
+          </div>
+        </div>
+        {{end}}
       </div>
     </div>
   </main>
