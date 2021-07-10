@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -56,7 +57,6 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 	}
 
 	commentIds := make([]string, 0)
-
 	gjson.Get(string(commentsDataBody), "result.items.#.comment_id").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			commentIds = append(commentIds, value.String())
@@ -66,7 +66,6 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 	)
 
 	likesDislikes := GetCommentLikeDislikes(commentIds)
-	counter := 0
 
 	comments := make([]Comment, 0)
 
@@ -74,8 +73,6 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 
 	gjson.Get(string(commentsDataBody), "result.items").ForEach(
 		func(key, value gjson.Result) bool {
-			counter++
-
 			go func() {
 				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
@@ -84,15 +81,17 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 				comment = strings.ReplaceAll(comment, "\n", "<br>")
 				comment = xurls.Relaxed().ReplaceAllString(comment, "<a href=\"$1$3$4\">$1$3$4</a>")
 
+				commentId := value.Get("comment_id").String()
+
 				comments = append(comments, Comment{
 					Channel:   GetChannel(value.Get("channel_url").String()),
 					Comment:   template.HTML(comment),
-					CommentId: value.Get("comment_id").String(),
+					CommentId: commentId,
 					ParentId:  value.Get("parent_id").String(),
 					Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
 					RelTime:   humanize.Time(timestamp),
-					Likes:     likesDislikes[counter-1][0],
-					Dislikes:  likesDislikes[counter-1][1],
+					Likes:     likesDislikes[commentId][0],
+					Dislikes:  likesDislikes[commentId][1],
 				})
 
 				wg.Done()
@@ -103,10 +102,14 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 	)
 	wg.Wait()
 
+	sort.Slice(comments[:], func(i, j int) bool {
+		return comments[i].Likes < comments[j].Likes
+	})
+
 	return comments
 }
 
-func GetCommentLikeDislikes(commentIds []string) [][]int64 {
+func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -126,14 +129,14 @@ func GetCommentLikeDislikes(commentIds []string) [][]int64 {
 		log.Fatal(err2)
 	}
 
-	likesDislikes := make([][]int64, 0)
+	likesDislikes := make(map[string][]int64)
 
 	gjson.Get(string(commentsDataBody), "result.others_reactions").ForEach(
-		func(key gjson.Result, value gjson.Result) bool {
-			likesDislikes = append(likesDislikes, []int64{
+		func(key, value gjson.Result) bool {
+			likesDislikes[key.String()] = []int64{
 				value.Get("like").Int(),
 				value.Get("dislike").Int(),
-			})
+			}
 
 			return true
 		},
