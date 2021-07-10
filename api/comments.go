@@ -3,12 +3,15 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"runtime"
 	"strings"
 	"time"
+	"sync"
 
 	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
@@ -16,6 +19,9 @@ import (
 	"github.com/tidwall/gjson"
 	"mvdan.cc/xurls/v2"
 )
+
+var wg sync.WaitGroup
+var comments []Comment
 
 type Comment struct {
 	Channel   Channel
@@ -52,44 +58,70 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 		log.Fatal(err2)
 	}
 
-	comments := make([]Comment, 0)
+	commentIds := make([]string, 0)
 
-	gjson.Get(string(commentsDataBody), "result.items").ForEach(
+	gjson.Get(string(commentsDataBody), "result.items.#.comment_id").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			time := time.Unix(value.Get("timestamp").Int(), 0)
-
-			likesDislikes := GetCommentLikeDislikes(value.Get("comment_id").String())
-
-			comment := value.Get("comment").String()
-			comment = bluemonday.UGCPolicy().Sanitize(comment)
-			comment = strings.ReplaceAll(comment, "\n", "<br>")
-			comment = xurls.Relaxed().ReplaceAllString(comment, "<a href=\"$1$3$4\">$1$3$4</a>")
-
-			comments = append(comments, Comment{
-				Channel:   GetChannel(value.Get("channel_url").String()),
-				Comment:   template.HTML(comment),
-				CommentId: value.Get("comment_id").String(),
-				ParentId:  value.Get("parent_id").String(),
-				Time:      time.UTC().Format("January 2, 2006 15:04"),
-				RelTime:   humanize.Time(time),
-				Likes:     likesDislikes[0],
-				Dislikes:  likesDislikes[1],
-			})
+			commentIds = append(commentIds, value.String())
 
 			return true
 		},
 	)
 
+	likesDislikes := GetCommentLikeDislikes(commentIds)
+	counter := 0
+
+	fmt.Println("Version", runtime.Version())
+	fmt.Println("NumCPU", runtime.NumCPU())
+	fmt.Println("GOMAXPROCS", runtime.GOMAXPROCS(0))
+
+	wg.Add(len(commentIds))
+
+	gjson.Get(string(commentsDataBody), "result.items").ForEach(
+		func(key, value gjson.Result) bool {
+			counter++
+
+			go processComment(key, value, counter, likesDislikes)
+
+			return true
+		},
+	)
+	wg.Wait()
+
 	return comments
 }
 
-func GetCommentLikeDislikes(commentId string) []int64 {
+func processComment(key gjson.Result, value gjson.Result, counter int, likesDislikes [][]int64) {
+	timestamp := time.Unix(value.Get("timestamp").Int(), 0)
+
+	comment := value.Get("comment").String()
+	comment = bluemonday.UGCPolicy().Sanitize(comment)
+	comment = strings.ReplaceAll(comment, "\n", "<br>")
+	comment = xurls.Relaxed().ReplaceAllString(comment, "<a href=\"$1$3$4\">$1$3$4</a>")
+
+	fmt.Println(counter)
+
+	comments = append(comments, Comment{
+		Channel:   GetChannel(value.Get("channel_url").String()),
+		Comment:   template.HTML(comment),
+		CommentId: value.Get("comment_id").String(),
+		ParentId:  value.Get("parent_id").String(),
+		Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
+		RelTime:   humanize.Time(timestamp),
+		Likes:     likesDislikes[counter-1][0],
+		Dislikes:  likesDislikes[counter-1][1],
+	})
+
+	wg.Done()
+}
+
+func GetCommentLikeDislikes(commentIds []string) [][]int64 {
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
 		"method":  "comment_react_list",
 		"params": map[string]interface{}{
-			"comment_ids": commentId,
+			"comment_ids": strings.Join(commentIds, ","),
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
@@ -103,10 +135,18 @@ func GetCommentLikeDislikes(commentId string) []int64 {
 		log.Fatal(err2)
 	}
 
-	likesDislikes := gjson.Get(string(commentsDataBody), "result.others_reactions."+commentId)
+	likesDislikes := make([][]int64, 0)
 
-	return []int64{
-		likesDislikes.Get("like").Int(),
-		likesDislikes.Get("dislike").Int(),
-	}
+	gjson.Get(string(commentsDataBody), "result.others_reactions").ForEach(
+		func(key gjson.Result, value gjson.Result) bool {
+			likesDislikes = append(likesDislikes, []int64{
+				value.Get("like").Int(),
+				value.Get("dislike").Int(),
+			})
+
+			return true
+		},
+	)
+
+	return likesDislikes
 }
