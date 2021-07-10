@@ -3,15 +3,13 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"runtime"
 	"strings"
-	"time"
 	"sync"
+	"time"
 
 	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
@@ -21,7 +19,6 @@ import (
 )
 
 var wg sync.WaitGroup
-var comments []Comment
 
 type Comment struct {
 	Channel   Channel
@@ -71,9 +68,7 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 	likesDislikes := GetCommentLikeDislikes(commentIds)
 	counter := 0
 
-	fmt.Println("Version", runtime.Version())
-	fmt.Println("NumCPU", runtime.NumCPU())
-	fmt.Println("GOMAXPROCS", runtime.GOMAXPROCS(0))
+	comments := make([]Comment, 0)
 
 	wg.Add(len(commentIds))
 
@@ -81,7 +76,27 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 		func(key, value gjson.Result) bool {
 			counter++
 
-			go processComment(key, value, counter, likesDislikes)
+			go func() {
+				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
+
+				comment := value.Get("comment").String()
+				comment = bluemonday.UGCPolicy().Sanitize(comment)
+				comment = strings.ReplaceAll(comment, "\n", "<br>")
+				comment = xurls.Relaxed().ReplaceAllString(comment, "<a href=\"$1$3$4\">$1$3$4</a>")
+
+				comments = append(comments, Comment{
+					Channel:   GetChannel(value.Get("channel_url").String()),
+					Comment:   template.HTML(comment),
+					CommentId: value.Get("comment_id").String(),
+					ParentId:  value.Get("parent_id").String(),
+					Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
+					RelTime:   humanize.Time(timestamp),
+					Likes:     likesDislikes[counter-1][0],
+					Dislikes:  likesDislikes[counter-1][1],
+				})
+
+				wg.Done()
+			}()
 
 			return true
 		},
@@ -89,30 +104,6 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 	wg.Wait()
 
 	return comments
-}
-
-func processComment(key gjson.Result, value gjson.Result, counter int, likesDislikes [][]int64) {
-	timestamp := time.Unix(value.Get("timestamp").Int(), 0)
-
-	comment := value.Get("comment").String()
-	comment = bluemonday.UGCPolicy().Sanitize(comment)
-	comment = strings.ReplaceAll(comment, "\n", "<br>")
-	comment = xurls.Relaxed().ReplaceAllString(comment, "<a href=\"$1$3$4\">$1$3$4</a>")
-
-	fmt.Println(counter)
-
-	comments = append(comments, Comment{
-		Channel:   GetChannel(value.Get("channel_url").String()),
-		Comment:   template.HTML(comment),
-		CommentId: value.Get("comment_id").String(),
-		ParentId:  value.Get("parent_id").String(),
-		Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
-		RelTime:   humanize.Time(timestamp),
-		Likes:     likesDislikes[counter-1][0],
-		Dislikes:  likesDislikes[counter-1][1],
-	})
-
-	wg.Done()
 }
 
 func GetCommentLikeDislikes(commentIds []string) [][]int64 {
