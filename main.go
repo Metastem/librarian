@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/imabritishcow/librarian/pages"
+	"github.com/imabritishcow/librarian/proxy"
 	"github.com/imabritishcow/librarian/templates"
 	"github.com/spf13/viper"
 )
@@ -31,6 +32,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/{channel}/{video}", pages.VideoHandler)
+	r.HandleFunc("/image", proxy.ProxyImage)
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
 
 	http.Handle("/", r)

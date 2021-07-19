@@ -6,13 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="thumbnail" content={{.video.ThumbnailUrl}}>
+  <meta name="thumbnail" content="https://{{.config.DOMAIN}}/image?url={{.video.ThumbnailUrl}}">
   <meta name="description" content={{.video.Description}}>
 
   <meta property="og:site_name" content="Librarian">
   <meta property="og:url" content={{.video.Url}}>
   <meta property="og:title" content={{.video.Title}}>
-  <meta property="og:image" content={{.video.ThumbnailUrl}}>
+  <meta property="og:image" content="https://{{.config.DOMAIN}}/image?url={{.video.ThumbnailUrl}}">
   <meta property="og:description" content={{.video.Description}}>
   <meta property="og:type" content="video.other">
 
@@ -20,7 +20,7 @@
   <meta name="twitter:url" content={{.video.Url}}>
   <meta name="twitter:title" content={{.video.Title}}>
   <meta name="twitter:description" content="">
-  <meta name="twitter:image" content={{.video.ThumbnailUrl}}>
+  <meta name="twitter:image" content="https://{{.config.DOMAIN}}/image?url={{.video.ThumbnailUrl}}">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -55,7 +55,7 @@
 
   <main>
     <div class="videoWrapper">
-      <video id="player" class="videoPlayer" poster={{.video.ThumbnailUrl}} controls=true width="1280" height="720">
+      <video id="player" class="videoPlayer" poster="/image?url={{.video.ThumbnailUrl}}" controls=true width="1280" height="720">
         <source type="video/mp4" src="{{.stream}}">
       </video>
     </div>
@@ -84,9 +84,9 @@
           <div class="channel">
             <a href="{{.video.Channel.Url}}" class="pfpWrapper">
               {{if .video.Channel.Thumbnail}}
-              <img src="{{.video.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
+              <img src="/image?url={{.video.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
               {{else}}
-              <img src="https://odysee.com/public/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
+              <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
               {{end}}
             </a>
             <a href="{{.video.Channel.Url}}">
@@ -112,9 +112,9 @@
         {{range $index, $value := .comments}}
         <div class="comment">
           {{if $value.Channel.Thumbnail}}
-          <img src="{{$value.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
+          <img src="/image?url={{$value.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
           {{else}}
-          <img src="https://odysee.com/public/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
+          <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
           {{end}}
           <div>
             <a href="{{$value.Channel.Url}}">
