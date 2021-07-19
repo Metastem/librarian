@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"html"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -13,10 +14,10 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	"github.com/gomarkdown/markdown"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
-	"mvdan.cc/xurls/v2"
 )
 
 var wg sync.WaitGroup
@@ -78,8 +79,9 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 
 				comment := value.Get("comment").String()
 				comment = bluemonday.UGCPolicy().Sanitize(comment)
-				comment = strings.ReplaceAll(comment, "\n", "<br>")
-				comment = xurls.Relaxed().ReplaceAllString(comment, "<a href=\"$1$3$4\">$1$3$4</a>")
+				comment = string(markdown.ToHTML([]byte(comment), nil, nil))
+				comment = strings.ReplaceAll(comment, `img src="`, `img src="/image?url=`)
+				comment = html.UnescapeString(comment)
 
 				commentId := value.Get("comment_id").String()
 
