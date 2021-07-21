@@ -38,7 +38,10 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	channelData := api.GetChannel(vars["channel"])
-	followers := api.GetChannelFollowers(channelData.Id)
+	followers, err := api.GetChannelFollowers(channelData.Id)
+	if err != nil {
+		log.Fatal(err)
+	}
 	videos := api.GetChannelVideos(page, channelData.Id, []string{claimType}, orderBy)
 
 	channelTemplate, _ := template.ParseFS(templates.GetFiles(), "channel.html")

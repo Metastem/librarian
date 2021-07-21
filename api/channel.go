@@ -59,18 +59,15 @@ func GetChannel(channel string) types.Channel {
 	}
 }
 
-func GetChannelFollowers(claimId string) int64 {
+func GetChannelFollowers(claimId string) (int64, error) {
 	res, err := http.Get("https://api.lbry.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	return gjson.Get(string(body), "data.0").Int()
+	return gjson.Get(string(body), "data.0").Int(), err
 }
 
 func GetChannelVideos(page int, channelId string, claimType []string, orderBy []string) []types.Video {
