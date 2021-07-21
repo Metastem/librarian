@@ -75,23 +75,50 @@
     </p>
 
     {{.channel.Description}}
-    <a href="{{.channel.OdyseeUrl}}">View on Odysee</a>
+
+    <a href="{{.channel.OdyseeUrl}}">View on Odysee</a><br>
+    
+    <!-- TO-DO: Add playlists
+    {{if eq .query.claimType .query.stream}}
+      <b>Videos</b><br>
+      <a href="{{.channel.RelUrl}}?claimType=collection">Playlists</a>
+    {{else}}
+      <a href="{{.channel.RelUrl}}">Videos</a><br>
+      <b>Playlists</b>
+    {{end}}-->
     <hr>
 
-    <div>
+    <div class="videos">
       {{range $index, $value := .videos}}
         <div class="video">
-          <div class="thumbnail" style="background-image: url(/image?url={{$value.ThumbnailUrl}});">
+          <div class="thumbnailWrapper">
+            <a href={{$value.RelUrl}}>
+              <img class="thumbnail" src="/image?url={{$value.ThumbnailUrl}}">
+            </a>
             <p class="duration">{{$value.Duration}}</p>
           </div>
-          <p>{{$value.Title}}</p>
-          <p>{{$value.Channel.Name}}</p>
-          <div>
+          <p>
+            <a class="videoLink" href={{$value.RelUrl}}>{{$value.Title}}</a>
+          </p>
+          <p>
+            <a class="videoLink" href={{$value.Channel.RelUrl}}>{{$value.Channel.Name}}</a>
+          </p>
+          <div class="videoMeta">
             <p title="{{$value.Date}}">Shared {{$value.RelTime}}</p>
-            <p>{{$value.Views}} Views</p>
+            <p>{{$value.Views}} views</p>
           </div>
         </div>
         {{end}}
+    </div>
+    
+    <br><br>
+
+    <div class="pageSelector">
+      {{if ne .query.prevPage .query.page0 }}
+      <a class="videoLink" href="{{.channel.RelUrl}}?page={{.query.prevPage}}">Previous page</a>
+      {{else}}
+      {{end}}
+      <a class="videoLink" href="{{.channel.RelUrl}}?page={{.query.nextPage}}">Next page</a>
     </div>
   </main>
 </body>

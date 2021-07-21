@@ -10,7 +10,7 @@ body {
 }
 
 main {
-  margin: 0 15vw 0 15vw;
+  margin: 0 12vw 0 12vw;
 }
 
 .channel {
@@ -35,10 +35,52 @@ main {
   background-color: lightskyblue;
 }
 
-.comment {
+.videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.videoLink {
+  color: #212121;
+}
+
+.thumbnailWrapper {
+  padding: 28.125%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.thumbnail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.duration {
+  position: absolute;
+  background-color: rgba(35, 35, 35, 0.75);
+  color: white;
+  border-radius: 2px;
+  padding: 2px;
+  font-size: 16px;
+  right: 0.25em;
+  bottom: -0.75em;
+}
+
+.videoMeta {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  justify-content: space-between;
+}
+
+.pageSelector {
+  display: flex;
+  justify-content: space-between;
 }
 
 @media only screen and (max-width: 812px) {

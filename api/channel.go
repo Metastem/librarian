@@ -70,17 +70,17 @@ func GetChannelFollowers(claimId string) (int64, error) {
 	return gjson.Get(string(body), "data.0").Int(), err
 }
 
-func GetChannelVideos(page int, channelId string, claimType []string, orderBy []string) []types.Video {
+func GetChannelVideos(page int, channelId string) []types.Video {
 	channelDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
 		"method":  "claim_search",
 		"params": map[string]interface{}{
-			"page_size":                30,
+			"page_size":                20,
 			"page":                     page,
 			"no_totals":                true,
-			"claim_type":               claimType,
-			"order_by":                 orderBy,
+			"claim_type":               []string{"stream"},
+			"order_by":                 []string{"release_time"},
 			"fee_amount":               "<=0",
 			"channel_ids":              []string{channelId},
 			"release_time":             "<" + fmt.Sprint(time.Now().Unix()),
@@ -128,8 +128,9 @@ func GetChannelVideos(page int, channelId string, claimType []string, orderBy []
 					Title:        value.Get("value.title").String(),
 					ThumbnailUrl: template.URL(value.Get("value.thumbnail.url").String()),
 					Views:        GetVideoViews(claimId),
+					Timestamp:		time.Unix(),
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-					Duration:     utils.FormatDuration(value.Get("valuie.video.duration").Int()),
+					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
 					RelTime:		  humanize.Time(time),
 				})
 				waitingVideos.Done()

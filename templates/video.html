@@ -82,14 +82,14 @@
 
         <div class="videoDesc">
           <div class="channel">
-            <a href="{{.video.Channel.Url}}" class="pfpWrapper">
+            <a href="{{.video.Channel.RelUrl}}" class="pfpWrapper">
               {{if .video.Channel.Thumbnail}}
               <img src="/image?url={{.video.Channel.Thumbnail}}" class="pfp" width="56" height="56" />
               {{else}}
               <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
               {{end}}
             </a>
-            <a href="{{.video.Channel.Url}}">
+            <a href="{{.video.Channel.RelUrl}}">
               <p>
                 {{if .video.Channel.Title}}
                 <b>{{.video.Channel.Title}}</b>

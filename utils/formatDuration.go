@@ -4,9 +4,13 @@ import "fmt"
 
 func FormatDuration(seconds int64) string {
 	mins := seconds / 60
-	minutes := addZero(mins)
 	hours := addZero(mins / 60)
   remainingSeconds := addZero(seconds % 60)
+
+	minutes := addZero(mins)
+	if mins >= 60 {
+		minutes = addZero(mins - (mins / 60) * 60)
+	}
 
 	if hours != "00" {
 		return hours + ":" + minutes + ":" + remainingSeconds

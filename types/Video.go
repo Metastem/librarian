@@ -17,6 +17,7 @@ type Video struct {
 	Likes        int64
 	Dislikes     int64
 	Tags         []string
+	Timestamp		 int64
 	RelTime			 string
 	Date         string
 	Duration		 string

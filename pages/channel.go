@@ -1,9 +1,11 @@
 package pages
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -19,22 +21,8 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 
 	page := 1
 	pageParam, err := strconv.Atoi(r.URL.Query().Get("page"))
-	if err == nil {
+	if err == nil || pageParam != 0 {
 		page = pageParam
-	}
-
-	claimType := "stream"
-	if r.URL.Query().Get("claimType") != "" {
-		claimType = r.URL.Query().Get("claimType")
-	}
-
-	orderBy := []string{"release_time"}
-	if r.URL.Query().Get("orderBy") != "" {
-		if r.URL.Query().Get("orderBy") == "trending" {
-			orderBy = []string{"trending_group", "trending_mixed"}
-		} else {
-			orderBy = []string{r.URL.Query().Get("orderBy")}
-		}
 	}
 
 	channelData := api.GetChannel(vars["channel"])
@@ -42,7 +30,23 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	videos := api.GetChannelVideos(page, channelData.Id, []string{claimType}, orderBy)
+
+	/*TO-DO: Add playlists
+
+	videos := make([]types.Video, 0)
+	claimType := r.URL.Query().Get("claimType")
+	if claimType == "" || claimType == "stream" {
+		claimType = "stream"
+		videos := api.GetChannelVideos(page, channelData.Id)
+		sort.Slice(videos, func (i int, j int) bool {
+			return videos[i].Timestamp > videos[j].Timestamp
+		})
+	}*/
+
+	videos := api.GetChannelVideos(page, channelData.Id)
+	sort.Slice(videos, func (i int, j int) bool {
+		return videos[i].Timestamp > videos[j].Timestamp
+	})
 
 	channelTemplate, _ := template.ParseFS(templates.GetFiles(), "channel.html")
 	err = channelTemplate.Execute(w, map[string]interface{}{
@@ -51,9 +55,12 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 		"followers": followers,
 		"videos": videos,
 		"query": map[string]interface{}{
-			"page": page,
-			"claimType": claimType,
-			"orderBy": orderBy,
+			"page": fmt.Sprint(page),
+			"nextPage": fmt.Sprint(page + 1),
+			"prevPage": fmt.Sprint(page - 1),
+			"page0": "0",
+			"claimType": "stream",
+			"stream": "stream",
 		},
 	})
 	if err != nil {
