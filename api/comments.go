@@ -3,37 +3,25 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"html"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"sort"
 	"strings"
-	"sync"
 	"time"
+	"sync"
 
 	"github.com/dustin/go-humanize"
-	"github.com/gomarkdown/markdown"
-	"github.com/microcosm-cc/bluemonday"
+	"github.com/imabritishcow/librarian/types"
+	"github.com/imabritishcow/librarian/utils"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
-var wg sync.WaitGroup
+var waitingComments sync.WaitGroup
 
-type Comment struct {
-	Channel   Channel
-	Comment   template.HTML
-	CommentId string
-	ParentId  string
-	Time      string
-	RelTime   string
-	Likes     int64
-	Dislikes  int64
-}
-
-func GetComments(claimId string, channelId string, channelName string) []Comment {
+func GetComments(claimId string, channelId string, channelName string) []types.Comment {
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -68,24 +56,20 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 
 	likesDislikes := GetCommentLikeDislikes(commentIds)
 
-	comments := make([]Comment, 0)
+	comments := make([]types.Comment, 0)
 
-	wg.Add(len(commentIds))
+	waitingComments.Add(len(commentIds))
 
 	gjson.Get(string(commentsDataBody), "result.items").ForEach(
 		func(key, value gjson.Result) bool {
 			go func() {
 				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
-				comment := value.Get("comment").String()
-				comment = bluemonday.UGCPolicy().Sanitize(comment)
-				comment = string(markdown.ToHTML([]byte(comment), nil, nil))
-				comment = strings.ReplaceAll(comment, `img src="`, `img src="/image?url=`)
-				comment = html.UnescapeString(comment)
+				comment := utils.ProcessText(value.Get("comment").String())
 
 				commentId := value.Get("comment_id").String()
 
-				comments = append(comments, Comment{
+				comments = append(comments, types.Comment{
 					Channel:   GetChannel(value.Get("channel_url").String()),
 					Comment:   template.HTML(comment),
 					CommentId: commentId,
@@ -96,13 +80,13 @@ func GetComments(claimId string, channelId string, channelName string) []Comment
 					Dislikes:  likesDislikes[commentId][1],
 				})
 
-				wg.Done()
+				waitingComments.Done()
 			}()
 
 			return true
 		},
 	)
-	wg.Wait()
+	waitingComments.Wait()
 
 	sort.Slice(comments[:], func(i, j int) bool {
 		return comments[i].Likes < comments[j].Likes

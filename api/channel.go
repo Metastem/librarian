@@ -3,28 +3,25 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize"
+	"github.com/imabritishcow/librarian/types"
+	"github.com/imabritishcow/librarian/utils"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
-type Channel struct {
-	Name string
-	Title string
-	Id string
-	Url string
-	OdyseeUrl string
-	CoverImg string
-	Description string
-	Thumbnail string
-}
+var waitingVideos sync.WaitGroup
 
-func GetChannel(channel string) Channel {
+func GetChannel(channel string) types.Channel {
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -48,14 +45,103 @@ func GetChannel(channel string) Channel {
 
 	channelData := gjson.Get(string(channelBody), "result."+channel)
 
-	return Channel{
-		Name: channelData.Get("name").String(),
-		Title: channelData.Get("value.title").String(),
-		Id: channelData.Get("claim_id").String(),
-		Url: strings.Replace(channelData.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
-		OdyseeUrl: strings.ReplaceAll(channelData.Get("canonical_url").String(), "lbry://", "https://odysee.com/"),
-		CoverImg: channelData.Get("value.cover.url").String(),
-		Description: channelData.Get("value.description").String(),
-		Thumbnail: channelData.Get("value.thumbnail.url").String(),
+	description := utils.ProcessText(channelData.Get("value.description").String())
+
+	return types.Channel{
+		Name:        channelData.Get("name").String(),
+		Title:       channelData.Get("value.title").String(),
+		Id:          channelData.Get("claim_id").String(),
+		Url:         strings.Replace(channelData.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
+		OdyseeUrl:   strings.ReplaceAll(channelData.Get("canonical_url").String(), "lbry://", "https://odysee.com/"),
+		CoverImg:    channelData.Get("value.cover.url").String(),
+		Description: template.HTML(description),
+		Thumbnail:   channelData.Get("value.thumbnail.url").String(),
 	}
+}
+
+func GetChannelFollowers(claimId string) int64 {
+	res, err := http.Get("https://api.lbry.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return gjson.Get(string(body), "data.0").Int()
+}
+
+func GetChannelVideos(page int, channelId string, claimType []string, orderBy []string) []types.Video {
+	channelDataMap := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"id":      1,
+		"method":  "claim_search",
+		"params": map[string]interface{}{
+			"page_size":                30,
+			"page":                     page,
+			"no_totals":                true,
+			"claim_type":               claimType,
+			"order_by":                 orderBy,
+			"fee_amount":               "<=0",
+			"channel_ids":              []string{channelId},
+			"release_time":             "<" + fmt.Sprint(time.Now().Unix()),
+			"include_purchase_receipt": true,
+		},
+	}
+	channelData, _ := json.Marshal(channelDataMap)
+	channelDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=claim_search", "application/json", bytes.NewBuffer(channelData))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	channelDataBody, err := ioutil.ReadAll(channelDataRes.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	videos := make([]types.Video, 0)
+	videosData := gjson.Parse(string(channelDataBody))
+
+	waitingVideos.Add(int(videosData.Get("result.items.#").Int()))
+	videosData.Get("result.items").ForEach(
+		func(key gjson.Result, value gjson.Result) bool {
+			go func() {
+				claimId := value.Get("claim_id").String()
+				lbryUrl := value.Get("canonical_url").String()
+				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
+
+				time := time.Unix(value.Get("value.release_time").Int(), 0)
+
+				videos = append(videos, types.Video{
+					Url:       utils.LbryTo(lbryUrl, "http"),
+					LbryUrl:   lbryUrl,
+					RelUrl:    utils.LbryTo(lbryUrl, "rel"),
+					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+					ClaimId:   value.Get("claim_id").String(),
+					Channel: types.Channel{
+						Name:        value.Get("signing_channel.name").String(),
+						Title:       value.Get("signing_channel.value.title").String(),
+						Id:          value.Get("signing_channel.claim_id").String(),
+						Url:         utils.LbryTo(channelLbryUrl, "http"),
+						RelUrl:      utils.LbryTo(channelLbryUrl, "rel"),
+						OdyseeUrl:   utils.LbryTo(channelLbryUrl, "odysee"),
+					},
+					Title:        value.Get("value.title").String(),
+					ThumbnailUrl: template.URL(value.Get("value.thumbnail.url").String()),
+					Views:        GetVideoViews(claimId),
+					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
+					Duration:     utils.FormatDuration(value.Get("valuie.video.duration").Int()),
+					RelTime:		  humanize.Time(time),
+				})
+				waitingVideos.Done()
+			}()
+
+			return true
+		},
+	)
+	waitingVideos.Wait()
+
+	return videos
 }

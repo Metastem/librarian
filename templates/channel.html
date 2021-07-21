@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="thumbnail" content="https://{{.config.DOMAIN}}/image?url={{.channel.Thumbnail}}">
+  <meta name="description" content={{.video.Description}}>
+
+  <meta property="og:site_name" content="Librarian">
+  <meta property="og:url" content={{.channel.Url}}>
+  <meta property="og:title" content={{.channel.Title}}>
+  <meta property="og:image" content="https://{{.config.DOMAIN}}/image?url={{.channel.Thumbnail}}">
+  <meta property="og:description" content={{.channel.Description}}>
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:url" content={{.channel.Url}}>
+  <meta name="twitter:title" content={{.channel.Title}}>
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content="https://{{.config.DOMAIN}}/image?url={{.channel.Thumbnail}}">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/favicon/favicon.ico">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="msapplication-config" content="/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="/static/css/plyr.css" />
+  <link rel="stylesheet" href="/static/css/channel.css" />
+  <link rel="stylesheet" href="/static/fonts/roboto.css" />
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <title>{{.channel.Title}} - Librarian</title>
+</head>
+
+<body>
+  <header>
+    <a href="/">
+      <h2>LIBRARIAN</h2>
+    </a>
+    <!--<form action="/search">
+      <input type="text" placeholder="Search..." />
+      <input type="submit" value="Search" />
+    </form>-->
+  </header>
+
+  <br>
+
+  <main>
+    <img src="/image?url={{.channel.CoverImg}}" class="coverImg">
+    <hr>
+
+    <div class="channel">
+      {{if .channel.Thumbnail}}
+      <img src="/image?url={{.channel.Thumbnail}}" class="pfp" width="56" height="56" />
+      {{else}}
+      <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" />
+      {{end}}
+      <p>
+        <b>{{.channel.Title}}</b>
+        <br>
+        {{.channel.Name}}
+      </p>
+    </div>
+
+    <p>
+      <b>{{.followers}} followers</b>
+    </p>
+
+    {{.channel.Description}}
+    <a href="{{.channel.OdyseeUrl}}">View on Odysee</a>
+    <hr>
+
+    <div>
+      {{range $index, $value := .videos}}
+        <div class="video">
+          <div class="thumbnail" style="background-image: url(/image?url={{$value.ThumbnailUrl}});">
+            <p class="duration">{{$value.Duration}}</p>
+          </div>
+          <p>{{$value.Title}}</p>
+          <p>{{$value.Channel.Name}}</p>
+          <div>
+            <p title="{{$value.Date}}">Shared {{$value.RelTime}}</p>
+            <p>{{$value.Views}} Views</p>
+          </div>
+        </div>
+        {{end}}
+    </div>
+  </main>
+</body>
+
+</html>
