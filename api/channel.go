@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
+	"codeberg.org/imabritishcow/librarian/types"
+	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
-	"github.com/imabritishcow/librarian/types"
-	"github.com/imabritishcow/librarian/utils"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
@@ -118,20 +118,20 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
 					ClaimId:   value.Get("claim_id").String(),
 					Channel: types.Channel{
-						Name:        value.Get("signing_channel.name").String(),
-						Title:       value.Get("signing_channel.value.title").String(),
-						Id:          value.Get("signing_channel.claim_id").String(),
-						Url:         utils.LbryTo(channelLbryUrl, "http"),
-						RelUrl:      utils.LbryTo(channelLbryUrl, "rel"),
-						OdyseeUrl:   utils.LbryTo(channelLbryUrl, "odysee"),
+						Name:      value.Get("signing_channel.name").String(),
+						Title:     value.Get("signing_channel.value.title").String(),
+						Id:        value.Get("signing_channel.claim_id").String(),
+						Url:       utils.LbryTo(channelLbryUrl, "http"),
+						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
+						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
 					},
 					Title:        value.Get("value.title").String(),
 					ThumbnailUrl: template.URL(value.Get("value.thumbnail.url").String()),
 					Views:        GetVideoViews(claimId),
-					Timestamp:		time.Unix(),
+					Timestamp:    time.Unix(),
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
-					RelTime:		  humanize.Time(time),
+					RelTime:      humanize.Time(time),
 				})
 				waitingVideos.Done()
 			}()

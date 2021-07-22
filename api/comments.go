@@ -9,12 +9,12 @@ import (
 	"net/http"
 	"sort"
 	"strings"
-	"time"
 	"sync"
+	"time"
 
+	"codeberg.org/imabritishcow/librarian/types"
+	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
-	"github.com/imabritishcow/librarian/types"
-	"github.com/imabritishcow/librarian/utils"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )

@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"codeberg.org/imabritishcow/librarian/pages"
+	"codeberg.org/imabritishcow/librarian/proxy"
+	"codeberg.org/imabritishcow/librarian/templates"
 	"github.com/gorilla/mux"
-	"github.com/imabritishcow/librarian/pages"
-	"github.com/imabritishcow/librarian/proxy"
-	"github.com/imabritishcow/librarian/templates"
 	"github.com/spf13/viper"
 )
 

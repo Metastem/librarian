@@ -11,8 +11,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/imabritishcow/librarian/types"
-	"github.com/imabritishcow/librarian/utils"
+	"codeberg.org/imabritishcow/librarian/types"
+	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
