@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/h2non/bimg"
-	"github.com/spf13/viper"
 )
 
 func ProxyImage(w http.ResponseWriter, r *http.Request) {
