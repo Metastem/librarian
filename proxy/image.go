@@ -34,7 +34,7 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "image/png")
 		}
 
-		w.Header().Set("Cache-Control", "public,max-age=31557600h")
+		w.Header().Set("Cache-Control", "public,max-age=31557600")
 		w.Write(data)
 	} else {
 		w.WriteHeader(400)
