@@ -2,3 +2,5 @@ DOMAIN: 'localhost:3000'
 PORT: '3000'
 API_URL: 'https://api.lbry.tv'
 AUTH_TOKEN: 'AUTH_TOKEN'
+# Only enable if you have good CPU performance
+AVIF_IMAGES: 'false'
