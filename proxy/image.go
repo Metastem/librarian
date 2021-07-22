@@ -24,9 +24,6 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 
 	if strings.Contains(res.Header.Get("content-type"), "image") {
 		switch true {
-		case strings.Contains(r.Header.Get("Accept"), "image/avif") && viper.GetString("AVIF_IMAGES") == "true":
-			data, _ = bimg.NewImage(data).Convert(bimg.AVIF)
-			w.Header().Set("Content-Type", "image/avif")
 		case strings.Contains(r.Header.Get("Accept"), "image/webp"):
 			data, _ = bimg.NewImage(data).Convert(bimg.WEBP)
 			w.Header().Set("Content-Type", "image/webp")
