@@ -137,7 +137,7 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 		},
 		Title:        videoData.Get("value.title").String(),
 		ThumbnailUrl: template.URL(videoData.Get("value.thumbnail.url").String()),
-		Description:  template.HTML(utils.ProcessText(videoData.Get("value.description").String())),
+		Description:  template.HTML(utils.ProcessText(videoData.Get("value.description").String(), true)),
 		License:      videoData.Get("value.license").String(),
 		Views:        GetVideoViews(claimId),
 		Likes:        likeDislike[0],

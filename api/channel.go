@@ -45,7 +45,7 @@ func GetChannel(channel string) types.Channel {
 
 	channelData := gjson.Get(string(channelBody), "result."+channel)
 
-	description := utils.ProcessText(channelData.Get("value.description").String())
+	description := utils.ProcessText(channelData.Get("value.description").String(), true)
 
 	return types.Channel{
 		Name:        channelData.Get("name").String(),

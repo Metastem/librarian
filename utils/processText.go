@@ -9,9 +9,14 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 )
 
-func ProcessText(text string) string {
+func ProcessText(text string, newline bool) string {
 	text = bluemonday.UGCPolicy().Sanitize(text)
 	text = string(markdown.ToHTML([]byte(text), nil, nil))
+	if newline {
+		text = strings.ReplaceAll(text, "\n\n", "")
+		text = strings.ReplaceAll(text, "\n", "<br>")
+	}
+	text = strings.ReplaceAll(text, "<p></p>", "")
 	text = strings.ReplaceAll(text, `img src="`, `img src="/image?url=`)
 	text = html.UnescapeString(text)
 

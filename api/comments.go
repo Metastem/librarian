@@ -65,7 +65,7 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 			go func() {
 				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
-				comment := utils.ProcessText(value.Get("comment").String())
+				comment := utils.ProcessText(value.Get("comment").String(), false)
 
 				commentId := value.Get("comment_id").String()
 
