@@ -10,7 +10,7 @@ type Video struct {
 	ClaimId      string
 	Channel      Channel
 	Title        string
-	ThumbnailUrl template.URL
+	ThumbnailUrl string
 	Description  template.HTML
 	License      string
 	Views        int64

@@ -4,11 +4,25 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
+
+	"codeberg.org/imabritishcow/librarian/utils"
 )
 
 func ProxyImage(w http.ResponseWriter, r *http.Request) {
 	url := r.URL.Query().Get("url")
+	hash := r.URL.Query().Get("hash")
+	if hash == "" || url == "" {
+		w.WriteHeader(400)
+		w.Write([]byte("no hash or url"))
+		return
+	}
+
+	if !utils.VerifyHMAC(url, hash) {
+		w.WriteHeader(403)
+		w.Write([]byte("invalid hash"))
+		return
+	}
+
 	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -19,10 +33,6 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	if strings.Contains(res.Header.Get("content-type"), "image") {
-		w.Header().Set("Cache-Control", "public,max-age=31557600")
-		w.Write(data)
-	} else {
-		w.WriteHeader(400)
-	}
+	w.Header().Set("Cache-Control", "public,max-age=31557600")
+	w.Write(data)
 }

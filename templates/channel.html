@@ -6,13 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="thumbnail" content="https://{{.config.DOMAIN}}/image?url={{.channel.Thumbnail}}">
+  <meta name="thumbnail" content="https://{{.config.DOMAIN}}{{.channel.Thumbnail}}">
   <meta name="description" content={{.video.Description}}>
 
   <meta property="og:site_name" content="Librarian">
   <meta property="og:url" content={{.channel.Url}}>
   <meta property="og:title" content={{.channel.Title}}>
-  <meta property="og:image" content="https://{{.config.DOMAIN}}/image?url={{.channel.Thumbnail}}">
+  <meta property="og:image" content="https://{{.config.DOMAIN}}{{.channel.Thumbnail}}">
   <meta property="og:description" content={{.channel.Description}}>
   <meta property="og:type" content="website">
 
@@ -20,7 +20,7 @@
   <meta name="twitter:url" content={{.channel.Url}}>
   <meta name="twitter:title" content={{.channel.Title}}>
   <meta name="twitter:description" content="">
-  <meta name="twitter:image" content="https://{{.config.DOMAIN}}/image?url={{.channel.Thumbnail}}">
+  <meta name="twitter:image" content="https://{{.config.DOMAIN}}{{.channel.Thumbnail}}">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -54,12 +54,17 @@
   <br>
 
   <main>
-    <img src="/image?url={{.channel.CoverImg}}" class="coverImg" loading="lazy"/>
+    
+    {{if .channel.CoverImg}}
+    <img src="{{.channel.CoverImg}}" class="coverImg" loading="lazy"/>
+    {{else}}
+    {{end}}
+    
     <hr>
 
     <div class="channel">
       {{if .channel.Thumbnail}}
-      <img src="/image?url={{.channel.Thumbnail}}" class="pfp" width="56" height="56" loading="lazy"/>
+      <img src="{{.channel.Thumbnail}}" class="pfp" width="56" height="56" loading="lazy"/>
       {{else}}
       <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
       {{end}}
@@ -93,7 +98,7 @@
         <div class="video">
           <div class="thumbnailWrapper">
             <a href={{$value.RelUrl}}>
-              <img class="thumbnail" src="/image?url={{$value.ThumbnailUrl}}" loading="lazy"/>
+              <img class="thumbnail" src="{{$value.ThumbnailUrl}}" loading="lazy"/>
             </a>
             <p class="duration">{{$value.Duration}}</p>
           </div>

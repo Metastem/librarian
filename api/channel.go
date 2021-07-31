@@ -46,6 +46,14 @@ func GetChannel(channel string) types.Channel {
 	channelData := gjson.Get(string(channelBody), "result."+channel)
 
 	description := utils.ProcessText(channelData.Get("value.description").String(), true)
+	thumbnail := channelData.Get("value.thumbnail.url").String()
+	if thumbnail != "" {
+		thumbnail = "/image?url="+thumbnail+"&hash="+utils.EncodeHMAC(thumbnail)
+	}
+	coverImg := channelData.Get("value.cover.url").String()
+	if coverImg != "" {
+		coverImg = "/image?url="+coverImg+"&hash="+utils.EncodeHMAC(coverImg)
+	}
 
 	return types.Channel{
 		Name:        channelData.Get("name").String(),
@@ -53,9 +61,9 @@ func GetChannel(channel string) types.Channel {
 		Id:          channelData.Get("claim_id").String(),
 		Url:         strings.Replace(channelData.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
 		OdyseeUrl:   strings.ReplaceAll(channelData.Get("canonical_url").String(), "lbry://", "https://odysee.com/"),
-		CoverImg:    channelData.Get("value.cover.url").String(),
+		CoverImg:    coverImg,
 		Description: template.HTML(description),
-		Thumbnail:   channelData.Get("value.thumbnail.url").String(),
+		Thumbnail:   thumbnail,
 	}
 }
 
@@ -110,6 +118,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
 
 				time := time.Unix(value.Get("value.release_time").Int(), 0)
+				thumbnail := value.Get("value.thumbnail.url").String()
 
 				videos = append(videos, types.Video{
 					Url:       utils.LbryTo(lbryUrl, "http"),
@@ -126,7 +135,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
 					},
 					Title:        value.Get("value.title").String(),
-					ThumbnailUrl: template.URL(value.Get("value.thumbnail.url").String()),
+					ThumbnailUrl: "/image?url="+thumbnail+"&hash="+utils.EncodeHMAC(thumbnail),
 					Views:        GetVideoViews(claimId),
 					Timestamp:    time.Unix(),
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),

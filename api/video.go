@@ -115,6 +115,11 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 	channelLbryUrl := videoData.Get("signing_channel.canonical_url").String()
 
 	time := time.Unix(videoData.Get("value.release_time").Int(), 0)
+	thumbnail := videoData.Get("value.thumbnail.url").String()
+	channelThumbnail := videoData.Get("signing_channel.value.thumbnail.url").String()
+	if channelThumbnail != "" {
+		channelThumbnail = "/image?url="+channelThumbnail+"&hash="+utils.EncodeHMAC(channelThumbnail)
+	}
 
 	likeDislike := GetLikeDislike(claimId)
 
@@ -131,12 +136,11 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 			Url:         utils.LbryTo(channelLbryUrl, "http"),
 			RelUrl:      utils.LbryTo(channelLbryUrl, "rel"),
 			OdyseeUrl:   utils.LbryTo(channelLbryUrl, "odysee"),
-			CoverImg:    videoData.Get("signing_channel.value.cover.url").String(),
 			Description: template.HTML(videoData.Get("signing_channel.value.description").String()),
-			Thumbnail:   videoData.Get("signing_channel.value.thumbnail.url").String(),
+			Thumbnail:   channelThumbnail,
 		},
 		Title:        videoData.Get("value.title").String(),
-		ThumbnailUrl: template.URL(videoData.Get("value.thumbnail.url").String()),
+		ThumbnailUrl: "/image?url"+thumbnail+"&hash="+utils.EncodeHMAC(thumbnail),
 		Description:  template.HTML(utils.ProcessText(videoData.Get("value.description").String(), true)),
 		License:      videoData.Get("value.license").String(),
 		Views:        GetVideoViews(claimId),
