@@ -10,4 +10,5 @@ services:
       - PORT=3000
       - API_URL=https://api.lbry.tv
       - AUTH_TOKEN=G1NVCtodi7JQcAZhu68VBF55z6mGUafG
+      - HMAC_KEY='openssl rand -base64 33'
     restart: always
