@@ -1,5 +1,5 @@
 DOMAIN: 'localhost:3000'
 PORT: '3000'
-API_URL: 'https://api.lbry.tv'
+API_URL: 'https://api.na-backend.odysee.com'
 AUTH_TOKEN: 'AUTH_TOKEN'
 HMAC_KEY: 'openssl rand -base64 33'
