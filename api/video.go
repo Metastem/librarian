@@ -55,8 +55,6 @@ func GetVideoViews(claimId string) int64 {
 		log.Fatal(err2)
 	}
 
-	println(string(viewCountBody))
-
 	return gjson.Get(string(viewCountBody), "data.0").Int()
 }
 
