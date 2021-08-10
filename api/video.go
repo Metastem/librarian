@@ -45,7 +45,7 @@ func GetVideo(channel string, video string) types.Video {
 }
 
 func GetVideoViews(claimId string) int64 {
-	viewCountRes, err := http.Get("https://api.lbry.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	viewCountRes, err := http.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,11 +55,13 @@ func GetVideoViews(claimId string) int64 {
 		log.Fatal(err2)
 	}
 
+	println(string(viewCountBody))
+
 	return gjson.Get(string(viewCountBody), "data.0").Int()
 }
 
 func GetLikeDislike(claimId string) []int64 {
-	likeDislikeRes, err := http.PostForm("https://api.lbry.com/reaction/list", url.Values{
+	likeDislikeRes, err := http.PostForm("https://api.odysee.com/reaction/list", url.Values{
 		"claim_ids": []string{claimId},
 	})
 	if err != nil {
@@ -118,7 +120,7 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 	thumbnail := videoData.Get("value.thumbnail.url").String()
 	channelThumbnail := videoData.Get("signing_channel.value.thumbnail.url").String()
 	if channelThumbnail != "" {
-		channelThumbnail = "/image?url="+channelThumbnail+"&hash="+utils.EncodeHMAC(channelThumbnail)
+		channelThumbnail = "/image?url=" + channelThumbnail + "&hash=" + utils.EncodeHMAC(channelThumbnail)
 	}
 
 	likeDislike := GetLikeDislike(claimId)
@@ -140,7 +142,7 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 			Thumbnail:   channelThumbnail,
 		},
 		Title:        videoData.Get("value.title").String(),
-		ThumbnailUrl: "/image?url"+thumbnail+"&hash="+utils.EncodeHMAC(thumbnail),
+		ThumbnailUrl: "/image?url" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 		Description:  template.HTML(utils.ProcessText(videoData.Get("value.description").String(), true)),
 		License:      videoData.Get("value.license").String(),
 		Views:        GetVideoViews(claimId),

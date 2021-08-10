@@ -48,11 +48,11 @@ func GetChannel(channel string) types.Channel {
 	description := utils.ProcessText(channelData.Get("value.description").String(), true)
 	thumbnail := channelData.Get("value.thumbnail.url").String()
 	if thumbnail != "" {
-		thumbnail = "/image?url="+thumbnail+"&hash="+utils.EncodeHMAC(thumbnail)
+		thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
 	}
 	coverImg := channelData.Get("value.cover.url").String()
 	if coverImg != "" {
-		coverImg = "/image?url="+coverImg+"&hash="+utils.EncodeHMAC(coverImg)
+		coverImg = "/image?url=" + coverImg + "&hash=" + utils.EncodeHMAC(coverImg)
 	}
 
 	return types.Channel{
@@ -68,7 +68,7 @@ func GetChannel(channel string) types.Channel {
 }
 
 func GetChannelFollowers(claimId string) (int64, error) {
-	res, err := http.Get("https://api.lbry.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	res, err := http.Get("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		return 0, err
 	}
@@ -135,7 +135,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
 					},
 					Title:        value.Get("value.title").String(),
-					ThumbnailUrl: "/image?url="+thumbnail+"&hash="+utils.EncodeHMAC(thumbnail),
+					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 					Views:        GetVideoViews(claimId),
 					Timestamp:    time.Unix(),
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
