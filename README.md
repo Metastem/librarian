@@ -8,7 +8,6 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
 * No ads
 * No tracking
 * No crypto garbage
-* JavaScript not required
 * No Code of Conduct
 * No Contributor License Agreement or Developer Certificate of Origin
 
