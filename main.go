@@ -31,6 +31,7 @@ func main() {
 	fmt.Println("Librarian started on port " + viper.GetString("PORT"))
 
 	r := mux.NewRouter()
+	r.HandleFunc("/", pages.FrontpageHandler)
 	r.HandleFunc("/image", proxy.ProxyImage)
 	r.PathPrefix("/static").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
 	r.HandleFunc("/{channel}", pages.ChannelHandler)

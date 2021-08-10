@@ -6,21 +6,14 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="thumbnail" content="https://{{.config.DOMAIN}}{{.channel.Thumbnail}}">
-  <meta name="description" content={{.video.Description}}>
+  <meta name="description" content="An alternative frontend for LBRY/Odysee.">
 
   <meta property="og:site_name" content="Librarian">
-  <meta property="og:url" content={{.channel.Url}}>
-  <meta property="og:title" content={{.channel.Title}}>
-  <meta property="og:image" content="https://{{.config.DOMAIN}}{{.channel.Thumbnail}}">
-  <meta property="og:description" content={{.channel.Description}}>
+  <meta property="og:url" content="https://{{.config.DOMAIN}}}/">
+  <meta property="og:title" content="Librarian">
+  <meta property="og:image" content="https://{{.config.DOMAIN}}/static/favicon/apple-touch-icon.png">
+  <meta property="og:description" content="An alternative frontend for LBRY/Odysee.">
   <meta property="og:type" content="website">
-
-  <meta name="twitter:card" content="player">
-  <meta name="twitter:url" content={{.channel.Url}}>
-  <meta name="twitter:title" content={{.channel.Title}}>
-  <meta name="twitter:description" content="">
-  <meta name="twitter:image" content="https://{{.config.DOMAIN}}{{.channel.Thumbnail}}">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -32,11 +25,11 @@
   <meta name="msapplication-config" content="/static/favicon/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
 
-  <link rel="stylesheet" href="/static/css/channel.css" />
+  <link rel="stylesheet" href="/static/css/frontpage.css" />
   <link rel="stylesheet" href="/static/fonts/roboto.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
-  <title>{{.channel.Title}} - Librarian</title>
+  <title>Librarian</title>
 </head>
 
 <body>
@@ -53,45 +46,6 @@
   <br>
 
   <main>
-    
-    {{if .channel.CoverImg}}
-    <img src="{{.channel.CoverImg}}" class="coverImg" loading="lazy"/>
-    {{else}}
-    {{end}}
-    
-    <hr>
-
-    <div class="channel">
-      {{if .channel.Thumbnail}}
-      <img src="{{.channel.Thumbnail}}" class="pfp" width="56" height="56" loading="lazy"/>
-      {{else}}
-      <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
-      {{end}}
-      <p>
-        <b>{{.channel.Title}}</b>
-        <br>
-        {{.channel.Name}}
-      </p>
-    </div>
-
-    <p>
-      <b>{{.followers}} followers</b>
-    </p>
-
-    {{.channel.Description}}
-
-    <a href="{{.channel.OdyseeUrl}}">View on Odysee</a><br>
-    
-    <!-- TO-DO: Add playlists
-    {{if eq .query.claimType .query.stream}}
-      <b>Videos</b><br>
-      <a href="{{.channel.RelUrl}}?claimType=collection">Playlists</a>
-    {{else}}
-      <a href="{{.channel.RelUrl}}">Videos</a><br>
-      <b>Playlists</b>
-    {{end}}-->
-    <hr>
-
     <div class="videos">
       {{range $index, $value := .videos}}
         <div class="video">
@@ -113,16 +67,6 @@
           </div>
         </div>
         {{end}}
-    </div>
-    
-    <br><br>
-
-    <div class="pageSelector">
-      {{if ne .query.prevPage .query.page0 }}
-      <a class="videoLink" href="{{.channel.RelUrl}}?page={{.query.prevPage}}">Previous page</a>
-      {{else}}
-      {{end}}
-      <a class="videoLink" href="{{.channel.RelUrl}}?page={{.query.nextPage}}">Next page</a>
     </div>
   </main>
 </body>
