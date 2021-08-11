@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"codeberg.org/imabritishcow/librarian/pages"
 	"codeberg.org/imabritishcow/librarian/proxy"
@@ -39,8 +40,12 @@ func main() {
 
 	http.Handle("/", r)
 
-	err1 := http.ListenAndServe(":"+viper.GetString("PORT"), nil)
-	if err1 != nil {
-		log.Fatal(err)
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         ":"+viper.GetString("PORT"),
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
+
+	log.Fatal(srv.ListenAndServe())
 }

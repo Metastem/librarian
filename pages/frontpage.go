@@ -12,6 +12,8 @@ import (
 )
 
 func FrontpageHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Cache-Control", "public,max-age=1800")
+
 	videos := api.GetFrontpageVideos()
 	sort.Slice(videos, func(i int, j int) bool {
 		return videos[i].Timestamp > videos[j].Timestamp

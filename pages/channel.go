@@ -17,6 +17,7 @@ import (
 func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	w.WriteHeader(http.StatusOK)
+	w.Header().Add("Cache-Control", "public,max-age=1800")
 
 	page := 1
 	pageParam, err := strconv.Atoi(r.URL.Query().Get("page"))
