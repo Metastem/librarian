@@ -13,7 +13,8 @@ import (
 
 func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Cache-Control", "public,max-age=1800")
+	w.Header().Set("Content-Type", "application/rss+xml")
 
 	now := time.Now()
 	channel := api.GetChannel(vars["channel"])
