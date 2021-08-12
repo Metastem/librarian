@@ -35,7 +35,7 @@
 <body>
   <header>
     <a href="/">
-      <img src="/static/img/librarian.svg" height="96" class="logo"/>
+      <img src="/static/img/librarian.svg" height="96" class="logo" />
     </a>
     <!--<form action="/search">
       <input type="text" placeholder="Search..." />
@@ -48,27 +48,49 @@
   <main>
     <div class="videos">
       {{range $index, $value := .videos}}
-        <div class="video">
-          <div class="thumbnailWrapper">
-            <a href={{$value.RelUrl}}>
-              <img class="thumbnail" src="{{$value.ThumbnailUrl}}" loading="lazy"/>
-            </a>
-            <p class="duration">{{$value.Duration}}</p>
-          </div>
-          <p>
-            <a class="videoLink" href={{$value.RelUrl}}>{{$value.Title}}</a>
-          </p>
-          <p>
-            <a class="videoLink" href={{$value.Channel.RelUrl}}>{{$value.Channel.Name}}</a>
-          </p>
-          <div class="videoMeta">
-            <p title="{{$value.Date}}">Shared {{$value.RelTime}}</p>
-            <p>{{$value.Views}} views</p>
-          </div>
+      <div class="video">
+        <div class="thumbnailWrapper">
+          <a href={{$value.RelUrl}}>
+            <img class="thumbnail" src="{{$value.ThumbnailUrl}}" loading="lazy" />
+          </a>
+          <p class="duration">{{$value.Duration}}</p>
         </div>
-        {{end}}
+        <p>
+          <a class="videoLink" href={{$value.RelUrl}}>{{$value.Title}}</a>
+        </p>
+        <p>
+          <a class="videoLink" href={{$value.Channel.RelUrl}}>{{$value.Channel.Name}}</a>
+        </p>
+        <div class="videoMeta">
+          <p title="{{$value.Date}}">Shared {{$value.RelTime}}</p>
+          <p>{{$value.Views}} views</p>
+        </div>
+      </div>
+      {{end}}
     </div>
   </main>
+
+  <footer>
+    <br><br>
+    <div class="footer">
+      <a href="https://codeberg.org/imabritishcow/librarian">Released under the AGPLv3 by imabritishcow.</a>
+      <a href="bitcoin:bc1qfhe7rq3lqzuayzjxzyt9waz9ytrs09kla3tsgr">
+        <span class="material-icons-outlined">account_balance_wallet</span> BTC: bc1qmal84jwu5f2zteaxfjahckwdhw9cuha6e0uvuq
+      </a>
+      <a href="monero:43bzLw33KjyHhouRVmWtihNCQ82Vs5aA9SDoC2DhjG4mEark5wai91DEsQwM2Ra51DaeDa4fMLUKx88vxLFaa3QLDvxSqDN">
+        <span class="material-icons-outlined">account_balance_wallet</span> XMR: Click here
+      </a>
+    </div>
+    <div class="footer">
+      <a href="https://codeberg.org/imabritishcow/librarian/wiki">Documentation</a>
+      <a href="/static/licenses.html">
+        <span class="material-icons-outlined">copyright</span> JavaScript licenses
+      </a>
+      <a href="https://codeberg.org/imabritishcow/librarian">
+        <span class="material-icons-outlined">code</span> Source Code
+      </a>
+    </div>
+  </footer>
 </body>
 
 </html>
