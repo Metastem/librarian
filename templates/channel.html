@@ -74,12 +74,14 @@
       </p>
     </div>
 
-    <p>
-      <b>{{.followers}} followers</b>
-    </p>
-
     {{.channel.Description}}
 
+    <a href="{{.channel.Url}}/rss">
+      <button class="subscribeBtn">
+        <span class="material-icons-outlined">rss_feed</span> Subscribe | {{.followers}} followers
+      </button>
+    </a>
+    <br><br>
     <a href="{{.channel.OdyseeUrl}}">View on Odysee</a><br>
     
     <!-- TO-DO: Add playlists

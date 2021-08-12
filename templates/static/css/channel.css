@@ -32,7 +32,20 @@ main {
 }
 
 .defaultPfp {
-  background-color: lightskyblue;
+  background-color: #87cefa;
+}
+
+.subscribeBtn {
+  border-radius: 4px;
+  padding: .5em;
+  background-color: #212121;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.subscribeBtn:hover {
+  background-color: #2196F3;
 }
 
 .videos {
