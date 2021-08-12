@@ -12,6 +12,7 @@ type Video struct {
 	Title        string
 	ThumbnailUrl string
 	Description  template.HTML
+	DescriptionTxt string
 	License      string
 	Views        int64
 	Likes        int64

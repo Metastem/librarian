@@ -11,5 +11,6 @@ type Channel struct {
 	OdyseeUrl   string
 	CoverImg    string
 	Description template.HTML
+	DescriptionTxt string
 	Thumbnail   string
 }

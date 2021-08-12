@@ -15,6 +15,7 @@ import (
 	"codeberg.org/imabritishcow/librarian/types"
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
@@ -63,6 +64,7 @@ func GetChannel(channel string) types.Channel {
 		OdyseeUrl:   strings.ReplaceAll(channelData.Get("canonical_url").String(), "lbry://", "https://odysee.com/"),
 		CoverImg:    coverImg,
 		Description: template.HTML(description),
+		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
 		Thumbnail:   thumbnail,
 	}
 }
@@ -134,6 +136,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
 						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
 					},
+					DescriptionTxt: bluemonday.StrictPolicy().Sanitize(value.Get("value.description").String()),
 					Title:        value.Get("value.title").String(),
 					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 					Views:        GetVideoViews(claimId),
