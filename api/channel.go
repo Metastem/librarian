@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -57,15 +56,16 @@ func GetChannel(channel string) types.Channel {
 	}
 
 	return types.Channel{
-		Name:        channelData.Get("name").String(),
-		Title:       channelData.Get("value.title").String(),
-		Id:          channelData.Get("claim_id").String(),
-		Url:         strings.Replace(channelData.Get("canonical_url").String(), "lbry://", "https://"+viper.GetString("DOMAIN")+"/", 1),
-		OdyseeUrl:   strings.ReplaceAll(channelData.Get("canonical_url").String(), "lbry://", "https://odysee.com/"),
-		CoverImg:    coverImg,
-		Description: template.HTML(description),
+		Name:           channelData.Get("name").String(),
+		Title:          channelData.Get("value.title").String(),
+		Id:             channelData.Get("claim_id").String(),
+		Url:            utils.LbryTo(channelData.Get("canonical_url").String(), "http"),
+		OdyseeUrl:      utils.LbryTo(channelData.Get("canonical_url").String(), "odysee"),
+		RelUrl:         utils.LbryTo(channelData.Get("canonical_url").String(), "rel"),
+		CoverImg:       coverImg,
+		Description:    template.HTML(description),
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
-		Thumbnail:   thumbnail,
+		Thumbnail:      thumbnail,
 	}
 }
 
@@ -137,13 +137,13 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
 					},
 					DescriptionTxt: bluemonday.StrictPolicy().Sanitize(value.Get("value.description").String()),
-					Title:        value.Get("value.title").String(),
-					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:        GetVideoViews(claimId),
-					Timestamp:    time.Unix(),
-					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
-					RelTime:      humanize.Time(time),
+					Title:          value.Get("value.title").String(),
+					ThumbnailUrl:   "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
+					Views:          GetVideoViews(claimId),
+					Timestamp:      time.Unix(),
+					Date:           time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
+					Duration:       utils.FormatDuration(value.Get("value.video.duration").Int()),
+					RelTime:        humanize.Time(time),
 				})
 				waitingVideos.Done()
 			}()
