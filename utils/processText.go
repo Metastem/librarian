@@ -36,7 +36,7 @@ func LbryTo(link string, linkType string) string {
 	case "http":
 		link = strings.ReplaceAll(link, "lbry://", "https://" + viper.GetString("DOMAIN") + "/")
 	case "odysee":
-		link = strings.ReplaceAll(link, "lbry://", "https://" + viper.GetString("DOMAIN") + "/")
+		link = strings.ReplaceAll(link, "lbry://", "https://odysee.com/")
 	}
 	link = strings.ReplaceAll(link, "#", ":")
 	
