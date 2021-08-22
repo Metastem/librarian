@@ -21,7 +21,7 @@ func main() {
 	viper.AutomaticEnv()
 
 	viper.SetDefault("PORT", "3000")
-	viper.SetDefault("API_URL", "https://api.lbry.tv")
+	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com")
 
 	err := viper.ReadInConfig()
 	if err != nil {
