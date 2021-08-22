@@ -1,10 +1,12 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"net/http"
 	"time"
 
+	"codeberg.org/imabritishcow/librarian/api"
 	"codeberg.org/imabritishcow/librarian/pages"
 	"codeberg.org/imabritishcow/librarian/proxy"
 	"codeberg.org/imabritishcow/librarian/templates"
@@ -26,6 +28,17 @@ func main() {
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println(err)
+	}
+
+	if (viper.GetString("AUTH_TOKEN") == "") {
+		viper.Set("AUTH_TOKEN", api.NewUser())
+		viper.WriteConfig()
+	}
+	if (viper.GetString("HMAC_KEY") == "") {
+		b := make([]byte, 36)
+    rand.Read(b)
+    viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
+		viper.WriteConfig()
 	}
 
 	fmt.Println("Librarian started on port " + viper.GetString("PORT"))
