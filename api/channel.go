@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -35,12 +34,12 @@ func GetChannel(channel string) types.Channel {
 	resolveData, _ := json.Marshal(resolveDataMap)
 	channelRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	channelBody, err2 := ioutil.ReadAll(channelRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	channelData := gjson.Get(string(channelBody), "result."+channel)
@@ -100,12 +99,12 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 	channelData, _ := json.Marshal(channelDataMap)
 	channelDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=claim_search", "application/json", bytes.NewBuffer(channelData))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	channelDataBody, err := ioutil.ReadAll(channelDataRes.Body)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	videos := make([]types.Video, 0)

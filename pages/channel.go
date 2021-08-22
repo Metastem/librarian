@@ -3,7 +3,6 @@ package pages
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"sort"
 	"strconv"
@@ -28,7 +27,7 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	channelData := api.GetChannel(vars["channel"])
 	followers, err := api.GetChannelFollowers(channelData.Id)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	/*TO-DO: Add playlists
@@ -64,6 +63,6 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -31,12 +30,12 @@ func GetVideo(channel string, video string) types.Video {
 	resolveData, _ := json.Marshal(resolveDataMap)
 	videoDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	videoDataBody, err2 := ioutil.ReadAll(videoDataRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	videoData := gjson.Get(string(videoDataBody), "result.lbry*")
@@ -47,12 +46,12 @@ func GetVideo(channel string, video string) types.Video {
 func GetVideoViews(claimId string) int64 {
 	viewCountRes, err := http.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	viewCountBody, err2 := ioutil.ReadAll(viewCountRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	return gjson.Get(string(viewCountBody), "data.0").Int()
@@ -63,12 +62,12 @@ func GetLikeDislike(claimId string) []int64 {
 		"claim_ids": []string{claimId},
 	})
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	likeDislikeBody, err2 := ioutil.ReadAll(likeDislikeRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	return []int64{
@@ -90,12 +89,12 @@ func GetVideoStream(video string) string {
 	getData, _ := json.Marshal(getDataMap)
 	videoStreamRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=get", "application/json", bytes.NewBuffer(getData))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	videoStreamBody, err2 := ioutil.ReadAll(videoStreamRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	return gjson.Get(string(videoStreamBody), "result.streaming_url").String()

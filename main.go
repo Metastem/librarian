@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -26,7 +25,7 @@ func main() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	fmt.Println("Librarian started on port " + viper.GetString("PORT"))
@@ -43,10 +42,10 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         ":"+viper.GetString("PORT"),
+		Addr:         ":" + viper.GetString("PORT"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Fatal(srv.ListenAndServe())
+	fmt.Println(srv.ListenAndServe())
 }

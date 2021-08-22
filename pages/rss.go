@@ -1,7 +1,7 @@
 package pages
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -23,7 +23,7 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 	feed := &feeds.Feed{
 		Title:       channel.Name + " - Librarian",
 		Link:        &feeds.Link{Href: channel.Url},
-		Image: &feeds.Image{Url: "https://" + viper.GetString("DOMAIN") + channel.Thumbnail},
+		Image:       &feeds.Image{Url: "https://" + viper.GetString("DOMAIN") + channel.Thumbnail},
 		Description: channel.DescriptionTxt,
 		Created:     now,
 	}
@@ -41,7 +41,7 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 
 	rss, err := feed.ToRss()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	w.Write([]byte(rss))

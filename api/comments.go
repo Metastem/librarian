@@ -3,9 +3,9 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"sort"
 	"strings"
@@ -37,12 +37,12 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 	commentsData, _ := json.Marshal(commentsDataMap)
 	commentsDataRes, err := http.Post("https://comments.lbry.com/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	commentsDataBody, err2 := ioutil.ReadAll(commentsDataRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	commentIds := make([]string, 0)
@@ -107,12 +107,12 @@ func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 	commentsData, _ := json.Marshal(commentsDataMap)
 	commentsDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=comment_react_list", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	commentsDataBody, err2 := ioutil.ReadAll(commentsDataRes.Body)
 	if err2 != nil {
-		log.Fatal(err2)
+		fmt.Println(err2)
 	}
 
 	likesDislikes := make(map[string][]int64)

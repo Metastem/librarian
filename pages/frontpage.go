@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"sort"
 
@@ -21,10 +21,10 @@ func FrontpageHandler(w http.ResponseWriter, r *http.Request) {
 
 	frontpageTemplate, _ := template.ParseFS(templates.GetFiles(), "home.html")
 	err := frontpageTemplate.Execute(w, map[string]interface{}{
-		"config":    viper.AllSettings(),
-		"videos":    videos,
+		"config": viper.AllSettings(),
+		"videos": videos,
 	})
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }

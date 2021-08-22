@@ -1,8 +1,8 @@
 package proxy
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"codeberg.org/imabritishcow/librarian/utils"
@@ -25,12 +25,12 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
-	
+
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 
 	w.Header().Set("Cache-Control", "public,max-age=31557600")

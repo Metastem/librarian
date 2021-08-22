@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 
 	"codeberg.org/imabritishcow/librarian/api"
@@ -29,6 +29,6 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 		"config":         viper.AllSettings(),
 	})
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 }
