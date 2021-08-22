@@ -25,6 +25,7 @@ Open an issue to have your instance listed here!
 | ----------------------------------------------------------- | ------------------- | ---------- |
 | [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US, 🇫🇷 FR, 🇸🇬 SG  |            |
 | [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
+| [zxva5bphcvbtunor75r6as7jiiyt7frf7lioj7djyeshstyxwbs2k3id.onion](http://zxva5bphcvbtunor75r6as7jiiyt7frf7lioj7djyeshstyxwbs2k3id.onion/) | 🇺🇸 US | |
 
 ## Install
 
