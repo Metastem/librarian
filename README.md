@@ -23,7 +23,8 @@ Open an issue to have your instance listed here!
 
 | Website                                                     | Country             | Cloudflare |
 | ----------------------------------------------------------- | ------------------- | ---------- |
-| [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US, 🇫🇷 FR, 🇸🇬 SG |            |
+| [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US, 🇫🇷 FR, 🇸🇬 SG  |            |
+| [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
 
 ## Install
 
