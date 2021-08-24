@@ -134,4 +134,7 @@ footer {
   .videoLink {
     color: white;
   }
+  .logo {
+    filter: invert(1) hue-rotate(180deg);
+  }
 }

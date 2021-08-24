@@ -96,4 +96,10 @@ footer {
   a {
     color: #2196F3
   }
+  .videoLink {
+    color: white;
+  }
+  .logo {
+    filter: invert(1) hue-rotate(180deg);
+  }
 }
