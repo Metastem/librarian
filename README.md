@@ -14,7 +14,7 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
 
 ## Demo
 
-[Video](https://librarian.bcow.xyz/@MusicARetro:e/Rick+Astley+Never+Gonna+Give+You+Up:4)
+[Video](https://librarian.bcow.xyz/@MusicARetro:e/Rick+Astley+Never+Gonna+Give+You+Up:4)<br>
 [Channel](https://librarian.bcow.xyz/@DistroTube:2)
 
 ## Instances
