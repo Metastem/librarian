@@ -48,6 +48,34 @@ main {
   width: 20%;
 }
 
+.description {
+  overflow: hidden;
+  height: 8.5em;
+}
+
+#expandBtn {
+  display: none;
+}
+
+#expandBtn ~ label > a::after {
+  content: "Show more";
+}
+
+label {
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#expandBtn:checked ~ label > a::after {
+  content: "Show less";  
+}
+
+#expandBtn:checked ~ div {
+  overflow: unset;
+  height: 100%;
+}
+
 .videoDesc {
   width: 80%;
 }

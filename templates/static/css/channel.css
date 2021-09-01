@@ -37,7 +37,7 @@ main {
 
 .subscribeBtn {
   border-radius: 4px;
-  padding: .5em;
+  padding: 0.5em;
   background-color: #212121;
   color: #fff;
   border: none;
@@ -45,7 +45,35 @@ main {
 }
 
 .subscribeBtn:hover {
-  background-color: #2196F3;
+  background-color: #2196f3;
+}
+
+.description {
+  overflow: hidden;
+  height: 8.5em;
+}
+
+#expandBtn {
+  display: none;
+}
+
+#expandBtn ~ label > a::after {
+  content: "Show more";
+}
+
+label {
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#expandBtn:checked ~ label > a::after {
+  content: "Show less";
+}
+
+#expandBtn:checked ~ div {
+  overflow: unset;
+  height: 100%;
 }
 
 .videos {
@@ -129,7 +157,7 @@ footer {
     color: white;
   }
   a {
-    color: #2196F3
+    color: #2196f3;
   }
   .videoLink {
     color: white;

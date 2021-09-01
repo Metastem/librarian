@@ -74,7 +74,14 @@
       </p>
     </div>
 
-    {{.channel.Description}}
+    <div>
+      <input id="expandBtn" type="checkbox">
+      <div class="description">{{.channel.Description}}</div>
+      <label for="expandBtn">
+        <a></a>
+      </label>
+    </div>
+    <br>
 
     <a href="{{.channel.Url}}/rss">
       <button class="subscribeBtn">

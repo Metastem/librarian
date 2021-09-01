@@ -104,7 +104,13 @@
             </a>
           </div>
           <p><b>Shared {{.video.Date}}</b></p>
-          <p>{{.video.Description}}</p>
+          <div>
+            <input id="expandBtn" type="checkbox">
+            <div class="description">{{.video.Description}}</div>
+            <label for="expandBtn">
+              <a></a>
+            </label>
+          </div>
         </div>
       </div>
 
