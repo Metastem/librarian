@@ -76,6 +76,10 @@ label {
   height: 100%;
 }
 
+.claimId {
+  font-size: 12px;
+}
+
 .videoDesc {
   width: 80%;
 }

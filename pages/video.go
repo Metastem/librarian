@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	"codeberg.org/imabritishcow/librarian/api"
 	"codeberg.org/imabritishcow/librarian/templates"
@@ -17,6 +18,18 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Cache-Control", "public,max-age=3600")
 
 	videoData := api.GetVideo(vars["channel"], vars["video"])
+
+	if strings.ContainsAny(viper.GetString("BLOCKED_CLAIMS"), videoData.ClaimId) {
+		blockTemplate, _ := template.ParseFS(templates.GetFiles(), "blocked.html")
+		err := blockTemplate.Execute(w, map[string]interface{}{
+			"video":          videoData,
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+		return
+	}
+
 	videoStream := api.GetVideoStream(videoData.LbryUrl)
 	comments := api.GetComments(videoData.ClaimId, videoData.Channel.Id, videoData.Channel.Name)
 
