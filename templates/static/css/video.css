@@ -1,3 +1,7 @@
+a {
+  color: #0066cc;
+}
+
 header {
   display: flex;
   flex-direction: row;
