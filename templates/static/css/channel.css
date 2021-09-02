@@ -54,7 +54,7 @@ main {
 
 .description {
   overflow: hidden;
-  height: 8.5em;
+  max-height: 8.5em;
 }
 
 #expandBtn {
@@ -159,9 +159,6 @@ footer {
   body {
     background-color: black;
     color: white;
-  }
-  a {
-    color: #2196f3;
   }
   .videoLink {
     color: white;
