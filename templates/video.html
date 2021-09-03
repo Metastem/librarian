@@ -64,7 +64,6 @@
       <div class="videoMetaWrapper">
         <div class="videoMeta">
           <a href="{{.video.OdyseeUrl}}">Watch on Odysee</a>
-          <br><br>
           <!--soonTM
             <a>Switch Librarian Instance</a>
             <a>Embed Link</a>
@@ -75,10 +74,12 @@
             </a>
           -->
           <br>
-          <p><span class="material-icons-outlined">visibility</span> {{.video.Views}}</p>
-          <p><span class="material-icons-outlined">thumb_up</span> {{.video.Likes}}</p>
-          <p><span class="material-icons-outlined">thumb_down</span> {{.video.Dislikes}}</p>
-          <p>License: {{.video.License}}</p>
+          <p><span class="material-icons-outlined" title="Views">visibility</span> {{.video.Views}}</p>
+          <div class="thumbs">
+            <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{.video.Likes}}</p>
+            <p><span class="material-icons-outlined" title="Dislilkes">thumb_down</span> {{.video.Dislikes}}</p>
+          </div>
+          <p><span class="material-icons-outlined" title="License">copyright</span> {{.video.License}}</p>
         </div>
 
         <div class="videoDesc">
