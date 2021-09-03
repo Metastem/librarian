@@ -55,6 +55,7 @@ main {
 .videoMetaWrapper {
   display: flex;
   flex-direction: row;
+  gap: 6px;
 }
 
 .videoMeta {
@@ -64,6 +65,10 @@ main {
 .description {
   overflow: hidden;
   max-height: 8.5em;
+}
+
+.description p {
+  word-wrap: break-word;
 }
 
 #expandBtn {
@@ -130,6 +135,9 @@ footer {
     flex-direction: column;
   }
   .videoMeta {
+    width: 100%;
+  }
+  .videoDesc {
     width: 100%;
   }
   .thumbs {
