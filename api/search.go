@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/tidwall/gjson"
@@ -18,6 +19,7 @@ func Search(query string, page int, claimType string, nsfw bool) []interface{} {
 		from = page * 9
 	}
 
+	query = strings.ReplaceAll(query, " ", "+")
 	searchDataRes, err := http.Get("https://lighthouse.lbry.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType)
 	if err != nil {
 		fmt.Println(err)
