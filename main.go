@@ -46,6 +46,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", pages.FrontpageHandler)
 	r.HandleFunc("/image", proxy.ProxyImage)
+	r.HandleFunc("/search", pages.SearchHandler)
 	r.PathPrefix("/static").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
 	r.HandleFunc("/{channel}", pages.ChannelHandler)
 	r.HandleFunc("/{channel}/rss", pages.ChannelRSSHandler)

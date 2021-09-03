@@ -20,7 +20,7 @@ import (
 
 var waitingVideos sync.WaitGroup
 
-func GetChannel(channel string) types.Channel {
+func GetChannel(channel string, getFollowers bool) types.Channel {
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -54,6 +54,14 @@ func GetChannel(channel string) types.Channel {
 		coverImg = "/image?url=" + coverImg + "&hash=" + utils.EncodeHMAC(coverImg)
 	}
 
+	followers := int64(0)
+	if getFollowers {
+		followers, err = GetChannelFollowers(channelData.Get("claim_id").String())
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
 	return types.Channel{
 		Name:           channelData.Get("name").String(),
 		Title:          channelData.Get("value.title").String(),
@@ -65,6 +73,8 @@ func GetChannel(channel string) types.Channel {
 		Description:    template.HTML(description),
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
 		Thumbnail:      thumbnail,
+		Followers:			followers,
+		UploadCount: 		channelData.Get("meta.claims_in_channel").Int(),
 	}
 }
 

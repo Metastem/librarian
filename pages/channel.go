@@ -15,7 +15,6 @@ import (
 
 func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Cache-Control", "public,max-age=1800")
 
 	page := 1
@@ -24,11 +23,7 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 		page = pageParam
 	}
 
-	channelData := api.GetChannel(vars["channel"])
-	followers, err := api.GetChannelFollowers(channelData.Id)
-	if err != nil {
-		fmt.Println(err)
-	}
+	channelData := api.GetChannel(vars["channel"], true)
 
 	/*TO-DO: Add playlists
 
@@ -51,7 +46,6 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	err = channelTemplate.Execute(w, map[string]interface{}{
 		"channel":   channelData,
 		"config":    viper.AllSettings(),
-		"followers": followers,
 		"videos":    videos,
 		"query": map[string]interface{}{
 			"page":      fmt.Sprint(page),

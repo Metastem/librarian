@@ -6,6 +6,7 @@ type Channel struct {
 	Name        string
 	Title       string
 	Id          string
+	Followers		int64
 	Url         string
 	RelUrl			string
 	OdyseeUrl   string
@@ -13,4 +14,5 @@ type Channel struct {
 	Description template.HTML
 	DescriptionTxt string
 	Thumbnail   string
+	UploadCount	int64
 }

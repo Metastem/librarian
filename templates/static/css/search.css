@@ -1,7 +1,3 @@
-a {
-  color: #0066cc;
-}
-
 header {
   display: flex;
   flex-direction: row;
@@ -26,7 +22,7 @@ main {
   margin: 0 12vw 0 12vw;
 }
 
-.videos {
+.results {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
@@ -49,6 +45,10 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.channelThumbnail {
+  object-fit: scale-down;
 }
 
 .duration {
@@ -105,6 +105,9 @@ footer {
   body {
     background-color: black;
     color: white;
+  }
+  a {
+    color: #2196f3;
   }
   .videoLink {
     color: white;

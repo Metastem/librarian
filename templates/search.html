@@ -6,15 +6,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="description" content="An alternative frontend for LBRY/Odysee.">
-
-  <meta property="og:site_name" content="Librarian">
-  <meta property="og:url" content="https://{{.config.DOMAIN}}}/">
-  <meta property="og:title" content="Librarian">
-  <meta property="og:image" content="https://{{.config.DOMAIN}}/static/favicon/apple-touch-icon.png">
-  <meta property="og:description" content="An alternative frontend for LBRY/Odysee.">
-  <meta property="og:type" content="website">
-
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
@@ -25,11 +16,11 @@
   <meta name="msapplication-config" content="/static/favicon/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
 
-  <link rel="stylesheet" href="/static/css/frontpage.css" />
+  <link rel="stylesheet" href="/static/css/search.css" />
   <link rel="stylesheet" href="/static/fonts/roboto.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
-  <title>Librarian</title>
+  <title>{{.query.query}} - Librarian</title>
 </head>
 
 <body>
@@ -42,10 +33,30 @@
     </form>
   </header>
 
+  <hr style="margin: 0 12vw 0 12vw;">
   <br>
 
   <main>
-    <div class="videos">
+    <div class="results">
+      {{range $index, $value := .channels}}
+      <div class="video">
+        <div class="thumbnailWrapper">
+          <a href={{$value.RelUrl}}>
+            <img class="thumbnail channelThumbnail" src="{{$value.Thumbnail}}" loading="lazy" />
+          </a>
+        </div>
+        <p>
+          <b><a class="videoLink" href={{$value.RelUrl}}>{{$value.Title}}</a></b>
+        </p>
+        <p>
+          <a class="videoLink" href={{$value.RelUrl}}>{{$value.Name}}</a>
+        </p>
+        <p>
+          {{$value.Followers}} followers<br>
+          {{$value.UploadCount}} uploads
+        </p>
+      </div>
+      {{end}}
       {{range $index, $value := .videos}}
       <div class="video">
         <div class="thumbnailWrapper">
@@ -67,6 +78,16 @@
       </div>
       {{end}}
     </div>
+
+    <br><br>
+
+    <div class="pageSelector">
+      {{if ne .query.prevPage "0" }}
+      <a class="videoLink" href="/search?q={{.query.query}}&page={{.query.prevPage}}">Previous page</a>
+      {{else}}
+      {{end}}
+      <a class="videoLink" href="/search?q={{.query.query}}&page={{.query.nextPage}}">Next page</a>
+    </div>
   </main>
 
   <br><br><br>
@@ -75,7 +96,8 @@
     <div class="footer">
       <a href="https://codeberg.org/imabritishcow/librarian">Released under the AGPLv3 by imabritishcow.</a>
       <a href="bitcoin:bc1qfhe7rq3lqzuayzjxzyt9waz9ytrs09kla3tsgr">
-        <span class="material-icons-outlined">account_balance_wallet</span> BTC: bc1qmal84jwu5f2zteaxfjahckwdhw9cuha6e0uvuq
+        <span class="material-icons-outlined">account_balance_wallet</span> BTC:
+        bc1qmal84jwu5f2zteaxfjahckwdhw9cuha6e0uvuq
       </a>
       <a href="monero:43bzLw33KjyHhouRVmWtihNCQ82Vs5aA9SDoC2DhjG4mEark5wai91DEsQwM2Ra51DaeDa4fMLUKx88vxLFaa3QLDvxSqDN">
         <span class="material-icons-outlined">account_balance_wallet</span> XMR: Click here

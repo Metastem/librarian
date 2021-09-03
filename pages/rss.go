@@ -17,7 +17,7 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/rss+xml")
 
 	now := time.Now()
-	channel := api.GetChannel(vars["channel"])
+	channel := api.GetChannel(vars["channel"], false)
 	videos := api.GetChannelVideos(1, channel.Id)
 
 	feed := &feeds.Feed{

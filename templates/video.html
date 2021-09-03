@@ -43,12 +43,11 @@
 <body>
   <header>
     <a href="/">
-      <img src="/static/img/librarian.svg" height="96" class="logo"/>
+      <img src="/static/img/librarian.svg" height="72" class="logo" />
     </a>
-    <!--<form action="/search">
-      <input type="text" placeholder="Search..." />
-      <input type="submit" value="Search" />
-    </form>-->
+    <form action="/search" method="GET" class="searchBar">
+      <input type="search" placeholder="Search..." name="q" value="{{.query.query}}" class="searchBar" />
+    </form>
   </header>
 
   <br>

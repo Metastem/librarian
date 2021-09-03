@@ -12,16 +12,22 @@ import (
 
 	"codeberg.org/imabritishcow/librarian/types"
 	"codeberg.org/imabritishcow/librarian/utils"
+	"github.com/dustin/go-humanize"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
-func GetVideo(channel string, video string) types.Video {
+func GetVideo(channel string, video string, claimId string) types.Video {
+	urls := []string{"lbry://" + channel + "/" + video}
+	if channel == "" {
+		urls = []string{"lbry://" + video + "#" + claimId}
+	}
+
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
 		"params": map[string]interface{}{
-			"urls":                     []string{"lbry://" + channel + "/" + video},
+			"urls":                     urls,
 			"include_purchase_receipt": true,
 			"include_is_my_output":     true,
 		},
@@ -121,7 +127,7 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 	}
 
 	likeDislike := GetLikeDislike(claimId)
-
+	
 	return types.Video{
 		Url:       utils.LbryTo(lbryUrl, "http"),
 		LbryUrl:   lbryUrl,
@@ -139,13 +145,14 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 			Thumbnail:   channelThumbnail,
 		},
 		Title:        videoData.Get("value.title").String(),
-		ThumbnailUrl: "/image?url" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
+		ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 		Description:  template.HTML(utils.ProcessText(videoData.Get("value.description").String(), true)),
 		License:      videoData.Get("value.license").String(),
 		Views:        GetVideoViews(claimId),
 		Likes:        likeDislike[0],
 		Dislikes:     likeDislike[1],
 		Tags:         tags,
+		RelTime:      humanize.Time(time),
 		Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 	}
 }

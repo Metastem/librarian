@@ -17,12 +17,12 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Cache-Control", "public,max-age=3600")
 
-	videoData := api.GetVideo(vars["channel"], vars["video"])
+	videoData := api.GetVideo(vars["channel"], vars["video"], "")
 
 	if strings.Contains(viper.GetString("BLOCKED_CLAIMS"), videoData.ClaimId) {
 		blockTemplate, _ := template.ParseFS(templates.GetFiles(), "blocked.html")
 		err := blockTemplate.Execute(w, map[string]interface{}{
-			"video":          videoData,
+			"video": videoData,
 		})
 		if err != nil {
 			fmt.Println(err)

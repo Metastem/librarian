@@ -70,7 +70,7 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 				commentId := value.Get("comment_id").String()
 
 				comments = append(comments, types.Comment{
-					Channel:   GetChannel(value.Get("channel_url").String()),
+					Channel:   GetChannel(value.Get("channel_url").String(), false),
 					Comment:   template.HTML(comment),
 					CommentId: commentId,
 					ParentId:  value.Get("parent_id").String(),
