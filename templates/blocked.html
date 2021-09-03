@@ -21,7 +21,15 @@
       display: flex;
       flex-direction: row;
       justify-content: space-around;
-      vertical-align: middle;
+      align-items: center;
+    }
+    .searchBar {
+      height: 16px;
+      font-size: 14px;
+      padding: 0.5em;
+      border: none;
+      border-bottom: 1px solid #d2d2d2;
+      outline: none;
     }
     body {
       font-family: "Roboto", sans-serif;
@@ -35,6 +43,7 @@
         background-color: black;
         color: white;
       }
+
       .logo {
         filter: invert(1) hue-rotate(180deg);
       }
@@ -49,12 +58,11 @@
 <body>
   <header>
     <a href="/">
-      <img src="/static/img/librarian.svg" height="96" class="logo" />
+      <img src="/static/img/librarian.svg" height="72" class="logo" />
     </a>
-    <!--<form action="/search">
-      <input type="text" placeholder="Search..." />
-      <input type="submit" value="Search" />
-    </form>-->
+    <form action="/search" method="GET" class="searchBar">
+      <input type="text" placeholder="Search..." name="q" value="{{.query.query}}" class="searchBar" />
+    </form>
   </header>
 
   <br>
