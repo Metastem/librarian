@@ -42,7 +42,7 @@
       <div class="video">
         <div class="thumbnailWrapper">
           <a href={{$value.RelUrl}}>
-            <img class="thumbnail channelThumbnail" src="{{$value.Thumbnail}}" loading="lazy" />
+            <img class="thumbnail channelThumbnail" src="{{$value.Thumbnail}}&w=420&h=420&crop=true" loading="lazy" />
           </a>
         </div>
         <p>
@@ -61,7 +61,7 @@
       <div class="video">
         <div class="thumbnailWrapper">
           <a href={{$value.RelUrl}}>
-            <img class="thumbnail" src="{{$value.ThumbnailUrl}}" loading="lazy" />
+            <img class="thumbnail" src="{{$value.ThumbnailUrl}}&w=854&h=480&crop=true" loading="lazy" />
           </a>
           <p class="duration">{{$value.Duration}}</p>
         </div>

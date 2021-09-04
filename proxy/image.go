@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"codeberg.org/imabritishcow/librarian/utils"
+	"github.com/h2non/bimg"
 )
 
 func ProxyImage(w http.ResponseWriter, r *http.Request) {
@@ -33,6 +36,49 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	image := bimg.NewImage(data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if r.URL.Query().Get("w") != "" && r.URL.Query().Get("h") != "" {
+		width, err := strconv.Atoi(r.URL.Query().Get("w"))
+		if err != nil {
+			w.Write([]byte("invalid width"))
+			return
+		}
+		height, err := strconv.Atoi(r.URL.Query().Get("h"))
+		if err != nil {
+			w.Write([]byte("invalid height"))
+			return
+		}
+
+		if r.URL.Query().Get("crop") == "true" {
+			newImage, err := image.Crop(width, height, bimg.GravityCentre)
+			if err != nil {
+				w.Write([]byte("error resizing image"))
+				return
+			}
+			image = bimg.NewImage(newImage)
+		} else {
+			newImage, err := image.Resize(width, height)
+			if err != nil {
+				w.Write([]byte("error resizing image"))
+				return
+			}
+			image = bimg.NewImage(newImage)
+		}
+	}
+
+	if strings.Contains(r.Header.Get("Accept"), "webp") {
+		newImage, err := image.Convert(bimg.WEBP)
+		if err != nil {
+			w.Write([]byte("error converting image"))
+			return
+		}
+		image = bimg.NewImage(newImage)
+	}
+
 	w.Header().Set("Cache-Control", "public,max-age=31557600")
-	w.Write(data)
+	w.Write(image.Image())
 }

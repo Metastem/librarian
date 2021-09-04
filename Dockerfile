@@ -3,9 +3,12 @@ FROM golang:alpine AS build
 WORKDIR /src
 COPY . .
 
+RUN apk add --no-cache vips-dev gcc musl-dev
 RUN go build
 
 FROM alpine:latest AS bin
+
+RUN apk add --no-cache vips
 
 WORKDIR /app
 COPY --from=build /src/config.example.yml config.yml
