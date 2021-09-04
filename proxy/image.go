@@ -36,10 +36,7 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	image := bimg.NewImage(data)
-	if err != nil {
-		fmt.Println(err)
-	}
+	options := bimg.Options{}
 
 	if r.URL.Query().Get("w") != "" && r.URL.Query().Get("h") != "" {
 		width, err := strconv.Atoi(r.URL.Query().Get("w"))
@@ -52,33 +49,24 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("invalid height"))
 			return
 		}
+		options.Width = width
+		options.Height = height
+	}
 
-		if r.URL.Query().Get("crop") == "true" {
-			newImage, err := image.Crop(width, height, bimg.GravityCentre)
-			if err != nil {
-				w.Write([]byte("error resizing image"))
-				return
-			}
-			image = bimg.NewImage(newImage)
-		} else {
-			newImage, err := image.Resize(width, height)
-			if err != nil {
-				w.Write([]byte("error resizing image"))
-				return
-			}
-			image = bimg.NewImage(newImage)
-		}
+	if r.URL.Query().Get("crop") == "true" {
+		options.Crop = true
+		options.Gravity = bimg.GravityCentre
 	}
 
 	if strings.Contains(r.Header.Get("Accept"), "webp") {
-		newImage, err := image.Convert(bimg.WEBP)
-		if err != nil {
-			w.Write([]byte("error converting image"))
-			return
-		}
-		image = bimg.NewImage(newImage)
+		options.Type = bimg.WEBP
+	}
+
+	image, err := bimg.NewImage(data).Process(options)
+	if err != nil {
+		w.Write([]byte("error processing image"))
 	}
 
 	w.Header().Set("Cache-Control", "public,max-age=31557600")
-	w.Write(image.Image())
+	w.Write(image)
 }
