@@ -25,7 +25,7 @@ Open an issue to have your instance listed here!
 | ----------------------------------------------------------- | ------------------- | ---------- |
 | [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US, 🇫🇷 FR, 🇸🇬 SG  |            |
 | [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
-| [zxva5bphcvbtunor75r6as7jiiyt7frf7lioj7djyeshstyxwbs2k3id.onion](http://zxva5bphcvbtunor75r6as7jiiyt7frf7lioj7djyeshstyxwbs2k3id.onion/) | 🇺🇸 US | |
+| [ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion](http://ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion/) | 🇺🇸 US | |
 | [vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion](http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion/) | 🇨🇦 CA | |
 
 ## Install
