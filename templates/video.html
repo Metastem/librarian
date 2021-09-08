@@ -54,7 +54,8 @@
 
   <main>
     <div class="videoWrapper">
-      <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720&crop=true" controls=true width="1280" height="720">
+      <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720&crop=true" controls=true
+        width="1280" height="720">
         <source type="video/mp4" src="{{.stream}}">
       </video>
     </div>
@@ -86,9 +87,10 @@
           <div class="channel">
             <a href="{{.video.Channel.RelUrl}}" class="pfpWrapper">
               {{if .video.Channel.Thumbnail}}
-              <img src="{{.video.Channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56" loading="lazy"/>
+              <img src="{{.video.Channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56"
+                loading="lazy" />
               {{else}}
-              <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
+              <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy" />
               {{end}}
             </a>
             <a href="{{.video.Channel.RelUrl}}">
@@ -122,9 +124,9 @@
         {{range $index, $value := .comments}}
         <div class="comment">
           {{if $value.Channel.Thumbnail}}
-          <img src="{{$value.Channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56" loading="lazy"/>
+          <img src="{{$value.Channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56" loading="lazy">
           {{else}}
-          <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
+          <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy">
           {{end}}
           <div>
             <a href="{{$value.Channel.Url}}">
@@ -166,7 +168,8 @@
     <div class="footer">
       <a href="https://codeberg.org/imabritishcow/librarian">Released under the AGPLv3 by imabritishcow.</a>
       <a href="bitcoin:bc1qfhe7rq3lqzuayzjxzyt9waz9ytrs09kla3tsgr">
-        <span class="material-icons-outlined">account_balance_wallet</span> BTC: bc1qmal84jwu5f2zteaxfjahckwdhw9cuha6e0uvuq
+        <span class="material-icons-outlined">account_balance_wallet</span> BTC:
+        bc1qmal84jwu5f2zteaxfjahckwdhw9cuha6e0uvuq
       </a>
       <a href="monero:43bzLw33KjyHhouRVmWtihNCQ82Vs5aA9SDoC2DhjG4mEark5wai91DEsQwM2Ra51DaeDa4fMLUKx88vxLFaa3QLDvxSqDN">
         <span class="material-icons-outlined">account_balance_wallet</span> XMR: Click here
@@ -186,6 +189,18 @@
   <script src="/static/js/plyr.js"></script>
   <script>
     const player = new Plyr('#player');
+
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'j':
+          player.rewind(15);
+          break;
+        case 'l':
+          player.forward(15);
+          break;
+      }
+    });
+
   </script>
 </body>
 
