@@ -8,6 +8,7 @@ import (
 
 	"codeberg.org/imabritishcow/librarian/api"
 	"codeberg.org/imabritishcow/librarian/templates"
+	"codeberg.org/imabritishcow/librarian/utils"
 )
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,11 +26,19 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.URL.Query().Get("q")
-	videoResults := api.Search(query, page, "file", nsfw)
-	channelResults := api.Search(query, page, "channel", nsfw)
+	videoResults, err := api.Search(query, page, "file", nsfw)
+	if err != nil {
+		utils.HandleError(w, err)
+		return
+	}
+	channelResults, err := api.Search(query, page, "channel", nsfw)
+	if err != nil {
+		utils.HandleError(w, err)
+		return
+	}
 
 	searchTemplate, _ := template.ParseFS(templates.GetFiles(), "search.html")
-	err = searchTemplate.Execute(w, map[string]interface{}{
+	searchTemplate.Execute(w, map[string]interface{}{
 		"videos":   videoResults,
 		"channels": channelResults,
 		"query": map[string]interface{}{
@@ -39,7 +48,4 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			"prevPage":  fmt.Sprint(page - 1),
 		},
 	})
-	if err != nil {
-		fmt.Println(err)
-	}
 }

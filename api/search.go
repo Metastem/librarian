@@ -13,21 +13,25 @@ import (
 
 var waitingResults sync.WaitGroup
 
-func Search(query string, page int, claimType string, nsfw bool) []interface{} {
+func Search(query string, page int, claimType string, nsfw bool) ([]interface{}, error) {
 	from := 0
 	if page > 1 {
 		from = page * 9
 	}
 
+	if len(query) <= 3 {
+		return nil, fmt.Errorf("search: the query length must be between 3 and 99999")
+	}
+
 	query = strings.ReplaceAll(query, " ", "+")
 	searchDataRes, err := http.Get("https://lighthouse.lbry.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	searchDataBody, err := ioutil.ReadAll(searchDataRes.Body)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	results := make([]interface{}, 0)
@@ -51,5 +55,5 @@ func Search(query string, page int, claimType string, nsfw bool) []interface{} {
 	)
 	waitingResults.Wait()
 
-	return results
+	return results, nil
 }
