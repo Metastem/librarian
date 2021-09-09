@@ -1,5 +1,5 @@
 a {
-  color: #0066cc;
+  color: #1e88e5;
 }
 
 header {
@@ -19,7 +19,7 @@ header {
 }
 
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
 }
 
 main {

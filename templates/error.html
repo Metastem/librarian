@@ -17,6 +17,9 @@
   <meta name="theme-color" content="#ffffff">
 
   <style>
+    a {
+      color: #1e88e5;
+    }
     header {
       display: flex;
       flex-direction: row;
@@ -28,11 +31,14 @@
       font-size: 14px;
       padding: 0.5em;
       border: none;
-      border-bottom: 1px solid #d2d2d2;
       outline: none;
+      background: none;
+    }
+    .searchLine {
+      border-bottom: 1px solid #d2d2d2;
     }
     body {
-      font-family: "Roboto", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
     }
     h2, p {
       text-align: center;
@@ -44,21 +50,26 @@
       width: 50%;
       margin: 0 auto;
       word-wrap: break-word;
+      border-radius: 4px;
+      font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
     }
-
     @media (prefers-color-scheme: dark) {
       body {
         background-color: black;
         color: white;
       }
-
       .logo {
         filter: invert(1) hue-rotate(180deg);
       }
+      .searchBar {
+        color: white;
+      }
+      code {
+        background-color: #616161;
+        color: white;
+      }
     }
   </style>
-  <link rel="stylesheet" href="/static/fonts/roboto.css" />
-  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
   <title>Error - Librarian</title>
 </head>
@@ -69,7 +80,7 @@
       <img src="/static/img/librarian.svg" height="72" class="logo" />
     </a>
     <form action="/search" method="GET" class="searchBar">
-      <input type="text" placeholder="Search..." name="q" class="searchBar" />
+      <input type="text" placeholder="Search..." name="q" class="searchBar searchLine" />
     </form>
   </header>
 
