@@ -9,6 +9,7 @@ import (
 
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/h2non/bimg"
+	"github.com/spf13/viper"
 )
 
 func ProxyImage(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +59,7 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 		options.Gravity = bimg.GravityCentre
 	}
 
-	if strings.Contains(r.Header.Get("Accept"), "webp") {
+	if viper.GetString("WEBP_CONVERT") == "true" && strings.Contains(r.Header.Get("Accept"), "webp") {
 		options.Type = bimg.WEBP
 	}
 

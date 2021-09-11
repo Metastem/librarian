@@ -6,3 +6,5 @@ BLOCKED_CLAIMS: 'claimid,claim2'
 # AUTH_TOKEN and HMAC_KEY is automatically generated
 AUTH_TOKEN: ''
 HMAC_KEY: ''
+# Convert images to WebP to save bandwidth. Makes image loading slower on slow CPUs.
+WEBP_CONVERT: 'false'
