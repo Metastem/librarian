@@ -32,6 +32,13 @@ main {
   max-height: 640px;
 }
 
+video {
+  position: relative;
+  height: 640px;
+  width: 100%;
+  background-color: black;
+}
+
 .channel {
   display: flex;
   flex-direction: row;
