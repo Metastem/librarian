@@ -23,6 +23,7 @@ func ProcessText(text string, newline bool) string {
 		text = re.ReplaceAllString(text, "/image?url=$1"+hmac)
 	}
 	text = strings.ReplaceAll(text, `img src="`, `img src="/image?url=`)
+	text = strings.ReplaceAll(text, "https://odysee.com", "https://" + viper.GetString("DOMAIN"))
 	text = html.UnescapeString(text)
 	text = bluemonday.UGCPolicy().Sanitize(text)
 
