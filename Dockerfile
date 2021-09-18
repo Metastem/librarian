@@ -11,6 +11,7 @@ FROM alpine:latest AS bin
 RUN apk add --no-cache vips
 
 WORKDIR /app
+RUN mkdir /var/cache/librarian
 COPY --from=build /src/config.example.yml config.yml
 COPY --from=build /src/librarian .
 
