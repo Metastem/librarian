@@ -49,7 +49,6 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
   <title>Blocked - Librarian</title>
 </head>
@@ -59,7 +58,7 @@
     <a href="/">
       <img src="/static/img/librarian.svg" height="72" class="logo" />
     </a>
-    <form action="/search" method="GET" class="searchBar">
+    <form action="/search" method="GET">
       <input type="text" placeholder="Search..." name="q" value="{{.query.query}}" class="searchBar" />
     </form>
   </header>
