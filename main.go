@@ -30,10 +30,8 @@ func main() {
 		fmt.Println(err)
 	}
 
-	if (viper.GetString("AUTH_TOKEN") == "") {
-		viper.Set("AUTH_TOKEN", api.NewUser())
-		viper.WriteConfig()
-	}
+	viper.Set("AUTH_TOKEN", api.NewUser())
+	viper.WriteConfig()
 	if (viper.GetString("HMAC_KEY") == "") {
 		b := make([]byte, 36)
     rand.Read(b)
