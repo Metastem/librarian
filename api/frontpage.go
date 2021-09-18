@@ -11,11 +11,19 @@ import (
 	"codeberg.org/imabritishcow/librarian/types"
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
+	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
+var fpCache = cache.New(30*time.Minute, 30*time.Minute)
+
 func GetFrontpageVideos() []types.Video {
+	cacheData, found := fpCache.Get("fp")
+	if found {
+		return cacheData.([]types.Video)
+	}
+
 	claimSearchData := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -131,5 +139,6 @@ func GetFrontpageVideos() []types.Video {
 	)
 	waitingVideos.Wait()
 
+	commentCache.Set("fp", videos, cache.DefaultExpiration)
 	return videos
 }

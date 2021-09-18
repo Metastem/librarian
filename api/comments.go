@@ -15,13 +15,20 @@ import (
 	"codeberg.org/imabritishcow/librarian/types"
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
+	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
 var waitingComments sync.WaitGroup
+var commentCache = cache.New(30*time.Minute, 15*time.Minute)
 
 func GetComments(claimId string, channelId string, channelName string) []types.Comment {
+	cacheData, found := commentCache.Get(claimId)
+	if found {
+		return cacheData.([]types.Comment)
+	}
+
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -91,7 +98,8 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 	sort.Slice(comments[:], func(i, j int) bool {
 		return comments[i].Likes < comments[j].Likes
 	})
-
+ 
+	commentCache.Set(claimId, comments, cache.DefaultExpiration)
 	return comments
 }
 

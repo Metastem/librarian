@@ -14,13 +14,20 @@ import (
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
 var waitingVideos sync.WaitGroup
+var channelCache = cache.New(30*time.Minute, 15*time.Minute)
 
 func GetChannel(channel string, getFollowers bool) types.Channel {
+	cacheData, found := channelCache.Get(channel)
+	if found {
+		return cacheData.(types.Channel)
+	}
+
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -62,7 +69,7 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		}
 	}
 
-	return types.Channel{
+	returnData := types.Channel{
 		Name:           channelData.Get("name").String(),
 		Title:          channelData.Get("value.title").String(),
 		Id:             channelData.Get("claim_id").String(),
@@ -76,9 +83,16 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		Followers:			followers,
 		UploadCount: 		channelData.Get("meta.claims_in_channel").Int(),
 	}
+	channelCache.Set(channel, returnData, cache.DefaultExpiration)
+	return returnData
 }
 
 func GetChannelFollowers(claimId string) (int64, error) {
+	cacheData, found := channelCache.Get(claimId + "-followers")
+	if found {
+		return cacheData.(int64), nil
+	}
+
 	res, err := http.Get("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		return 0, err
@@ -86,10 +100,17 @@ func GetChannelFollowers(claimId string) (int64, error) {
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	return gjson.Get(string(body), "data.0").Int(), err
+	returnData := gjson.Get(string(body), "data.0").Int()
+	channelCache.Set(claimId + "-followers", returnData, cache.DefaultExpiration)
+	return returnData, err
 }
 
 func GetChannelVideos(page int, channelId string) []types.Video {
+	cacheData, found := channelCache.Get(channelId + "-videos-" + fmt.Sprint(page))
+	if found {
+		return cacheData.([]types.Video)
+	}
+
 	channelDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -162,5 +183,6 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 	)
 	waitingVideos.Wait()
 
+	channelCache.Set(channelId + "-videos-" + fmt.Sprint(page), videos, cache.DefaultExpiration)
 	return videos
 }

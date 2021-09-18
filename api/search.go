@@ -7,13 +7,21 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/patrickmn/go-cache"
 	"github.com/tidwall/gjson"
 )
 
 var waitingResults sync.WaitGroup
+var searchCache = cache.New(60*time.Minute, 30*time.Minute)
 
 func Search(query string, page int, claimType string, nsfw bool) ([]interface{}, error) {
+	cacheData, found := searchCache.Get(query + fmt.Sprint(page) + claimType + fmt.Sprint(nsfw))
+	if found {
+		return cacheData.([]interface{}), nil
+	}
+
 	from := 0
 	if page > 1 {
 		from = page * 9
@@ -55,5 +63,6 @@ func Search(query string, page int, claimType string, nsfw bool) ([]interface{},
 	)
 	waitingResults.Wait()
 
+	searchCache.Set(query + fmt.Sprint(page) + claimType + fmt.Sprint(nsfw), results, cache.DefaultExpiration)
 	return results, nil
 }

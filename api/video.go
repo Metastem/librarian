@@ -13,14 +13,22 @@ import (
 	"codeberg.org/imabritishcow/librarian/types"
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
+	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
+
+var videoCache = cache.New(30*time.Minute, 15*time.Minute)
 
 func GetVideo(channel string, video string, claimId string) types.Video {
 	urls := []string{"lbry://" + channel + "/" + video}
 	if channel == "" {
 		urls = []string{"lbry://" + video + "#" + claimId}
+	}
+
+	cacheData, found := videoCache.Get(urls[0])
+	if found {
+		return cacheData.(types.Video)
 	}
 
 	resolveDataMap := map[string]interface{}{
@@ -46,10 +54,17 @@ func GetVideo(channel string, video string, claimId string) types.Video {
 
 	videoData := gjson.Get(string(videoDataBody), "result.lbry*")
 
-	return ProcessVideo(videoData)
+	returnData := ProcessVideo(videoData)
+	videoCache.Set(urls[0], returnData, cache.DefaultExpiration)
+	return returnData
 }
 
 func GetVideoViews(claimId string) int64 {
+	cacheData, found := videoCache.Get(claimId + "-views")
+	if found {
+		return cacheData.(int64)
+	}
+
 	viewCountRes, err := http.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		fmt.Println(err)
@@ -60,10 +75,17 @@ func GetVideoViews(claimId string) int64 {
 		fmt.Println(err2)
 	}
 
-	return gjson.Get(string(viewCountBody), "data.0").Int()
+	returnData := gjson.Get(string(viewCountBody), "data.0").Int()
+	videoCache.Set(claimId + "-views", returnData, cache.DefaultExpiration)
+	return returnData
 }
 
 func GetLikeDislike(claimId string) []int64 {
+	cacheData, found := videoCache.Get(claimId + "-reactions")
+	if found {
+		return cacheData.([]int64)
+	}
+
 	likeDislikeRes, err := http.PostForm("https://api.odysee.com/reaction/list", url.Values{
 		"claim_ids": []string{claimId},
 	})
@@ -76,13 +98,20 @@ func GetLikeDislike(claimId string) []int64 {
 		fmt.Println(err2)
 	}
 
-	return []int64{
+	returnData := []int64{
 		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".like").Int(),
 		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int(),
 	}
+	videoCache.Set(claimId + "-reactions", returnData, cache.DefaultExpiration)
+	return returnData
 }
 
 func GetVideoStream(video string) string {
+	cacheData, found := videoCache.Get(video + "-strean")
+	if found {
+		return cacheData.(string)
+	}
+
 	getDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "get",
@@ -103,7 +132,9 @@ func GetVideoStream(video string) string {
 		fmt.Println(err2)
 	}
 
-	return gjson.Get(string(videoStreamBody), "result.streaming_url").String()
+	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
+	videoCache.Set(video + "-stream", returnData, cache.DefaultExpiration)
+	return returnData
 }
 
 func ProcessVideo(videoData gjson.Result) types.Video {

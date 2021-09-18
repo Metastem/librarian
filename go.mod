@@ -10,6 +10,7 @@ require (
 	github.com/h2non/bimg v1.1.5
 	github.com/kr/text v0.2.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.15
+	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/spf13/viper v1.8.1
 	github.com/tidwall/gjson v1.8.1
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
