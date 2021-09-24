@@ -91,11 +91,11 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("error processing image"))
 	}
 
+	w.Write(image)
 	if viper.GetString("IMAGE_CACHE") == "true" {
 		err := os.WriteFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash, image, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	w.Write(image)
 }
