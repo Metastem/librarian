@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"fmt"
 	"html"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -31,6 +33,13 @@ func ProcessText(text string, newline bool) string {
 }
 
 func LbryTo(link string, linkType string) string {
+	link = strings.ReplaceAll(link, "#", ":")
+	split := strings.Split(strings.ReplaceAll(link, "lbry://", ""), "/")
+	link = "lbry://" + url.PathEscape(split[0])
+	if len(split) > 1 {
+		link = "lbry://" + url.PathEscape(split[0]) + "/" + url.PathEscape(split[1])
+	}
+	
 	switch linkType {
 	case "rel":
 		link = strings.ReplaceAll(link, "lbry://", "/")
@@ -39,7 +48,6 @@ func LbryTo(link string, linkType string) string {
 	case "odysee":
 		link = strings.ReplaceAll(link, "lbry://", "https://odysee.com/")
 	}
-	link = strings.ReplaceAll(link, "#", ":")
 	
 	return link
 }
