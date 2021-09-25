@@ -2,13 +2,23 @@
 # librarian
 An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.com/iv-org/invidious).
 
+<a href="https://www.gnu.org/licenses/agpl-3.0.en.html">
+  <img alt="License: AGPLv3+" src="https://shields.io/badge/License-AGPL%20v3+-blue.svg">
+</a>
+<a href="https://matrix.to/#/#librarian:bcow.xyz">
+  <img alt="Matrix" src="https://img.shields.io/matrix/librarian:bcow.xyz?label=Matrix&color=blue">
+</a>
+
 ## Features
 
-- Copylefted libre software under the AGPL
+### Use features
 - Lightweight
 - No ads
 - No tracking
 - No crypto garbage
+
+### Technical features
+- Copylefted libre software under the AGPL
 - No Code of Conduct
 - No Contributor License Agreement or Developer Certificate of Origin
 
