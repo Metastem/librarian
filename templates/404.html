@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/static/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/static/favicon/favicon.ico">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="msapplication-config" content="/static/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+  <style>
+    header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .searchBar {
+      height: 16px;
+      font-size: 14px;
+      padding: 0.5em;
+      border: none;
+      border-bottom: 1px solid #d2d2d2;
+      outline: none;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
+    }
+    h2 {
+      text-align: center;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: black;
+        color: white;
+      }
+
+      .logo {
+        filter: invert(1) hue-rotate(180deg);
+      }
+    }
+  </style>
+
+  <title>404 - Librarian</title>
+</head>
+
+<body>
+  <header>
+    <a href="/">
+      <img src="/static/img/librarian.svg" height="72" class="logo" />
+    </a>
+    <form action="/search" method="GET">
+      <input type="text" placeholder="Search..." name="q" class="searchBar" />
+    </form>
+  </header>
+
+  <br>
+
+  <main>
+    <h2>404 Not Found</h2>
+  </main>
+
+</body>
+
+</html>

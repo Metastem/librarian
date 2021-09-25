@@ -18,6 +18,14 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Cache-Control", "public,max-age=3600")
 
 	videoData := api.GetVideo(vars["channel"], vars["video"], "")
+	if (videoData.ClaimId == "") {
+		notFoundTemplate, _ := template.ParseFS(templates.GetFiles(), "404.html")
+		err := notFoundTemplate.Execute(w, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return
+	}
 
 	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), videoData.ClaimId) {
 		blockTemplate, _ := template.ParseFS(templates.GetFiles(), "blocked.html")

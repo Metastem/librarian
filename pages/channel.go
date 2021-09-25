@@ -25,6 +25,15 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 
 	channelData := api.GetChannel(vars["channel"], true)
 
+	if (channelData.Id == "") {
+		notFoundTemplate, _ := template.ParseFS(templates.GetFiles(), "404.html")
+		err := notFoundTemplate.Execute(w, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return
+	}
+
 	/*TO-DO: Add playlists
 
 	videos := make([]types.Video, 0)
