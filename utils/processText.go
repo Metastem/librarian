@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"html"
 	"net/url"
 	"regexp"
@@ -39,7 +38,7 @@ func LbryTo(link string, linkType string) string {
 	if len(split) > 1 {
 		link = "lbry://" + url.PathEscape(split[0]) + "/" + url.PathEscape(split[1])
 	}
-	
+
 	switch linkType {
 	case "rel":
 		link = strings.ReplaceAll(link, "lbry://", "/")
