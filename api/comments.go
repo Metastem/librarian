@@ -96,7 +96,7 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 	waitingComments.Wait()
 
 	sort.Slice(comments[:], func(i, j int) bool {
-		return comments[i].Likes < comments[j].Likes
+		return comments[i].Likes > comments[j].Likes
 	})
  
 	commentCache.Set(claimId, comments, cache.DefaultExpiration)
