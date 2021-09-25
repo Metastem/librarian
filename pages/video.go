@@ -19,7 +19,7 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 
 	videoData := api.GetVideo(vars["channel"], vars["video"], "")
 
-	if strings.Contains(viper.GetString("BLOCKED_CLAIMS"), videoData.ClaimId) {
+	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), videoData.ClaimId) {
 		blockTemplate, _ := template.ParseFS(templates.GetFiles(), "blocked.html")
 		err := blockTemplate.Execute(w, map[string]interface{}{
 			"video": videoData,
