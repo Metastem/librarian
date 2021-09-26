@@ -16,6 +16,12 @@ import (
 func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	w.Header().Add("Cache-Control", "public,max-age=1800")
+	w.Header().Add("X-Frame-Options", "DENY")
+	w.Header().Add("Referrer-Policy", "no-referrer")
+	w.Header().Add("X-Content-Type-Options", "nosniff")
+	w.Header().Add("Strict-Transport-Security", "max-age=31557600")
+	w.Header().Add("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
+	w.Header().Add("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content; manifest-src 'self'")
 
 	page := 1
 	pageParam, err := strconv.Atoi(r.URL.Query().Get("page"))
