@@ -160,6 +160,10 @@ footer {
   main {
     margin: 0;
   }
+  .coverImg {
+    object-fit: scale-down;
+    max-height: 72px;
+  }
   .footer {
     flex-direction: column;
   }
