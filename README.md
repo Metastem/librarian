@@ -6,7 +6,7 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
   <img alt="License: AGPLv3+" src="https://shields.io/badge/License-AGPL%20v3+-blue.svg">
 </a>
 <a href="https://matrix.to/#/#librarian:bcow.xyz">
-  <img alt="Matrix" src="https://img.shields.io/matrix/librarian:bcow.xyz?label=Matrix&color=blue">
+  <img alt="Matrix" src="https://img.shields.io/matrix/librarian:bcow.xyz?label=Matrix&color=blue&server_fqdn=m.bcow.xyz">
 </a>
 
 ## Features
