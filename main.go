@@ -48,6 +48,8 @@ func main() {
 	r.PathPrefix("/static").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
 	r.HandleFunc("/{channel}", pages.ChannelHandler)
 	r.HandleFunc("/{channel}/", pages.ChannelHandler)
+	r.HandleFunc("/$/invite/{channel}", pages.ChannelHandler)
+	r.HandleFunc("/$/invite/{channel}/", pages.ChannelHandler)
 	r.HandleFunc("/{channel}/rss", pages.ChannelRSSHandler)
 	r.HandleFunc("/{channel}/{video}", pages.VideoHandler)
 
