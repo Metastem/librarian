@@ -18,6 +18,13 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 
 	now := time.Now()
 	channel := api.GetChannel(vars["channel"], false)
+	if channel.Id == "" {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Del("Content-Type")
+		w.Header().Set("Cache-Control", "no-store")
+		w.Write([]byte("500 Internal Server Error"))
+		return
+	}
 	videos := api.GetChannelVideos(1, channel.Id)
 
 	feed := &feeds.Feed{
