@@ -169,4 +169,8 @@ footer {
   .logo {
     filter: invert(1) hue-rotate(180deg);
   }
+  .searchBar{
+    background-color: black;
+    color: #d2d2d2;
+  }
 }
