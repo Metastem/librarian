@@ -19,7 +19,8 @@ header {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
+    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
 }
 
 main {
@@ -94,7 +95,7 @@ label {
 }
 
 #expandBtn:checked ~ label > a::after {
-  content: "Show less";  
+  content: "Show less";
 }
 
 #expandBtn:checked ~ div {
@@ -159,7 +160,7 @@ footer {
   .logo {
     filter: invert(1) hue-rotate(180deg);
   }
-  .searchBar{
+  .searchBar {
     background-color: black;
     color: #d2d2d2;
   }
