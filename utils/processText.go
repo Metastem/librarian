@@ -24,7 +24,7 @@ func ProcessText(text string, newline bool) string {
 		text = re.ReplaceAllString(text, "/image?url=$1"+hmac)
 	}
 	text = strings.ReplaceAll(text, `img src="`, `img src="/image?url=`)
-	text = strings.ReplaceAll(text, "https://odysee.com", "https://" + viper.GetString("DOMAIN"))
+	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
 	text = html.UnescapeString(text)
 	text = bluemonday.UGCPolicy().Sanitize(text)
 
@@ -43,7 +43,7 @@ func LbryTo(link string, linkType string) string {
 	case "rel":
 		link = strings.ReplaceAll(link, "lbry://", "/")
 	case "http":
-		link = strings.ReplaceAll(link, "lbry://", "https://" + viper.GetString("DOMAIN") + "/")
+		link = strings.ReplaceAll(link, "lbry://", viper.GetString("DOMAIN") + "/")
 	case "odysee":
 		link = strings.ReplaceAll(link, "lbry://", "https://odysee.com/")
 	}
