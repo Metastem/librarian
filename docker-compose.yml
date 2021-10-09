@@ -2,13 +2,10 @@ version: '3'
 
 services:
   librarian:
-    build: .
+    # build: . Uncomment to build from source
+    image: nineteengladespool/librarian
     ports:
       - 3000:3000
-    environment:
-      - DOMAIN=localhost
-      - PORT=3000
-      - API_URL=https://api.lbry.tv
-      - AUTH_TOKEN=G1NVCtodi7JQcAZhu68VBF55z6mGUafG
-      - HMAC_KEY='openssl rand -base64 33'
+    volumes:
+      - ./config.yml:/app/config.yml
     restart: always

@@ -40,5 +40,67 @@ Open an issue to have your instance listed here!
 | [vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion](http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion/) |  | |
 
 ## Install
+Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
 
-TODO
+### Requirements
+- Go v1.15 or later
+- libvips
+
+### Build from source
+Clone the repository and `cd` into it.
+```
+git clone https://codeberg.org/imabritishcow/librarian
+cd librarian
+```
+
+Build Librarian, make sure `libvips` is installed.
+```
+go build .
+```
+
+Edit the config file using your preferred editor.
+```
+cp config.example.yml config.yml
+nvim config.yml
+```
+
+You can now run Librarian.
+```
+./librarian
+```
+
+### `go install`
+You can install Librarian using Go.
+```
+go install codeberg.org/imabritishcow/librarian@latest
+```
+
+Edit the config file using your preferred editor.
+```
+cp config.example.yml config.yml
+nvim config.yml
+```
+
+You can now run Librarian.
+```
+librarian # If GOBIN is in your PATH
+$HOME/go/bin/librarian # If GOBIN is not in PATH
+```
+
+### Docker
+Install Docker and docker-compose, then clone this repository.
+```
+git clone https://codeberg.org/imabritishcow/librarian
+cd librarian
+```
+
+Edit the config file using your preferred editor.
+```
+cp config.example.yml config.yml
+nvim config.yml
+```
+
+You can now run Librarian.
+```
+sudo docker-compose up -d
+```
