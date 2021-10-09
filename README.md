@@ -11,7 +11,7 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
 
 ## Features
 
-### Use features
+### User features
 - Lightweight
 - No ads
 - No tracking
