@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -49,7 +50,7 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		fmt.Println(err2)
 	}
 
-	channelData := gjson.Get(string(channelBody), "result."+channel)
+	channelData := gjson.Get(string(channelBody), "result."+strings.ReplaceAll(channel, ".", "\\."))
 
 	description := utils.ProcessText(channelData.Get("value.description").String(), true)
 	thumbnail := channelData.Get("value.thumbnail.url").String()
