@@ -55,7 +55,7 @@
   <main>
     
     {{if .channel.CoverImg}}
-    <img src="{{.channel.CoverImg}}&w=1920&h=240&crop=true" class="coverImg" loading="lazy"/>
+    <img src="{{.channel.CoverImg}}&w=1920&h=240" class="coverImg" loading="lazy"/>
     {{else}}
     {{end}}
     
@@ -63,7 +63,7 @@
 
     <div class="channel">
       {{if .channel.Thumbnail}}
-      <img src="{{.channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56" loading="lazy"/>
+      <img src="{{.channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy"/>
       {{else}}
       <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
       {{end}}
@@ -106,7 +106,7 @@
         <div class="video">
           <div class="thumbnailWrapper">
             <a href={{$value.RelUrl}}>
-              <img class="thumbnail" src="{{$value.ThumbnailUrl}}&w=854&h=480&crop=true" loading="lazy"/>
+              <img class="thumbnail" src="{{$value.ThumbnailUrl}}&w=854&h=480" loading="lazy"/>
             </a>
             <p class="duration">{{$value.Duration}}</p>
           </div>

@@ -53,7 +53,7 @@
 
   <main>
     <div class="videoWrapper">
-      <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720&crop=true" controls=true
+      <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720" controls=true
         width="1280" height="720">
         <source type="video/mp4" src="{{.stream}}">
       </video>
@@ -86,7 +86,7 @@
           <div class="channel">
             <a href="{{.video.Channel.RelUrl}}" class="pfpWrapper">
               {{if .video.Channel.Thumbnail}}
-              <img src="{{.video.Channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56"
+              <img src="{{.video.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56"
                 loading="lazy" />
               {{else}}
               <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy" />
@@ -122,7 +122,7 @@
         {{range $index, $value := .comments}}
         <div class="comment">
           {{if $value.Channel.Thumbnail}}
-          <img src="{{$value.Channel.Thumbnail}}&w=56&h=56&crop=true" class="pfp" width="56" height="56" loading="lazy">
+          <img src="{{$value.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
           {{else}}
           <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy">
           {{end}}

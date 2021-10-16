@@ -7,7 +7,6 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20210514010506-3b9f47219fe7
 	github.com/gorilla/feeds v1.1.1
 	github.com/gorilla/mux v1.8.0
-	github.com/h2non/bimg v1.1.5
 	github.com/kr/text v0.2.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.15
 	github.com/patrickmn/go-cache v2.1.0+incompatible
