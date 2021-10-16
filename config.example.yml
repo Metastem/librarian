@@ -10,4 +10,4 @@ HMAC_KEY: ''
 IMAGE_CACHE: 'false'
 IMAGE_CACHE_DIR: '/var/cache/librarian'
 # Proxy videos using a CDN such as BunnyCDN
-CDN_VIDEO_PROXY: 'YOUR-PULL-ZONE.b-cdn.net'
+CDN_VIDEO_PROXY: ''
