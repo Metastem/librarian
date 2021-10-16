@@ -44,7 +44,6 @@ Librarian can run on any platform Go compiles on, memory usage varies on instanc
 
 ### Requirements
 - Go v1.15 or later
-- libvips
 
 ### Build from source
 Clone the repository and `cd` into it.
@@ -53,7 +52,7 @@ git clone https://codeberg.org/imabritishcow/librarian
 cd librarian
 ```
 
-Build Librarian, make sure `libvips` is installed.
+Build Librarian.
 ```
 go build .
 ```

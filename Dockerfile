@@ -3,12 +3,10 @@ FROM golang:alpine AS build
 WORKDIR /src
 COPY . .
 
-RUN apk add --no-cache vips-dev gcc musl-dev
-RUN go build
+ARG opts
+RUN env ${opts} go build
 
-FROM alpine:latest AS bin
-
-RUN apk add --no-cache vips
+FROM alpine:latest as bin
 
 WORKDIR /app
 RUN mkdir /var/cache/librarian
