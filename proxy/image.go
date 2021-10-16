@@ -57,7 +57,7 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 
 	w.Write(data)
 
-	if viper.GetString("IMAGE_CACHE") == "true" {
+	if viper.GetString("IMAGE_CACHE") == "true" && res.StatusCode == 200 {
 		err := os.WriteFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash, data, 0644)
 		if err != nil {
 			log.Fatal(err)
