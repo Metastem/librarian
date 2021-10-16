@@ -30,12 +30,12 @@ main {
 .plyr,
 .videoWrapper {
   position: relative;
-  max-height: 640px;
+  max-height: 720px;
 }
 
 video {
   position: relative;
-  height: 640px;
+  max-height: 720px;
   width: 100%;
   background-color: black;
 }
