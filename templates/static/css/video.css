@@ -33,6 +33,10 @@ main {
   max-height: 720px;
 }
 
+.plyr:fullscreen video {
+  max-height: 100%;
+}
+
 video {
   position: relative;
   max-height: 720px;
