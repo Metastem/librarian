@@ -32,7 +32,7 @@ func Search(query string, page int, claimType string, nsfw bool) ([]interface{},
 	}
 
 	query = strings.ReplaceAll(query, " ", "+")
-	searchDataRes, err := http.Get("https://lighthouse.lbry.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType)
+	searchDataRes, err := http.Get("https://lighthouse.odysee.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType)
 	if err != nil {
 		return nil, err
 	}
@@ -49,10 +49,10 @@ func Search(query string, page int, claimType string, nsfw bool) ([]interface{},
 	resultsData.ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			go func() {
-				if (claimType == "file") {
+				if claimType == "file" {
 					results = append(results, GetVideo("", value.Get("name").String(), value.Get("claimId").String()))
-				} else if (claimType == "channel") {
-					results = append(results, GetChannel(value.Get("name").String() + "#" + value.Get("claimId").String(), true))
+				} else if claimType == "channel" {
+					results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
 				}
 
 				waitingResults.Done()
@@ -63,6 +63,6 @@ func Search(query string, page int, claimType string, nsfw bool) ([]interface{},
 	)
 	waitingResults.Wait()
 
-	searchCache.Set(query + fmt.Sprint(page) + claimType + fmt.Sprint(nsfw), results, cache.DefaultExpiration)
+	searchCache.Set(query+fmt.Sprint(page)+claimType+fmt.Sprint(nsfw), results, cache.DefaultExpiration)
 	return results, nil
 }

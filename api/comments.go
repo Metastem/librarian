@@ -42,7 +42,7 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := http.Post("https://comments.lbry.com/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
+	commentsDataRes, err := http.Post("https://comments.odysee.com/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
 		fmt.Println(err)
 	}
