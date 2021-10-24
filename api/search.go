@@ -16,7 +16,7 @@ import (
 var waitingResults sync.WaitGroup
 var searchCache = cache.New(60*time.Minute, 30*time.Minute)
 
-func Search(query string, page int, claimType string, nsfw bool) ([]interface{}, error) {
+func Search(query string, page int, claimType string, nsfw bool, relatedTo string) ([]interface{}, error) {
 	cacheData, found := searchCache.Get(query + fmt.Sprint(page) + claimType + fmt.Sprint(nsfw))
 	if found {
 		return cacheData.([]interface{}), nil
@@ -32,7 +32,11 @@ func Search(query string, page int, claimType string, nsfw bool) ([]interface{},
 	}
 
 	query = strings.ReplaceAll(query, " ", "+")
-	searchDataRes, err := http.Get("https://lighthouse.odysee.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType)
+	url := "https://lighthouse.odysee.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType
+	if relatedTo != "" {
+		url = url + "&related_to=" + relatedTo
+	}
+	searchDataRes, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}

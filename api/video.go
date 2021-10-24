@@ -180,6 +180,7 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 			Description: template.HTML(videoData.Get("signing_channel.value.description").String()),
 			Thumbnail:   channelThumbnail,
 		},
+		Duration:     utils.FormatDuration(videoData.Get("value.video.duration").Int()),
 		Title:        videoData.Get("value.title").String(),
 		ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 		Description:  template.HTML(utils.ProcessText(videoData.Get("value.description").String(), true)),

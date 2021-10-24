@@ -44,17 +44,23 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	videoStream := api.GetVideoStream(videoData.LbryUrl)
+	relatedVids, err := api.Search(videoData.Title, 1, "file", false, videoData.ClaimId)
 	comments := api.GetComments(videoData.ClaimId, videoData.Channel.Id, videoData.Channel.Name)
 
+	if err != nil {
+		errorTemplate, _ := template.ParseFS(templates.GetFiles(), "error.html")
+		errorTemplate.Execute(w, map[string]interface{}{
+			"err": err,
+		})
+	}
+
 	videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
-	err := videoTemplate.Execute(w, map[string]interface{}{
+	videoTemplate.Execute(w, map[string]interface{}{
 		"stream":         videoStream,
 		"video":          videoData,
 		"comments":       comments,
 		"commentsLength": len(comments),
+		"relatedVids":		relatedVids,
 		"config":         viper.AllSettings(),
 	})
-	if err != nil {
-		fmt.Println(err)
-	}
 }

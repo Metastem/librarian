@@ -27,16 +27,12 @@ main {
   margin: 0 15vw 0 15vw;
 }
 
-.plyr,
-.videoWrapper {
-  position: relative;
-  max-height: 720px;
-}
-
 .plyr:fullscreen video {
   max-height: 100%;
 }
 
+.plyr,
+.videoWrapper,
 video {
   position: relative;
   max-height: 720px;
@@ -44,83 +40,166 @@ video {
   background-color: black;
 }
 
-.channel {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}
-
-.pfpWrapper {
-  height: 56px;
-}
-
 .pfp {
   border-radius: 100%;
   object-fit: cover;
 }
 
-.defaultPfp {
+.pfp--default {
   background-color: lightskyblue;
 }
 
-.videoMetaWrapper {
+.videoData {
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 15px
+}
+
+.videoData__left {
+  width: 80%;
+}
+
+.videoData__right {
+  width: 20%;
 }
 
 .videoMeta {
   width: 20%;
 }
 
-.description {
-  overflow: hidden;
-  margin-top: -1em;
-  max-height: 8.5em;
-}
-
-.description p {
-  word-wrap: break-word;
-}
-
-#expandBtn {
-  display: none;
-}
-
-#expandBtn ~ label > a::after {
-  content: "Show more";
-}
-
-label {
-  color: #0066cc;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-#expandBtn:checked ~ label > a::after {
-  content: "Show less";
-}
-
-#expandBtn:checked ~ div {
-  overflow: unset;
-  max-height: none;
-  margin-top: 0;
-  height: 100%;
-}
-
-.claimId {
-  font-size: 12px;
+.videoMeta__wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
 }
 
 .videoDesc {
   width: 80%;
 }
 
+.videoDesc__channel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.videoDesc__description {
+  overflow: hidden;
+  margin-top: -1em;
+  max-height: 8.5em;
+}
+
+.videoDesc__description p {
+  word-wrap: break-word;
+}
+
+#videoDesc__expandBtn {
+  display: none;
+}
+
+#videoDesc__expandBtn ~ .videoDesc__expandBtn__label > a::after {
+  content: "Show more";
+}
+
+#videoDesc__expandBtn:checked ~ .videoDesc__expandBtn__label > a::after {
+  content: "Show less";
+}
+
+.videoDesc__expandBtn__label {
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#videoDesc__expandBtn:checked ~ div {
+  overflow: unset;
+  max-height: none;
+  margin-top: 0;
+  height: 100%;
+}
+
+.videoDesc__claimId {
+  font-size: 12px;
+}
+
 .comment {
   display: flex;
   flex-direction: row;
   gap: 10px;
+}
+
+#comments__expandBtn {
+  display: none;
+}
+
+.comments__expandBtn__label {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.comments__expandBtn__icon {
+  font-size: 24px;
+}
+
+#comments__expandBtn ~ .comments__expandBtn__label > span::after {
+  content: "expand_more";
+}
+
+#comments__expandBtn:checked ~ .comments__expandBtn__label > span::after {
+  content: "expand_less";
+}
+
+#comments__expandBtn:checked ~ .comments {
+  display: none;
+}
+
+.relVids {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.relVid__link {
+  color: #212121;
+  word-wrap: break-word;
+  text-decoration: none;
+}
+
+.relVid__thumbnailWrapper {
+  padding: 28.125%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.relVid__thumbnail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.relVid__duration {
+  position: absolute;
+  background-color: rgba(35, 35, 35, 0.75);
+  color: white;
+  border-radius: 2px;
+  padding: 2px;
+  font-size: 16px;
+  right: 0.25em;
+  bottom: -0.75em;
+}
+
+.relVid__meta {
+  display: flex;
+  font-weight: 600;
+  font-size: 14px;
+  justify-content: space-between;
 }
 
 footer {
@@ -134,21 +213,27 @@ footer {
   main {
     margin: 0;
   }
-  .videoMetaWrapper {
+  .videoData {
     flex-direction: column;
+  }
+  .videoData__side {
+    width: 100%;
   }
   .videoMeta {
     width: 100%;
   }
-  .videoDesc {
-    width: 100%;
+  .videoMeta__wrapper {
+    flex-direction: column;
   }
-  .thumbs {
+  .videoMeta__thumbs {
     display: flex;
     flex-direction: row;
     gap: 6px;
     margin-top: -1.75em;
     height: 1.5em;
+  }
+  .videoDesc {
+    width: 100%;
   }
   footer {
     flex-direction: column;

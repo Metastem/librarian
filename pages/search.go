@@ -32,12 +32,12 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.URL.Query().Get("q")
-	videoResults, err := api.Search(query, page, "file", nsfw)
+	videoResults, err := api.Search(query, page, "file", nsfw, "")
 	if err != nil {
 		utils.HandleError(w, err)
 		return
 	}
-	channelResults, err := api.Search(query, page, "channel", nsfw)
+	channelResults, err := api.Search(query, page, "channel", nsfw, "")
 	if err != nil {
 		utils.HandleError(w, err)
 		return
