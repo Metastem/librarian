@@ -21,7 +21,7 @@ import (
 
 var videoCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func GetVideo(channel string, video string, claimId string) types.Video {
+func GetVideo(channel string, video string, claimId string) (types.Video, error) {
 	urls := []string{"lbry://" + channel + "/" + video}
 	if channel == "" {
 		urls = []string{"lbry://" + video + "#" + claimId}
@@ -29,7 +29,7 @@ func GetVideo(channel string, video string, claimId string) types.Video {
 
 	cacheData, found := videoCache.Get(urls[0])
 	if found {
-		return cacheData.(types.Video)
+		return cacheData.(types.Video), nil
 	}
 
 	resolveDataMap := map[string]interface{}{
@@ -44,20 +44,17 @@ func GetVideo(channel string, video string, claimId string) types.Video {
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
 	videoDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", "application/json", bytes.NewBuffer(resolveData))
-	if err != nil {
-		fmt.Println(err)
-	}
 
-	videoDataBody, err2 := ioutil.ReadAll(videoDataRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
+	videoDataBody, err := ioutil.ReadAll(videoDataRes.Body)
 
 	videoData := gjson.Get(string(videoDataBody), "result.lbry*")
+	if videoData.Get("error.name").String() != "" {
+		return types.Video{}, fmt.Errorf("API Error: " + videoData.Get("error.name").String() + videoData.Get("error.text").String())
+	}
 
 	returnData := ProcessVideo(videoData)
 	videoCache.Set(urls[0], returnData, cache.DefaultExpiration)
-	return returnData
+	return returnData, err
 }
 
 func GetVideoViews(claimId string) int64 {

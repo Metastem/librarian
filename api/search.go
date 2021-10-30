@@ -54,7 +54,10 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 		func(key gjson.Result, value gjson.Result) bool {
 			go func() {
 				if claimType == "file" {
-					results = append(results, GetVideo("", value.Get("name").String(), value.Get("claimId").String()))
+					vid, err := GetVideo("", value.Get("name").String(), value.Get("claimId").String())
+					if err == nil {
+						results = append(results, vid)
+					}
 				} else if claimType == "channel" {
 					results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
 				}

@@ -8,6 +8,7 @@ import (
 
 	"codeberg.org/imabritishcow/librarian/api"
 	"codeberg.org/imabritishcow/librarian/templates"
+	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
@@ -22,13 +23,17 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=*, battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
 	w.Header().Add("Content-Security-Policy", "default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src *; media-src *; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
-	videoData := api.GetVideo(vars["channel"], vars["video"], "")
+	videoData, err := api.GetVideo(vars["channel"], vars["video"], "")
 	if (videoData.ClaimId == "") {
 		notFoundTemplate, _ := template.ParseFS(templates.GetFiles(), "404.html")
 		err := notFoundTemplate.Execute(w, nil)
 		if err != nil {
 			fmt.Println(err)
 		}
+		return
+	}
+	if err != nil {
+		utils.HandleError(w, err)
 		return
 	}
 
@@ -46,12 +51,9 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	videoStream := api.GetVideoStream(videoData.LbryUrl)
 	relatedVids, err := api.Search(videoData.Title, 1, "file", false, videoData.ClaimId)
 	comments := api.GetComments(videoData.ClaimId, videoData.Channel.Id, videoData.Channel.Name)
-
 	if err != nil {
-		errorTemplate, _ := template.ParseFS(templates.GetFiles(), "error.html")
-		errorTemplate.Execute(w, map[string]interface{}{
-			"err": err,
-		})
+		utils.HandleError(w, err)
+		return
 	}
 
 	videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
