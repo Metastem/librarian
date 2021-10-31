@@ -81,8 +81,8 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		Description:    template.HTML(description),
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
 		Thumbnail:      thumbnail,
-		Followers:			followers,
-		UploadCount: 		channelData.Get("meta.claims_in_channel").Int(),
+		Followers:      followers,
+		UploadCount:    channelData.Get("meta.claims_in_channel").Int(),
 	}
 	channelCache.Set(channel, returnData, cache.DefaultExpiration)
 	return returnData
@@ -102,7 +102,7 @@ func GetChannelFollowers(claimId string) (int64, error) {
 	body, err := ioutil.ReadAll(res.Body)
 
 	returnData := gjson.Get(string(body), "data.0").Int()
-	channelCache.Set(claimId + "-followers", returnData, cache.DefaultExpiration)
+	channelCache.Set(claimId+"-followers", returnData, cache.DefaultExpiration)
 	return returnData, err
 }
 
@@ -175,6 +175,8 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 					Date:           time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 					Duration:       utils.FormatDuration(value.Get("value.video.duration").Int()),
 					RelTime:        humanize.Time(time),
+					MediaType:      value.Get("value.source.media_type").String(),
+					SrcSize:        value.Get("value.source.size").String(),
 				})
 				waitingVideos.Done()
 			}()
@@ -184,6 +186,6 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 	)
 	waitingVideos.Wait()
 
-	channelCache.Set(channelId + "-videos-" + fmt.Sprint(page), videos, cache.DefaultExpiration)
+	channelCache.Set(channelId+"-videos-"+fmt.Sprint(page), videos, cache.DefaultExpiration)
 	return videos
 }

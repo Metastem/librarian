@@ -3,6 +3,7 @@ package pages
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"codeberg.org/imabritishcow/librarian/api"
@@ -38,12 +39,28 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 	feed.Items = []*feeds.Item{}
 
 	for i := 0; i < len(videos); i++ {
-		feed.Items = append(feed.Items, &feeds.Item{
+		item := &feeds.Item{
 			Title:       videos[i].Title,
 			Link:        &feeds.Link{Href: videos[i].Url},
 			Description: videos[i].DescriptionTxt,
 			Created:     time.Unix(videos[i].Timestamp, 0),
-		})
+			Enclosure: 	 &feeds.Enclosure{},
+		}
+
+		if r.URL.Query().Get("enclosure") == "true" {
+			url, err := url.Parse(api.GetVideoStream(videos[i].LbryUrl))
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Header().Set("Cache-Control", "no-store")
+				w.Write([]byte("500 Internal Server Error"))
+				return
+			}
+			item.Enclosure.Url = url.String()
+			item.Enclosure.Type = videos[i].MediaType
+			item.Enclosure.Length = videos[i].SrcSize
+		}
+
+		feed.Items = append(feed.Items, item)
 	}
 
 	rss, err := feed.ToRss()

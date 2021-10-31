@@ -22,4 +22,6 @@ type Video struct {
 	RelTime			 string
 	Date         string
 	Duration		 string
+	MediaType		 string
+	SrcSize			 string
 }
