@@ -105,7 +105,7 @@ func GetLikeDislike(claimId string) []int64 {
 }
 
 func GetVideoStream(video string) string {
-	cacheData, found := videoCache.Get(video + "-strean")
+	cacheData, found := videoCache.Get(video + "-stream")
 	if found {
 		return cacheData.(string)
 	}
