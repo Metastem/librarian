@@ -46,6 +46,11 @@ func main() {
 	r.HandleFunc("/image", proxy.ProxyImage)
 	r.HandleFunc("/search", pages.SearchHandler)
 	r.PathPrefix("/static").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
+	r.HandleFunc("/sw.js", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/javascript")
+		file, _ := templates.GetStaticFiles().ReadFile("static/js/sw.js")
+		w.Write(file)
+	})
 	r.HandleFunc("/{channel}", pages.ChannelHandler)
 	r.HandleFunc("/{channel}/", pages.ChannelHandler)
 	r.HandleFunc("/$/invite/{channel}", pages.ChannelHandler)
