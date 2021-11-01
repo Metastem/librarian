@@ -50,3 +50,8 @@ func LbryTo(link string, linkType string) string {
 	
 	return link
 }
+
+func UrlEncode(link string) (string, error) {
+	link2, err := url.Parse(link)
+	return link2.String(), err
+}

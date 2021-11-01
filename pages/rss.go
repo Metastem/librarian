@@ -3,10 +3,10 @@ package pages
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
 
 	"codeberg.org/imabritishcow/librarian/api"
+	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
@@ -20,18 +20,24 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	channel := api.GetChannel(vars["channel"], false)
 	if channel.Id == "" {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		w.Header().Del("Content-Type")
-		w.Header().Set("Cache-Control", "no-store")
-		w.Write([]byte("500 Internal Server Error"))
+		w.Write([]byte("404 Not Found\nERROR: Unable to find channel"))
 		return
 	}
 	videos := api.GetChannelVideos(1, channel.Id)
 
+	image, err := utils.UrlEncode(viper.GetString("DOMAIN") + channel.Thumbnail)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 Internal Server Error\nERROR: "+err.Error()))
+		return
+	}
+
 	feed := &feeds.Feed{
 		Title:       channel.Name + " - Librarian",
 		Link:        &feeds.Link{Href: channel.Url},
-		Image:       &feeds.Image{Url: viper.GetString("DOMAIN") + channel.Thumbnail},
+		Image:       &feeds.Image{Url: image},
 		Description: channel.DescriptionTxt,
 		Created:     now,
 	}
@@ -48,14 +54,13 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if r.URL.Query().Get("enclosure") == "true" {
-			url, err := url.Parse(api.GetVideoStream(videos[i].LbryUrl))
+			url, err := utils.UrlEncode(api.GetVideoStream(videos[i].LbryUrl))
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Header().Set("Cache-Control", "no-store")
-				w.Write([]byte("500 Internal Server Error"))
+				w.Write([]byte("500 Internal Server Error\nERROR: "+err.Error()))
 				return
 			}
-			item.Enclosure.Url = url.String()
+			item.Enclosure.Url = url
 			item.Enclosure.Type = videos[i].MediaType
 			item.Enclosure.Length = videos[i].SrcSize
 		}
