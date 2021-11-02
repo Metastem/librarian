@@ -74,6 +74,20 @@ video {
   gap: 6px;
 }
 
+.videoMeta__download {
+  border-radius: 4px;
+  margin-top: 1em;
+  padding: 0.5em;
+  background-color: #212121;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.videoMeta__download:hover {
+  background-color: #2196f3;
+}
+
 .videoDesc {
   width: 80%;
 }

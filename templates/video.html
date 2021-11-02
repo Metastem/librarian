@@ -65,7 +65,11 @@
         <div class="videoMeta__wrapper">
           <div class="videoMeta">
             <a href="{{.video.OdyseeUrl}}">Watch on Odysee</a>
-            <br>
+            <a href="{{.stream}}?download=true">
+              <button class="videoMeta__download">
+                <span class="material-icons-outlined">download</span> Download
+              </button>
+            </a>
             <p><span class="material-icons-outlined" title="Views">visibility</span> {{.video.Views}}</p>
             <div class="videoMeta__thumbs">
               <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{.video.Likes}}</p>
