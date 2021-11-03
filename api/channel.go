@@ -167,7 +167,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
 						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
 					},
-					DescriptionTxt: bluemonday.StrictPolicy().Sanitize(value.Get("value.description").String()),
+					Description: 		template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
 					Title:          value.Get("value.title").String(),
 					ThumbnailUrl:   "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 					Views:          GetVideoViews(claimId),

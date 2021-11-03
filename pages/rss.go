@@ -48,7 +48,7 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 		item := &feeds.Item{
 			Title:       videos[i].Title,
 			Link:        &feeds.Link{Href: videos[i].Url},
-			Description: videos[i].DescriptionTxt,
+			Description: "<img width=\"480\" src=\"" + viper.GetString("DOMAIN") + videos[i].ThumbnailUrl + "\"><br><br>" + string(videos[i].Description),
 			Created:     time.Unix(videos[i].Timestamp, 0),
 			Enclosure: 	 &feeds.Enclosure{},
 		}
