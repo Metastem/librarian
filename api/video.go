@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"codeberg.org/imabritishcow/librarian/types"
@@ -131,9 +130,6 @@ func GetVideoStream(video string) string {
 	}
 	
 	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
-	if viper.GetString("CDN_VIDEO_PROXY") != "" {
-		returnData = strings.ReplaceAll(returnData, "cdn.lbryplayer.xyz", viper.GetString("CDN_VIDEO_PROXY"))
-	}
 	
 	videoCache.Set(video + "-stream", returnData, cache.DefaultExpiration)
 	return returnData
