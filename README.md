@@ -33,10 +33,10 @@ Open an issue to have your instance listed here!
 
 | Website                                                     | Country             | Cloudflare |
 | ----------------------------------------------------------- | ------------------- | ---------- |
-| [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇨🇦 CA |            |
+| [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US |            |
 | [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |            |
-| [librarian.davidovski.xyz](https://librarian.davidovski.xyz/) | 🇳🇱 NL | |
+| [librarian.davidovski.xyz](https://librarian.davidovski.xyz/) | 🇬🇧 UK | |
 | [ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion](http://ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion/) |  | |
 | [vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion](http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion/) |  | |
 
