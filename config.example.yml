@@ -6,6 +6,8 @@ BLOCKED_CLAIMS: 'claimid,claim2'
 # AUTH_TOKEN and HMAC_KEY is automatically generated
 AUTH_TOKEN: ''
 HMAC_KEY: ''
+# Proxy videos using a CDN such as BunnyCDN. See https://codeberg.org/imabritishcow/librarian/wiki/CDN-video-proxy-setup
+CDN_VIDEO_PROXY: ''
 # Create IMAGE_CACHE_DIR before enabling image caching
 IMAGE_CACHE: 'false'
 IMAGE_CACHE_DIR: '/var/cache/librarian'
