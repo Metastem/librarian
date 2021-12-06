@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"sort"
 	"strings"
-	"sync"
 	"time"
 
 	"codeberg.org/imabritishcow/librarian/types"
@@ -20,7 +19,6 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var waitingComments sync.WaitGroup
 var commentCache = cache.New(30*time.Minute, 15*time.Minute)
 
 func GetComments(claimId string, channelId string, channelName string) []types.Comment {
@@ -65,40 +63,34 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 
 	comments := make([]types.Comment, 0)
 
-	waitingComments.Add(len(commentIds))
-
 	gjson.Get(string(commentsDataBody), "result.items").ForEach(
 		func(key, value gjson.Result) bool {
-			go func() {
-				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
-				comment := utils.ProcessText(value.Get("comment").String(), false)
+			timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
-				commentId := value.Get("comment_id").String()
+			comment := utils.ProcessText(value.Get("comment").String(), false)
 
-				comments = append(comments, types.Comment{
-					Channel:   GetChannel(value.Get("channel_url").String(), false),
-					Comment:   template.HTML(comment),
-					CommentId: commentId,
-					ParentId:  value.Get("parent_id").String(),
-					Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
-					RelTime:   humanize.Time(timestamp),
-					Likes:     likesDislikes[commentId][0],
-					Dislikes:  likesDislikes[commentId][1],
-				})
+			commentId := value.Get("comment_id").String()
 
-				waitingComments.Done()
-			}()
+			comments = append(comments, types.Comment{
+				Channel:   GetChannel(value.Get("channel_url").String(), false),
+				Comment:   template.HTML(comment),
+				CommentId: commentId,
+				ParentId:  value.Get("parent_id").String(),
+				Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
+				RelTime:   humanize.Time(timestamp),
+				Likes:     likesDislikes[commentId][0],
+				Dislikes:  likesDislikes[commentId][1],
+			})
 
 			return true
 		},
 	)
-	waitingComments.Wait()
 
 	sort.Slice(comments[:], func(i, j int) bool {
 		return comments[i].Likes > comments[j].Likes
 	})
- 
+
 	commentCache.Set(claimId, comments, cache.DefaultExpiration)
 	return comments
 }
