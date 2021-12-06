@@ -105,7 +105,7 @@ func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=comment_react_list", "application/json", bytes.NewBuffer(commentsData))
+	commentsDataRes, err := http.Post("https://api.na-backend.odysee.com/api/v1/proxy?m=comment_react_list", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
 		fmt.Println(err)
 	}
