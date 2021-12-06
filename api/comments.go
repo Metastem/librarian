@@ -15,7 +15,6 @@ import (
 	"codeberg.org/imabritishcow/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/patrickmn/go-cache"
-	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
