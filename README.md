@@ -34,6 +34,7 @@ Open an issue to have your instance listed here!
 | Website                                                     | Country             | Cloudflare |
 | ----------------------------------------------------------- | ------------------- | ---------- |
 | [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇺🇸 US |            |
+| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official) | 🇨🇦 CA |            |
 | [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |            |
 | [librarian.davidovski.xyz](https://librarian.davidovski.xyz/) | 🇬🇧 UK | |
@@ -41,8 +42,14 @@ Open an issue to have your instance listed here!
 | [ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion](http://ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion/) |  | |
 | [vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion](http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion/) |  | |
 
+> [librarian.bcow.xyz](https://librarian.bcow.xyz) is currently hosted on [replit](https://replit.com/) which uses Google Cloud.
+
+> [lbry.bcow.xyz](https://lbry.bcow.xyz) is a testing instance for using [lbry-sdk](https://github.com/lbryio/lbry-sdk) instead of the Odysee API. It is hosted on Amazon Web Services.
+
 ## Install
 Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
+
+> Librarian is still in beta and changes frequently, building the latest version from source is recommended.
 
 ### Requirements
 - Go v1.15 or later
