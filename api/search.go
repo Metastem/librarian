@@ -6,14 +6,12 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/tidwall/gjson"
 )
 
-var waitingResults sync.WaitGroup
 var searchCache = cache.New(60*time.Minute, 30*time.Minute)
 
 func Search(query string, page int, claimType string, nsfw bool, relatedTo string) ([]interface{}, error) {
@@ -49,26 +47,20 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	results := make([]interface{}, 0)
 	resultsData := gjson.Parse(string(searchDataBody))
 
-	waitingResults.Add(int(resultsData.Get("#").Int()))
 	resultsData.ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			go func() {
-				if claimType == "file" {
-					vid, err := GetVideo("", value.Get("name").String(), value.Get("claimId").String())
-					if err == nil {
-						results = append(results, vid)
-					}
-				} else if claimType == "channel" {
-					results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
+			if claimType == "file" {
+				vid, err := GetVideo("", value.Get("name").String(), value.Get("claimId").String())
+				if err == nil {
+					results = append(results, vid)
 				}
-
-				waitingResults.Done()
-			}()
+			} else if claimType == "channel" {
+				results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
+			}
 
 			return true
 		},
 	)
-	waitingResults.Wait()
 
 	searchCache.Set(query+fmt.Sprint(page)+claimType+fmt.Sprint(nsfw), results, cache.DefaultExpiration)
 	return results, nil

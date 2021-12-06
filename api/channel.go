@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"codeberg.org/imabritishcow/librarian/types"
@@ -20,7 +19,6 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-var waitingVideos sync.WaitGroup
 var channelCache = cache.New(30*time.Minute, 15*time.Minute)
 
 func GetChannel(channel string, getFollowers bool) types.Channel {
@@ -142,49 +140,44 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 	videos := make([]types.Video, 0)
 	videosData := gjson.Parse(string(channelDataBody))
 
-	waitingVideos.Add(int(videosData.Get("result.items.#").Int()))
 	videosData.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			go func() {
-				claimId := value.Get("claim_id").String()
-				lbryUrl := value.Get("canonical_url").String()
-				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
+			claimId := value.Get("claim_id").String()
+			lbryUrl := value.Get("canonical_url").String()
+			channelLbryUrl := value.Get("signing_channel.canonical_url").String()
 
-				time := time.Unix(value.Get("value.release_time").Int(), 0)
-				thumbnail := value.Get("value.thumbnail.url").String()
+			time := time.Unix(value.Get("value.release_time").Int(), 0)
+			thumbnail := value.Get("value.thumbnail.url").String()
 
-				videos = append(videos, types.Video{
-					Url:       utils.LbryTo(lbryUrl, "http"),
-					LbryUrl:   lbryUrl,
-					RelUrl:    utils.LbryTo(lbryUrl, "rel"),
-					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
-					ClaimId:   value.Get("claim_id").String(),
-					Channel: types.Channel{
-						Name:      value.Get("signing_channel.name").String(),
-						Title:     value.Get("signing_channel.value.title").String(),
-						Id:        value.Get("signing_channel.claim_id").String(),
-						Url:       utils.LbryTo(channelLbryUrl, "http"),
-						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
-						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
-					},
-					Description: 		template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
-					Title:          value.Get("value.title").String(),
-					ThumbnailUrl:   "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:          GetVideoViews(claimId),
-					Timestamp:      time.Unix(),
-					Date:           time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-					Duration:       utils.FormatDuration(value.Get("value.video.duration").Int()),
-					RelTime:        humanize.Time(time),
-					MediaType:      value.Get("value.source.media_type").String(),
-					SrcSize:        value.Get("value.source.size").String(),
-				})
-				waitingVideos.Done()
-			}()
+			videos = append(videos, types.Video{
+				Url:       utils.LbryTo(lbryUrl, "http"),
+				LbryUrl:   lbryUrl,
+				RelUrl:    utils.LbryTo(lbryUrl, "rel"),
+				OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+				ClaimId:   value.Get("claim_id").String(),
+				Channel: types.Channel{
+					Name:      value.Get("signing_channel.name").String(),
+					Title:     value.Get("signing_channel.value.title").String(),
+					Id:        value.Get("signing_channel.claim_id").String(),
+					Url:       utils.LbryTo(channelLbryUrl, "http"),
+					RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
+					OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
+				},
+				Description:  template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
+				Title:        value.Get("value.title").String(),
+				ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
+				Views:        GetVideoViews(claimId),
+				Timestamp:    time.Unix(),
+				Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
+				Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
+				RelTime:      humanize.Time(time),
+				MediaType:    value.Get("value.source.media_type").String(),
+				SrcSize:      value.Get("value.source.size").String(),
+			})
 
 			return true
 		},
 	)
-	waitingVideos.Wait()
 
 	channelCache.Set(channelId+"-videos-"+fmt.Sprint(page), videos, cache.DefaultExpiration)
 	return videos
