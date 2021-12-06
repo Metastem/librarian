@@ -98,46 +98,41 @@ func GetFrontpageVideos() []types.Video {
 	videos := make([]types.Video, 0)
 	videosData := gjson.Parse(string(frontpageDataBody))
 
-	waitingVideos.Add(int(videosData.Get("result.items.#").Int()))
 	videosData.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			go func() {
-				claimId := value.Get("claim_id").String()
-				lbryUrl := value.Get("canonical_url").String()
-				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
+			claimId := value.Get("claim_id").String()
+			lbryUrl := value.Get("canonical_url").String()
+			channelLbryUrl := value.Get("signing_channel.canonical_url").String()
 
-				time := time.Unix(value.Get("value.release_time").Int(), 0)
-				thumbnail := value.Get("value.thumbnail.url").String()
+			time := time.Unix(value.Get("value.release_time").Int(), 0)
+			thumbnail := value.Get("value.thumbnail.url").String()
 
-				videos = append(videos, types.Video{
-					Url:       utils.LbryTo(lbryUrl, "http"),
-					LbryUrl:   lbryUrl,
-					RelUrl:    utils.LbryTo(lbryUrl, "rel"),
-					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
-					ClaimId:   value.Get("claim_id").String(),
-					Channel: types.Channel{
-						Name:      value.Get("signing_channel.name").String(),
-						Title:     value.Get("signing_channel.value.title").String(),
-						Id:        value.Get("signing_channel.claim_id").String(),
-						Url:       utils.LbryTo(channelLbryUrl, "http"),
-						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
-						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
-					},
-					Title:        value.Get("value.title").String(),
-					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:        GetVideoViews(claimId),
-					Timestamp:    time.Unix(),
-					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
-					RelTime:      humanize.Time(time),
-				})
-				waitingVideos.Done()
-			}()
+			videos = append(videos, types.Video{
+				Url:       utils.LbryTo(lbryUrl, "http"),
+				LbryUrl:   lbryUrl,
+				RelUrl:    utils.LbryTo(lbryUrl, "rel"),
+				OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+				ClaimId:   value.Get("claim_id").String(),
+				Channel: types.Channel{
+					Name:      value.Get("signing_channel.name").String(),
+					Title:     value.Get("signing_channel.value.title").String(),
+					Id:        value.Get("signing_channel.claim_id").String(),
+					Url:       utils.LbryTo(channelLbryUrl, "http"),
+					RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
+					OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
+				},
+				Title:        value.Get("value.title").String(),
+				ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
+				Views:        GetVideoViews(claimId),
+				Timestamp:    time.Unix(),
+				Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
+				Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
+				RelTime:      humanize.Time(time),
+			})
 
 			return true
 		},
 	)
-	waitingVideos.Wait()
 
 	commentCache.Set("fp", videos, cache.DefaultExpiration)
 	return videos
