@@ -85,7 +85,7 @@ func GetFrontpageVideos() []types.Video {
 		},
 	}
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
-	frontpageDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
+	frontpageDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
 	if err != nil {
 		fmt.Println(err)
 	}

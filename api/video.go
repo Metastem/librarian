@@ -43,7 +43,7 @@ func GetVideo(channel string, video string, claimId string) (types.Video, error)
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	videoDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	videoDataRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 
 	videoDataBody, err := ioutil.ReadAll(videoDataRes.Body)
 
@@ -120,7 +120,7 @@ func GetVideoStream(video string) string {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=get", "application/json", bytes.NewBuffer(getData))
+	videoStreamRes, err := http.Post(viper.GetString("API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
 	if err != nil {
 		fmt.Println(err)
 	}

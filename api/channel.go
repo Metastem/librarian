@@ -38,7 +38,7 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	channelRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	channelRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -127,7 +127,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 		},
 	}
 	channelData, _ := json.Marshal(channelDataMap)
-	channelDataRes, err := http.Post(viper.GetString("API_URL")+"/api/v1/proxy?m=claim_search", "application/json", bytes.NewBuffer(channelData))
+	channelDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
 	if err != nil {
 		fmt.Println(err)
 	}
