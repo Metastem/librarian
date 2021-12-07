@@ -1,6 +1,6 @@
 DOMAIN: 'https://domain.tld'
 PORT: '3000'
-API_URL: 'https://api.na-backend.odysee.com'
+API_URL: 'https://api.na-backend.odysee.com/api/v1/proxy'
 # Block access to claims in case of DMCA
 BLOCKED_CLAIMS: 'claimid,claim2'
 # AUTH_TOKEN and HMAC_KEY is automatically generated
