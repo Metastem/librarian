@@ -55,6 +55,8 @@ Librarian can run on any platform Go compiles on, memory usage varies on instanc
 - Go v1.15 or later
 
 ### Build from source
+> For more detailed instructions, follow the [guide](https://codeberg.org/imabritishcow/librarian/wiki/Setup-guide-%28manual%29).
+
 Clone the repository and `cd` into it.
 ```
 git clone https://codeberg.org/imabritishcow/librarian
