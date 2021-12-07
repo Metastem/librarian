@@ -131,8 +131,9 @@ func GetVideoStream(video string) string {
 	}
 	
 	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
-	if viper.GetString("CDN_VIDEO_PROXY") != "" {
-		returnData = strings.ReplaceAll(returnData, "cdn.lbryplayer.xyz", viper.GetString("CDN_VIDEO_PROXY"))
+	if viper.GetString("VIDEO_STREAMING_URL") != "" {
+		returnData = strings.ReplaceAll(returnData, "localhost:5280", viper.GetString("VIDEO_STREAMING_URL"))
+		returnData = strings.ReplaceAll(returnData, "cdn.lbryplayer.xyz", viper.GetString("VIDEO_STREAMING_URL"))
 	}
 	
 	videoCache.Set(video + "-stream", returnData, cache.DefaultExpiration)
