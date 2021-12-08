@@ -143,7 +143,6 @@ func GetVideoStream(video string) string {
 func GetStcStream(video string) map[string]string {
 	encodedUrl := strings.ReplaceAll(video, "lbry://", "")
 	encodedUrl = url.PathEscape(encodedUrl)
-	println(encodedUrl)
 
 	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?url=" + encodedUrl)
 	if err != nil {
