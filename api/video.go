@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"codeberg.org/imabritishcow/librarian/types"
-	"codeberg.org/imabritishcow/librarian/utils"
+	"codeberg.org/librarian/librarian/types"
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
@@ -143,6 +143,7 @@ func GetVideoStream(video string) string {
 func GetStcStream(video string) map[string]string {
 	encodedUrl := strings.ReplaceAll(video, "lbry://", "")
 	encodedUrl = url.PathEscape(encodedUrl)
+	println(encodedUrl)
 
 	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?url=" + encodedUrl)
 	if err != nil {

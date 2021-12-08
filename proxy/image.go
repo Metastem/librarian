@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"codeberg.org/imabritishcow/librarian/utils"
+	"codeberg.org/librarian/librarian/utils"
   "github.com/spf13/viper"
 )
 

@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"codeberg.org/imabritishcow/librarian/templates"
+	"codeberg.org/librarian/librarian/templates"
 )
 
 func HandleError(w http.ResponseWriter, err error) {

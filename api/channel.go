@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"codeberg.org/imabritishcow/librarian/types"
-	"codeberg.org/imabritishcow/librarian/utils"
+	"codeberg.org/librarian/librarian/types"
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/patrickmn/go-cache"

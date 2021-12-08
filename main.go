@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"codeberg.org/imabritishcow/librarian/api"
-	"codeberg.org/imabritishcow/librarian/pages"
-	"codeberg.org/imabritishcow/librarian/proxy"
-	"codeberg.org/imabritishcow/librarian/templates"
+	"codeberg.org/librarian/librarian/api"
+	"codeberg.org/librarian/librarian/pages"
+	"codeberg.org/librarian/librarian/proxy"
+	"codeberg.org/librarian/librarian/templates"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )

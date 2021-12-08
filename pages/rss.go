@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"codeberg.org/imabritishcow/librarian/api"
-	"codeberg.org/imabritishcow/librarian/utils"
+	"codeberg.org/librarian/librarian/api"
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"

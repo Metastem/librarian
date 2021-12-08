@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strconv"
 
-	"codeberg.org/imabritishcow/librarian/api"
-	"codeberg.org/imabritishcow/librarian/templates"
+	"codeberg.org/librarian/librarian/api"
+	"codeberg.org/librarian/librarian/templates"
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )

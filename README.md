@@ -1,4 +1,4 @@
-<img src="https://codeberg.org/imabritishcow/librarian/raw/branch/main/templates/static/img/librarian.svg" width="96" height="96" />
+<img src="https://codeberg.org/librarian/librarian/raw/branch/main/templates/static/img/librarian.svg" width="96" height="96" />
 # librarian
 An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.com/iv-org/invidious).
 
@@ -55,11 +55,11 @@ Librarian can run on any platform Go compiles on, memory usage varies on instanc
 - Go v1.15 or later
 
 ### Build from source
-> For more detailed instructions, follow the [guide](https://codeberg.org/imabritishcow/librarian/wiki/Setup-guide-%28manual%29).
+> For more detailed instructions, follow the [guide](https://codeberg.org/librarian/librarian/wiki/Setup-guide-%28manual%29).
 
 Clone the repository and `cd` into it.
 ```
-git clone https://codeberg.org/imabritishcow/librarian
+git clone https://codeberg.org/librarian/librarian
 cd librarian
 ```
 
@@ -82,7 +82,7 @@ You can now run Librarian.
 ### `go install`
 You can install Librarian using Go.
 ```
-go install codeberg.org/imabritishcow/librarian@latest
+go install codeberg.org/librarian/librarian@latest
 ```
 
 Edit the config file using your preferred editor.
@@ -100,7 +100,7 @@ $HOME/go/bin/librarian # If GOBIN is not in PATH
 ### Docker
 Install Docker and docker-compose, then clone this repository.
 ```
-git clone https://codeberg.org/imabritishcow/librarian
+git clone https://codeberg.org/librarian/librarian
 cd librarian
 ```
 
