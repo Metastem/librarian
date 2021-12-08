@@ -74,7 +74,7 @@ func GetVideoViews(claimId string) int64 {
 	}
 
 	returnData := gjson.Get(string(viewCountBody), "data.0").Int()
-	videoCache.Set(claimId + "-views", returnData, cache.DefaultExpiration)
+	videoCache.Set(claimId+"-views", returnData, cache.DefaultExpiration)
 	return returnData
 }
 
@@ -100,7 +100,7 @@ func GetLikeDislike(claimId string) []int64 {
 		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".like").Int(),
 		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int(),
 	}
-	videoCache.Set(claimId + "-reactions", returnData, cache.DefaultExpiration)
+	videoCache.Set(claimId+"-reactions", returnData, cache.DefaultExpiration)
 	return returnData
 }
 
@@ -129,15 +129,38 @@ func GetVideoStream(video string) string {
 	if err2 != nil {
 		fmt.Println(err2)
 	}
-	
+
 	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
 	if viper.GetString("VIDEO_STREAMING_URL") != "" {
 		returnData = strings.ReplaceAll(returnData, "http://localhost:5280", viper.GetString("VIDEO_STREAMING_URL"))
 		returnData = strings.ReplaceAll(returnData, "https://cdn.lbryplayer.xyz", viper.GetString("VIDEO_STREAMING_URL"))
 	}
-	
-	videoCache.Set(video + "-stream", returnData, cache.DefaultExpiration)
+
+	videoCache.Set(video+"-stream", returnData, cache.DefaultExpiration)
 	return returnData
+}
+
+func GetStcStream(video string) map[string]string {
+	encodedUrl := strings.ReplaceAll(video, "lbry://", "")
+	encodedUrl = url.PathEscape(encodedUrl)
+
+	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?url=" + encodedUrl)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	stcBody, err2 := ioutil.ReadAll(stcRes.Body)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+
+	data := gjson.Get(string(stcBody), "")
+
+	return map[string]string{
+		"1080p": data.Get("1080p").String(),
+		"720p": data.Get("720p").String(),
+		"480p": data.Get("480p").String(),
+	}
 }
 
 func ProcessVideo(videoData gjson.Result) types.Video {
@@ -161,7 +184,7 @@ func ProcessVideo(videoData gjson.Result) types.Video {
 	}
 
 	likeDislike := GetLikeDislike(claimId)
-	
+
 	return types.Video{
 		Url:       utils.LbryTo(lbryUrl, "http"),
 		LbryUrl:   lbryUrl,
