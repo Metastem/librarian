@@ -154,12 +154,12 @@ func GetStcStream(video string) map[string]string {
 		fmt.Println(err2)
 	}
 
-	data := gjson.Get(string(stcBody), "")
+	data := gjson.Parse(string(stcBody))
 
 	return map[string]string{
-		"1080p": data.Get("1080p").String(),
-		"720p": data.Get("720p").String(),
-		"480p": data.Get("480p").String(),
+		"fhd": data.Get("1080p").String(),
+		"hd": data.Get("720p").String(),
+		"sd": data.Get("480p").String(),
 	}
 }
 
