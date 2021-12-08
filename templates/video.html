@@ -54,12 +54,10 @@
   <main>
     <div class="videoWrapper">
       <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720" controls=true>
-        {{if .stcStream.sd}}
-        <source type="video/webm" src="{{.stcStream.fhd}}">
+        <source type="video/webm" src="{{.stcStream.fhd}}" size="1080">
+        <source type="video/webm" src="{{.stcStream.hd}}" size="720">
+        <source type="video/webm" src="{{.stcStream.sd}}" size="480">
         <source type="video/mp4" src="{{.stream}}">
-        {{else}}
-        <source type="video/mp4" src="{{.stream}}">
-        {{end}}
       </video>
     </div>
 
@@ -207,7 +205,7 @@
     </a>
   </footer>
 
-  <script src="/static/js/plyr.js"></script>
+  <script src="https://cdn.plyr.io/3.6.9/plyr.polyfilled.js"></script>
   <script>
     const player = new Plyr('#player');
 
@@ -222,31 +220,6 @@
       }
     });
   </script>
-  {{if .stcStream.sd}}
-  <script>
-    player.source = {
-      sources: [
-        {
-          src: '{{.stcStream.fhd}}',
-          type: 'video/webm',
-          size: 1080,
-        },
-        {
-          src: '{{.stcStream.hd}}',
-          type: 'video/webm',
-          size: 720,
-        },
-        {
-          src: '{{.stcStream.sd}}',
-          type: 'video/webm',
-          size: 480,
-        }
-      ]
-    }
-  </script>
-  {{else}}
-  {{end}}
-
 </body>
 
 </html>
