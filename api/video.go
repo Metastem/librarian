@@ -140,11 +140,8 @@ func GetVideoStream(video string) string {
 	return returnData
 }
 
-func GetStcStream(video string) map[string]string {
-	encodedUrl := strings.ReplaceAll(video, "lbry://", "")
-	encodedUrl = url.PathEscape(encodedUrl)
-
-	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?url=" + encodedUrl)
+func GetStcStream(claimId string) map[string]string {
+	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?claim_id=" + claimId)
 	if err != nil {
 		fmt.Println(err)
 	}

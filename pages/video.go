@@ -51,7 +51,7 @@ func VideoHandler(w http.ResponseWriter, r *http.Request) {
 	videoStream := api.GetVideoStream(videoData.LbryUrl)
 	stcStream := map[string]string{"sd":""}
 	if viper.GetString("STC_URL") != "" {
-		stcStream = api.GetStcStream(videoData.LbryUrl)
+		stcStream = api.GetStcStream(videoData.ClaimId)
 	}
 	
 	relatedVids, err := api.Search(videoData.Title, 1, "file", false, videoData.ClaimId)
