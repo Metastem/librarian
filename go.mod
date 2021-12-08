@@ -1,4 +1,4 @@
-module codeberg.org/imabritishcow/librarian
+module codeberg.org/librarian/librarian
 
 go 1.16
 
