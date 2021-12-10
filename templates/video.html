@@ -54,10 +54,13 @@
   <main>
     <div class="videoWrapper">
       <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720" controls=true>
+        {{if eq .stcStream.sd ""}}
+        <source type="video/mp4" src="{{.stream}}">
+        {{else}}
         <source type="video/webm" src="{{.stcStream.fhd}}" size="1080">
         <source type="video/webm" src="{{.stcStream.hd}}" size="720">
         <source type="video/webm" src="{{.stcStream.sd}}" size="480">
-        <source type="video/mp4" src="{{.stream}}">
+        {{end}}
       </video>
     </div>
 
