@@ -63,8 +63,8 @@ func main() {
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         ":" + viper.GetString("PORT"),
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  30 * time.Second,
 	}
 
 	fmt.Println(srv.ListenAndServe())
