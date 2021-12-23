@@ -3,8 +3,8 @@ FROM golang:alpine AS build
 WORKDIR /src
 COPY . .
 
-ARG opts
-RUN env ${opts} go build
+ARG GOARCH=amd64
+RUN env GOARCH=${GOARCH} go build
 
 FROM alpine:latest as bin
 
