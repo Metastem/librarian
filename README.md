@@ -41,7 +41,7 @@ Open an issue to have your instance listed here!
 | [ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion](http://ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion/) |  | |
 | [vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion](http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion/) |  | |
 
-> [librarian.bcow.xyz](https://lbry.bcow.xyz) is using [lbry-sdk](https://github.com/lbryio/lbry-sdk) instead of the Odysee API and is hosted on Amazon Web Services.
+> [librarian.bcow.xyz](https://librarian.bcow.xyz) is using [lbry-sdk](https://github.com/lbryio/lbry-sdk) instead of the Odysee API and is hosted on Amazon Web Services.
 
 ## Install
 Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
