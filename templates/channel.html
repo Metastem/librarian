@@ -101,15 +101,18 @@
     {{end}}-->
     <hr>
 
-    <div class="videos">
-      {{range $index, $value := .videos}}
+    <div class="claims">
+      {{range $index, $value := .claims}}
         <div class="video">
+          {{if eq $value.StreamType "video" }}
           <div class="thumbnailWrapper">
             <a href={{$value.RelUrl}}>
               <img class="thumbnail" src="{{$value.ThumbnailUrl}}&w=854&h=480" loading="lazy"/>
             </a>
             <p class="duration">{{$value.Duration}}</p>
           </div>
+          {{else}}
+          {{end}}
           <p>
             <a class="videoLink" href={{$value.RelUrl}}>{{$value.Title}}</a>
           </p>

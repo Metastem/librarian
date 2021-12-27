@@ -50,7 +50,7 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	resultsData.ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			if claimType == "file" {
-				vid, err := GetVideo("", value.Get("name").String(), value.Get("claimId").String())
+				vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
 				if err == nil {
 					results = append(results, vid)
 				}

@@ -52,16 +52,16 @@ func ChannelHandler(w http.ResponseWriter, r *http.Request) {
 		})
 	}*/
 
-	videos := api.GetChannelVideos(page, channelData.Id)
-	sort.Slice(videos, func(i int, j int) bool {
-		return videos[i].Timestamp > videos[j].Timestamp
+	claims := api.GetChannelClaims(page, channelData.Id)
+	sort.Slice(claims, func(i int, j int) bool {
+		return claims[i].Timestamp > claims[j].Timestamp
 	})
 
 	channelTemplate, _ := template.ParseFS(templates.GetFiles(), "channel.html")
 	err = channelTemplate.Execute(w, map[string]interface{}{
 		"channel":   channelData,
 		"config":    viper.AllSettings(),
-		"videos":    videos,
+		"claims":    claims,
 		"query": map[string]interface{}{
 			"page":      fmt.Sprint(page),
 			"nextPage":  fmt.Sprint(page + 1),

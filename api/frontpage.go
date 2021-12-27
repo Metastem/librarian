@@ -18,10 +18,10 @@ import (
 
 var fpCache = cache.New(30*time.Minute, 30*time.Minute)
 
-func GetFrontpageVideos() []types.Video {
+func GetFrontpageVideos() []types.Claim {
 	cacheData, found := fpCache.Get("fp")
 	if found {
-		return cacheData.([]types.Video)
+		return cacheData.([]types.Claim)
 	}
 
 	claimSearchData := map[string]interface{}{
@@ -95,10 +95,10 @@ func GetFrontpageVideos() []types.Video {
 		fmt.Println(err)
 	}
 
-	videos := make([]types.Video, 0)
-	videosData := gjson.Parse(string(frontpageDataBody))
+	claims := make([]types.Claim, 0)
+	claimsData := gjson.Parse(string(frontpageDataBody))
 
-	videosData.Get("result.items").ForEach(
+	claimsData.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			claimId := value.Get("claim_id").String()
 			lbryUrl := value.Get("canonical_url").String()
@@ -107,7 +107,7 @@ func GetFrontpageVideos() []types.Video {
 			time := time.Unix(value.Get("value.release_time").Int(), 0)
 			thumbnail := value.Get("value.thumbnail.url").String()
 
-			videos = append(videos, types.Video{
+			claims = append(claims, types.Claim{
 				Url:       utils.LbryTo(lbryUrl, "http"),
 				LbryUrl:   lbryUrl,
 				RelUrl:    utils.LbryTo(lbryUrl, "rel"),
@@ -123,7 +123,7 @@ func GetFrontpageVideos() []types.Video {
 				},
 				Title:        value.Get("value.title").String(),
 				ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-				Views:        GetVideoViews(claimId),
+				Views:        GetViews(claimId),
 				Timestamp:    time.Unix(),
 				Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 				Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
@@ -134,6 +134,6 @@ func GetFrontpageVideos() []types.Video {
 		},
 	)
 
-	commentCache.Set("fp", videos, cache.DefaultExpiration)
-	return videos
+	commentCache.Set("fp", claims, cache.DefaultExpiration)
+	return claims
 }

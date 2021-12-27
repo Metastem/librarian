@@ -25,7 +25,7 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("404 Not Found\nERROR: Unable to find channel"))
 		return
 	}
-	videos := api.GetChannelVideos(1, channel.Id)
+	claims := api.GetChannelClaims(1, channel.Id)
 
 	image, err := utils.UrlEncode(viper.GetString("DOMAIN") + channel.Thumbnail)
 	if err != nil {
@@ -44,25 +44,25 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 
 	feed.Items = []*feeds.Item{}
 
-	for i := 0; i < len(videos); i++ {
+	for i := 0; i < len(claims); i++ {
 		item := &feeds.Item{
-			Title:       videos[i].Title,
-			Link:        &feeds.Link{Href: videos[i].Url},
-			Description: "<img width=\"480\" src=\"" + viper.GetString("DOMAIN") + videos[i].ThumbnailUrl + "\"><br><br>" + string(videos[i].Description),
-			Created:     time.Unix(videos[i].Timestamp, 0),
+			Title:       claims[i].Title,
+			Link:        &feeds.Link{Href: claims[i].Url},
+			Description: "<img width=\"480\" src=\"" + viper.GetString("DOMAIN") + claims[i].ThumbnailUrl + "\"><br><br>" + string(claims[i].Description),
+			Created:     time.Unix(claims[i].Timestamp, 0),
 			Enclosure: 	 &feeds.Enclosure{},
 		}
 
 		if r.URL.Query().Get("enclosure") == "true" {
-			url, err := utils.UrlEncode(api.GetVideoStream(videos[i].LbryUrl))
+			url, err := utils.UrlEncode(api.GetVideoStream(claims[i].LbryUrl))
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				w.Write([]byte("500 Internal Server Error\nERROR: "+err.Error()))
 				return
 			}
 			item.Enclosure.Url = url
-			item.Enclosure.Type = videos[i].MediaType
-			item.Enclosure.Length = videos[i].SrcSize
+			item.Enclosure.Type = claims[i].MediaType
+			item.Enclosure.Length = claims[i].SrcSize
 		}
 
 		feed.Items = append(feed.Items, item)
