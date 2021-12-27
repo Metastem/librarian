@@ -104,10 +104,10 @@ func GetChannelFollowers(claimId string) (int64, error) {
 	return returnData, err
 }
 
-func GetChannelVideos(page int, channelId string) []types.Video {
-	cacheData, found := channelCache.Get(channelId + "-videos-" + fmt.Sprint(page))
+func GetChannelClaims(page int, channelId string) []types.Claim {
+	cacheData, found := channelCache.Get(channelId + "-claims-" + fmt.Sprint(page))
 	if found {
-		return cacheData.([]types.Video)
+		return cacheData.([]types.Claim)
 	}
 
 	channelDataMap := map[string]interface{}{
@@ -137,10 +137,10 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 		fmt.Println(err)
 	}
 
-	videos := make([]types.Video, 0)
-	videosData := gjson.Parse(string(channelDataBody))
+	claims := make([]types.Claim, 0)
+	claimsData := gjson.Parse(string(channelDataBody))
 
-	videosData.Get("result.items").ForEach(
+	claimsData.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			claimId := value.Get("claim_id").String()
 			lbryUrl := value.Get("canonical_url").String()
@@ -149,7 +149,7 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 			time := time.Unix(value.Get("value.release_time").Int(), 0)
 			thumbnail := value.Get("value.thumbnail.url").String()
 
-			videos = append(videos, types.Video{
+			claims = append(claims, types.Claim{
 				Url:       utils.LbryTo(lbryUrl, "http"),
 				LbryUrl:   lbryUrl,
 				RelUrl:    utils.LbryTo(lbryUrl, "rel"),
@@ -166,12 +166,13 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 				Description:  template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
 				Title:        value.Get("value.title").String(),
 				ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-				Views:        GetVideoViews(claimId),
+				Views:        GetViews(claimId),
 				Timestamp:    time.Unix(),
 				Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 				Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
 				RelTime:      humanize.Time(time),
 				MediaType:    value.Get("value.source.media_type").String(),
+				StreamType:  	value.Get("value.stream_type").String(),
 				SrcSize:      value.Get("value.source.size").String(),
 			})
 
@@ -179,6 +180,6 @@ func GetChannelVideos(page int, channelId string) []types.Video {
 		},
 	)
 
-	channelCache.Set(channelId+"-videos-"+fmt.Sprint(page), videos, cache.DefaultExpiration)
-	return videos
+	channelCache.Set(channelId+"-claims-"+fmt.Sprint(page), claims, cache.DefaultExpiration)
+	return claims
 }

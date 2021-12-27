@@ -56,7 +56,8 @@ func main() {
 	r.HandleFunc("/$/invite/{channel}", pages.ChannelHandler)
 	r.HandleFunc("/$/invite/{channel}/", pages.ChannelHandler)
 	r.HandleFunc("/{channel}/rss", pages.ChannelRSSHandler)
-	r.HandleFunc("/{channel}/{video}", pages.VideoHandler)
+	r.HandleFunc("/embed/{channel}/{claim}", pages.EmbedHandler)
+	r.HandleFunc("/{channel}/{claim}", pages.ClaimHandler)
 
 	http.Handle("/", r)
 

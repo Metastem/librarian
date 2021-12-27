@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="thumbnail" content="{{.config.DOMAIN}}{{.claim.ThumbnailUrl}}">
+  <meta name="description" content={{.claim.Description}}>
+
+  <meta property="og:site_name" content="Librarian">
+  <meta property="og:url" content={{.claim.Url}}>
+  <meta property="og:title" content={{.claim.Title}}>
+  <meta property="og:image" content="{{.config.DOMAIN}}{{.claim.ThumbnailUrl}}">
+  <meta property="og:description" content={{.claim.Description}}>
+  <meta property="og:type" content="article">
+
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:url" content={{.claim.Url}}>
+  <meta name="twitter:title" content={{.claim.Title}}>
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content="{{.config.DOMAIN}}{{.claim.ThumbnailUrl}}">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="mask-icon" href="/static/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/static/favicon/favicon.ico">
+  <meta name="msapplication-TileColor" content="#2b5797">
+  <meta name="msapplication-config" content="/static/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="/static/css/plyr.css" />
+  <link rel="stylesheet" href="/static/css/article.css" />
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <title>{{.claim.Title}} - Librarian</title>
+</head>
+
+<body>
+  <header>
+    <a href="/">
+      <img src="/static/img/librarian.svg" height="72" class="logo" />
+    </a>
+    <form action="/search" method="GET">
+      <input type="text" placeholder="Search..." name="q" value="{{.query.query}}" class="searchBar" />
+    </form>
+  </header>
+
+  <br>
+
+  <main>
+    <h2>{{.claim.Title}}</h2>
+
+    {{.document}}
+
+    <div>
+      <div class="videoMeta__wrapper">
+        <div class="videoMeta">
+          <a href="{{.claim.OdyseeUrl}}">View on Odysee</a><br>
+          <p><span class="material-icons-outlined" title="Views">visibility</span> {{.claim.Views}}</p>
+          <div class="videoMeta__thumbs">
+            <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{.claim.Likes}}</p>
+            <p><span class="material-icons-outlined" title="Dislilkes">thumb_down</span> {{.claim.Dislikes}}</p>
+          </div>
+          <p><span class="material-icons-outlined" title="License">copyright</span> {{.claim.License}}</p>
+        </div>
+
+        <div class="videoDesc">
+          <div class="videoDesc__channel">
+            <a href="{{.claim.Channel.RelUrl}}">
+              {{if .claim.Channel.Thumbnail}}
+              <img src="{{.claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
+              {{else}}
+              <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+              {{end}}
+            </a>
+            <a href="{{.claim.Channel.RelUrl}}">
+              <p>
+                {{if .claim.Channel.Title}}
+                <b>{{.claim.Channel.Title}}</b>
+                <br>
+                {{.claim.Channel.Name}}
+                {{else}}
+                <b>{{.claim.Channel.Name}}</b>
+                {{end}}
+              </p>
+            </a>
+          </div>
+          <p><b>Shared {{.claim.Date}}</b></p>
+          <p class="videoDesc__claimId">Claim ID: {{.claim.ClaimId}}</p>
+        </div>
+      </div>
+
+      <div>
+        <hr>
+        <input id="comments__expandBtn" type="checkbox">
+        <label class="comments__expandBtn__label" for="comments__expandBtn">
+          <h3>Comments ({{.commentsLength}})</h3>
+          <span class="comments__expandBtn__icon material-icons-outlined"></span>
+        </label>
+        <div class="comments">
+          {{range $index, $value := .comments}}
+          <div class="comment">
+            {{if $value.Channel.Thumbnail}}
+            <img src="{{$value.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
+            {{else}}
+            <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
+            {{end}}
+            <div>
+              <a href="{{$value.Channel.Url}}">
+                <p>
+                  {{if $value.Channel.Title}}
+                  <b>{{$value.Channel.Title}}</b>
+                  <br>
+                  {{$value.Channel.Name}}
+                  {{else}}
+                  <b>{{$value.Channel.Name}}</b>
+                  {{end}}
+                </p>
+              </a>
+              {{$value.Comment}}
+
+              {{if eq $value.RelTime "a long while ago"}}
+              <p>
+                {{$value.Time}} |
+                <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
+                <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
+              </p>
+              {{else}}
+              <p title="{{$value.Time}}">
+                {{$value.RelTime}} |
+                <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
+                <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
+              </p>
+              {{end}}
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </div>
+      <hr>
+    </div>
+  </main>
+
+  <br><br><br>
+
+  <footer>
+    <a href="https://codeberg.org/librarian/librarian/wiki">
+      <span class="material-icons-outlined">menu_book</span> Documentation
+    </a>
+    <a href="/static/licenses.html">
+      <span class="material-icons-outlined">copyright</span> JavaScript licenses
+    </a>
+    <a href="https://codeberg.org/librarian/librarian">
+      <span class="material-icons-outlined">code</span> Source Code
+    </a>
+  </footer>
+</body>
+
+</html>

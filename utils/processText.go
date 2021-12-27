@@ -2,6 +2,7 @@ package utils
 
 import (
 	"html"
+	"html/template"
 	"net/url"
 	"regexp"
 	"strings"
@@ -30,6 +31,42 @@ func ProcessText(text string, newline bool) string {
 	text = bluemonday.UGCPolicy().Sanitize(text)
 
 	return text
+}
+
+func ProcessMarkdown(text string) template.HTML {
+	text = string(markdown.ToHTML([]byte(text), nil, nil))
+
+	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
+	imgs := re.FindAllString(text, len(text) / 4)
+	for i := 0; i < len(imgs); i++ {
+		hmac := EncodeHMAC(imgs[i])
+		text = re.ReplaceAllString(text, "/image?url=$1"+hmac)
+	}
+	text = strings.ReplaceAll(text, `img src="`, `img src="/image?url=`)
+
+	re2 := regexp.MustCompile(`<iframe src="http(.*)>`)
+	text = re2.ReplaceAllString(text, "")
+
+	re3 := regexp.MustCompile(`<iframe src="(.*)>`)
+	embeds := re3.FindAllString(text, len(text) / 4)
+	for i := 0; i < len(embeds); i++ {
+		embed := embeds[i]
+		newEmbed := strings.ReplaceAll(embed, "#", ":")
+		newEmbed = strings.ReplaceAll(newEmbed, "lbry://", "/embed/")
+		text = strings.ReplaceAll(text, embed, newEmbed)
+	}
+
+	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
+	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
+
+	p := bluemonday.UGCPolicy()
+	p.AllowElements("iframe")
+	p.AllowAttrs("width").Matching(bluemonday.Number).OnElements("iframe")
+	p.AllowAttrs("height").Matching(bluemonday.Number).OnElements("iframe")
+	p.AllowAttrs("src").OnElements("iframe")
+	text = p.Sanitize(text)
+	
+	return template.HTML(text)
 }
 
 func LbryTo(link string, linkType string) string {

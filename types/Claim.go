@@ -2,7 +2,7 @@ package types
 
 import "html/template"
 
-type Video struct {
+type Claim struct {
 	Url          string
 	RelUrl			 string
 	LbryUrl      string
@@ -23,4 +23,5 @@ type Video struct {
 	Duration		 string
 	MediaType		 string
 	SrcSize			 string
+	StreamType	 string
 }
