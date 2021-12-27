@@ -47,7 +47,7 @@ Librarian can run on any platform Go compiles on, memory usage varies on instanc
 > Librarian is still in beta and changes frequently, building the latest version from source is recommended.
 
 ### Requirements
-- Go v1.15 or later
+- Go v1.16 or later
 
 ### Build from source
 > For more detailed instructions, follow the [guide](https://codeberg.org/librarian/librarian/wiki/Setup-guide-%28manual%29).
