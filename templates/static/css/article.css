@@ -25,20 +25,12 @@ body {
 }
 
 main {
-  margin: 0 18vw 0 18vw;
+  margin: 0 24vw 0 24vw;
 }
 
-.plyr:fullscreen video {
-  max-height: 100%;
-}
-
-.plyr,
-.videoWrapper,
-video {
-  position: relative;
-  max-height: 720px;
-  width: 100%;
-  background-color: black;
+iframe {
+  border: none;
+  overflow: hidden;
 }
 
 .pfp {
@@ -48,20 +40,6 @@ video {
 
 .pfp--default {
   background-color: lightskyblue;
-}
-
-.videoData {
-  display: flex;
-  flex-direction: row;
-  gap: 15px
-}
-
-.videoData__left {
-  width: 80%;
-}
-
-.videoData__right {
-  width: 20%;
 }
 
 .videoMeta {
@@ -83,6 +61,10 @@ video {
   flex-direction: row;
   align-items: center;
   gap: 10px;
+}
+
+.videoDesc__claimId {
+  font-size: 12px;
 }
 
 .comment {

@@ -56,94 +56,92 @@
 
     {{.document}}
 
-    <div class="videoData">
-      <div class="videoData__left videoData__side">
-        <div class="videoMeta__wrapper">
-          <div class="videoMeta">
-            <a href="{{.claim.OdyseeUrl}}">View on Odysee</a><br>
-            <p><span class="material-icons-outlined" title="Views">visibility</span> {{.claim.Views}}</p>
-            <div class="videoMeta__thumbs">
-              <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{.claim.Likes}}</p>
-              <p><span class="material-icons-outlined" title="Dislilkes">thumb_down</span> {{.claim.Dislikes}}</p>
-            </div>
-            <p><span class="material-icons-outlined" title="License">copyright</span> {{.claim.License}}</p>
+    <div>
+      <div class="videoMeta__wrapper">
+        <div class="videoMeta">
+          <a href="{{.claim.OdyseeUrl}}">View on Odysee</a><br>
+          <p><span class="material-icons-outlined" title="Views">visibility</span> {{.claim.Views}}</p>
+          <div class="videoMeta__thumbs">
+            <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{.claim.Likes}}</p>
+            <p><span class="material-icons-outlined" title="Dislilkes">thumb_down</span> {{.claim.Dislikes}}</p>
           </div>
+          <p><span class="material-icons-outlined" title="License">copyright</span> {{.claim.License}}</p>
+        </div>
 
-          <div class="videoDesc">
-            <div class="videoDesc__channel">
-              <a href="{{.claim.Channel.RelUrl}}">
-                {{if .claim.Channel.Thumbnail}}
-                <img src="{{.claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
+        <div class="videoDesc">
+          <div class="videoDesc__channel">
+            <a href="{{.claim.Channel.RelUrl}}">
+              {{if .claim.Channel.Thumbnail}}
+              <img src="{{.claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
+              {{else}}
+              <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+              {{end}}
+            </a>
+            <a href="{{.claim.Channel.RelUrl}}">
+              <p>
+                {{if .claim.Channel.Title}}
+                <b>{{.claim.Channel.Title}}</b>
+                <br>
+                {{.claim.Channel.Name}}
                 {{else}}
-                <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+                <b>{{.claim.Channel.Name}}</b>
                 {{end}}
-              </a>
-              <a href="{{.claim.Channel.RelUrl}}">
+              </p>
+            </a>
+          </div>
+          <p><b>Shared {{.claim.Date}}</b></p>
+          <p class="videoDesc__claimId">Claim ID: {{.claim.ClaimId}}</p>
+        </div>
+      </div>
+
+      <div>
+        <hr>
+        <input id="comments__expandBtn" type="checkbox">
+        <label class="comments__expandBtn__label" for="comments__expandBtn">
+          <h3>Comments ({{.commentsLength}})</h3>
+          <span class="comments__expandBtn__icon material-icons-outlined"></span>
+        </label>
+        <div class="comments">
+          {{range $index, $value := .comments}}
+          <div class="comment">
+            {{if $value.Channel.Thumbnail}}
+            <img src="{{$value.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
+            {{else}}
+            <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
+            {{end}}
+            <div>
+              <a href="{{$value.Channel.Url}}">
                 <p>
-                  {{if .claim.Channel.Title}}
-                  <b>{{.claim.Channel.Title}}</b>
+                  {{if $value.Channel.Title}}
+                  <b>{{$value.Channel.Title}}</b>
                   <br>
-                  {{.claim.Channel.Name}}
+                  {{$value.Channel.Name}}
                   {{else}}
-                  <b>{{.claim.Channel.Name}}</b>
+                  <b>{{$value.Channel.Name}}</b>
                   {{end}}
                 </p>
               </a>
-            </div>
-            <p><b>Shared {{.claim.Date}}</b></p>
-            <p class="videoDesc__claimId">Claim ID: {{.claim.ClaimId}}</p>
-          </div>
-        </div>
+              {{$value.Comment}}
 
-        <div>
-          <hr>
-          <input id="comments__expandBtn" type="checkbox">
-          <label class="comments__expandBtn__label" for="comments__expandBtn">
-            <h3>Comments ({{.commentsLength}})</h3>
-            <span class="comments__expandBtn__icon material-icons-outlined"></span>
-          </label>
-          <div class="comments">
-            {{range $index, $value := .comments}}
-            <div class="comment">
-              {{if $value.Channel.Thumbnail}}
-              <img src="{{$value.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
+              {{if eq $value.RelTime "a long while ago"}}
+              <p>
+                {{$value.Time}} |
+                <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
+                <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
+              </p>
               {{else}}
-              <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
+              <p title="{{$value.Time}}">
+                {{$value.RelTime}} |
+                <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
+                <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
+              </p>
               {{end}}
-              <div>
-                <a href="{{$value.Channel.Url}}">
-                  <p>
-                    {{if $value.Channel.Title}}
-                    <b>{{$value.Channel.Title}}</b>
-                    <br>
-                    {{$value.Channel.Name}}
-                    {{else}}
-                    <b>{{$value.Channel.Name}}</b>
-                    {{end}}
-                  </p>
-                </a>
-                {{$value.Comment}}
-
-                {{if eq $value.RelTime "a long while ago"}}
-                <p>
-                  {{$value.Time}} |
-                  <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
-                  <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
-                </p>
-                {{else}}
-                <p title="{{$value.Time}}">
-                  {{$value.RelTime}} |
-                  <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
-                  <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
-                </p>
-                {{end}}
-              </div>
             </div>
-            {{end}}
           </div>
+          {{end}}
         </div>
-        <hr>
       </div>
+      <hr>
     </div>
   </main>
 

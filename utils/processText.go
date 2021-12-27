@@ -47,20 +47,25 @@ func ProcessMarkdown(text string) template.HTML {
 	re2 := regexp.MustCompile(`<iframe src="http(.*)>`)
 	text = re2.ReplaceAllString(text, "")
 
-	re3 := regexp.MustCompile(`(?:iframe src=")(.*)(?:")`)
+	re3 := regexp.MustCompile(`<iframe src="(.*)>`)
 	embeds := re3.FindAllString(text, len(text) / 4)
 	for i := 0; i < len(embeds); i++ {
 		embed := embeds[i]
-		embed = strings.ReplaceAll(embed, "#", ":")
-		embed = strings.ReplaceAll(embed, "lbry://", "/embed/")
-		text = re3.ReplaceAllString(text, embed)
+		newEmbed := strings.ReplaceAll(embed, "#", ":")
+		newEmbed = strings.ReplaceAll(newEmbed, "lbry://", "/embed/")
+		text = strings.ReplaceAll(text, embed, newEmbed)
 	}
 
 	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
 	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
-	text = strings.ReplaceAll(text, "iframe", viper.GetString("DOMAIN"))
-	text = bluemonday.UGCPolicy().Sanitize(text)
 
+	p := bluemonday.UGCPolicy()
+	p.AllowElements("iframe")
+	p.AllowAttrs("width").Matching(bluemonday.Number).OnElements("iframe")
+	p.AllowAttrs("height").Matching(bluemonday.Number).OnElements("iframe")
+	p.AllowAttrs("src").OnElements("iframe")
+	text = p.Sanitize(text)
+	
 	return template.HTML(text)
 }
 
