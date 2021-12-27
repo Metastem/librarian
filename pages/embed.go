@@ -3,7 +3,6 @@ package pages
 import (
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -14,10 +13,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ClaimHandler(w http.ResponseWriter, r *http.Request) {
+func EmbedHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	w.Header().Add("Cache-Control", "public,max-age=3600")
-	w.Header().Add("X-Frame-Options", "DENY")
 	w.Header().Add("Referrer-Policy", "no-referrer")
 	w.Header().Add("X-Content-Type-Options", "nosniff")
 	w.Header().Add("Strict-Transport-Security", "max-age=31557600")
@@ -49,59 +47,20 @@ func ClaimHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch claimData.StreamType {
-	case "document":
-		docRes, err := http.Get(api.GetVideoStream(claimData.LbryUrl))
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		docBody, err2 := ioutil.ReadAll(docRes.Body)
-		if err2 != nil {
-			fmt.Println(err2)
-		}
-		document := utils.ProcessMarkdown(string(docBody))
-		fmt.Println(document)
-
-		comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name)
-		if err != nil {
-			utils.HandleError(w, err)
-			return
-		}
-
-		articleTemplate, _ := template.ParseFS(templates.GetFiles(), "article.html")
-		articleTemplate.Execute(w, map[string]interface{}{
-			"document":				document,
-			"claim":          claimData,
-			"comments":       comments,
-			"commentsLength": len(comments),
-			"config":         viper.AllSettings(),
-		})
-	case "video":
+	if claimData.StreamType == "video" {
 		videoStream := api.GetVideoStream(claimData.LbryUrl)
 		stcStream := map[string]string{"sd": ""}
 		if viper.GetString("STC_URL") != "" {
 			stcStream = api.GetStcStream(claimData.ClaimId)
 		}
 
-		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
-		comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name)
-		if err != nil {
-			utils.HandleError(w, err)
-			return
-		}
-
-		videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
-		videoTemplate.Execute(w, map[string]interface{}{
+		embedTemplate, _ := template.ParseFS(templates.GetFiles(), "embed.html")
+		embedTemplate.Execute(w, map[string]interface{}{
 			"stream":         videoStream,
 			"video":          claimData,
-			"comments":       comments,
-			"commentsLength": len(comments),
-			"relatedVids":    relatedVids,
-			"config":         viper.AllSettings(),
 			"stcStream":      stcStream,
 		})
-	default:
+	} else {
 		utils.HandleError(w, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
 	}
 }
