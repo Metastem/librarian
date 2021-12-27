@@ -25,7 +25,7 @@ body {
 }
 
 main {
-  margin: 0 15vw 0 15vw;
+  margin: 0 18vw 0 18vw;
 }
 
 .plyr:fullscreen video {
@@ -74,20 +74,6 @@ video {
   gap: 6px;
 }
 
-.videoMeta__download {
-  border-radius: 4px;
-  margin-top: 1em;
-  padding: 0.5em;
-  background-color: #212121;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.videoMeta__download:hover {
-  background-color: #2196f3;
-}
-
 .videoDesc {
   width: 80%;
 }
@@ -97,44 +83,6 @@ video {
   flex-direction: row;
   align-items: center;
   gap: 10px;
-}
-
-.videoDesc__description {
-  overflow: hidden;
-  margin-top: -1em;
-  max-height: 8.5em;
-}
-
-.videoDesc__description p {
-  word-wrap: break-word;
-}
-
-#videoDesc__expandBtn {
-  display: none;
-}
-
-#videoDesc__expandBtn ~ .videoDesc__expandBtn__label > a::after {
-  content: "Show more";
-}
-
-#videoDesc__expandBtn:checked ~ .videoDesc__expandBtn__label > a::after {
-  content: "Show less";
-}
-
-.videoDesc__expandBtn__label {
-  color: #0066cc;
-  cursor: pointer;
-}
-
-#videoDesc__expandBtn:checked ~ div {
-  overflow: unset;
-  max-height: none;
-  margin-top: 0;
-  height: 100%;
-}
-
-.videoDesc__claimId {
-  font-size: 12px;
 }
 
 .comment {

@@ -56,12 +56,15 @@ func ClaimHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
+		if docRes.Header.Get("Content-Type") != "text/markdown" {
+			utils.HandleError(w, fmt.Errorf("document not type of text/markdown"))
+		}
+
 		docBody, err2 := ioutil.ReadAll(docRes.Body)
 		if err2 != nil {
 			fmt.Println(err2)
 		}
 		document := utils.ProcessMarkdown(string(docBody))
-		fmt.Println(document)
 
 		comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name)
 		if err != nil {
