@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -20,8 +21,37 @@ import (
 
 var commentCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func GetComments(claimId string, channelId string, channelName string) []types.Comment {
-	cacheData, found := commentCache.Get(claimId)
+func CommentsHandler(w http.ResponseWriter, r *http.Request) {
+	claimId := r.URL.Query().Get("claim_id")
+	channelId := r.URL.Query().Get("channel_id")
+	channelName := r.URL.Query().Get("channel_name")
+	page := r.URL.Query().Get("page")
+	pageSize := r.URL.Query().Get("page_size")
+	if claimId == "" || channelId == "" || channelName == "" || page == "" || pageSize == "" {
+		w.WriteHeader(400)
+		w.Write([]byte("missing query param. claim_id, channel_id, channel_name, page, page_size required"))
+		return
+	}
+
+	newPage, err := strconv.Atoi(page)
+	if err != nil {
+		fmt.Println(err)
+	}
+	newPageSize, err := strconv.Atoi(pageSize)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	comments := GetComments(claimId, channelId, channelName, newPageSize, newPage)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"comments": comments,
+	})
+}
+
+func GetComments(claimId string, channelId string, channelName string, pageSize int, page int) []types.Comment {
+	cacheData, found := commentCache.Get(claimId + fmt.Sprint(page) + fmt.Sprint(pageSize))
 	if found {
 		return cacheData.([]types.Comment)
 	}
@@ -31,9 +61,9 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 		"id":      1,
 		"method":  "comment.List",
 		"params": map[string]interface{}{
-			"page":         1,
+			"page":         page,
 			"claim_id":     claimId,
-			"page_size":    99999,
+			"page_size":    pageSize,
 			"channel_id":   channelId,
 			"channel_name": channelName,
 		},
@@ -90,7 +120,7 @@ func GetComments(claimId string, channelId string, channelName string) []types.C
 		return comments[i].Likes > comments[j].Likes
 	})
 
-	commentCache.Set(claimId, comments, cache.DefaultExpiration)
+	commentCache.Set(claimId + fmt.Sprint(page) + fmt.Sprint(pageSize), comments, cache.DefaultExpiration)
 	return comments
 }
 

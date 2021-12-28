@@ -158,21 +158,6 @@
       <span class="material-icons-outlined">code</span> Source Code
     </a>
   </footer>
-
-  <script src="/static/js/comments.js"></script>
-  <script>
-    document.getElementById("nojs").remove();
-
-    comments("{{.claim.ClaimId}}", "{{.claim.Channel.Id}}", "{{.claim.Channel.Name}}", 1)
-
-    function loadMoreBtn(page) {
-      let loadMore = document.getElementById("loadMore");
-      loadMore.addEventListener('click', () => {
-        loadMore.remove()
-        comments("{{.claim.ClaimId}}", "{{.claim.Channel.Id}}", "{{.claim.Channel.Name}}", page + 1)
-      })
-    }
-  </script>
 </body>
 
 </html>

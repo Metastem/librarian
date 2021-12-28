@@ -51,6 +51,9 @@ func main() {
 		file, _ := templates.GetStaticFiles().ReadFile("static/js/sw.js")
 		w.Write(file)
 	})
+
+	r.HandleFunc("/api/comments", api.CommentsHandler)
+
 	r.HandleFunc("/{channel}", pages.ChannelHandler)
 	r.HandleFunc("/{channel}/", pages.ChannelHandler)
 	r.HandleFunc("/$/invite/{channel}", pages.ChannelHandler)

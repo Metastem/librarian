@@ -66,20 +66,24 @@ func ClaimHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		document := utils.ProcessMarkdown(string(docBody))
 
-		comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name)
-		if err != nil {
-			utils.HandleError(w, err)
-			return
-		}
-
-		articleTemplate, _ := template.ParseFS(templates.GetFiles(), "article.html")
-		articleTemplate.Execute(w, map[string]interface{}{
+		if r.URL.Query().Get("nojs") == "1" {
+			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
+			articleTemplate, _ := template.ParseFS(templates.GetFiles(), "article_nojs.html")
+			articleTemplate.Execute(w, map[string]interface{}{
+				"document":				document,
+				"claim":          claimData,
+				"comments":       comments,
+				"commentsLength": len(comments),
+				"config":         viper.AllSettings(),
+			})
+		} else {
+			articleTemplate, _ := template.ParseFS(templates.GetFiles(), "article.html")
+			articleTemplate.Execute(w, map[string]interface{}{
 			"document":				document,
-			"claim":          claimData,
-			"comments":       comments,
-			"commentsLength": len(comments),
-			"config":         viper.AllSettings(),
-		})
+				"claim":          claimData,
+				"config":         viper.AllSettings(),
+			})
+		}
 	case "video":
 		videoStream := api.GetVideoStream(claimData.LbryUrl)
 		stcStream := map[string]string{"sd": ""}
@@ -88,22 +92,33 @@ func ClaimHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
-		comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name)
 		if err != nil {
 			utils.HandleError(w, err)
 			return
 		}
 
-		videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
-		videoTemplate.Execute(w, map[string]interface{}{
-			"stream":         videoStream,
-			"video":          claimData,
-			"comments":       comments,
-			"commentsLength": len(comments),
-			"relatedVids":    relatedVids,
-			"config":         viper.AllSettings(),
-			"stcStream":      stcStream,
-		})
+		if r.URL.Query().Get("nojs") == "1" {
+			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
+			videoNoJSTemplate, _ := template.ParseFS(templates.GetFiles(), "video_nojs.html")
+			videoNoJSTemplate.Execute(w, map[string]interface{}{
+				"stream":         videoStream,
+				"video":          claimData,
+				"comments":       comments,
+				"commentsLength": len(comments),
+				"relatedVids":    relatedVids,
+				"config":         viper.AllSettings(),
+				"stcStream":      stcStream,
+			})
+		} else {
+			videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
+			videoTemplate.Execute(w, map[string]interface{}{
+				"stream":         videoStream,
+				"video":          claimData,
+				"relatedVids":    relatedVids,
+				"config":         viper.AllSettings(),
+				"stcStream":      stcStream,
+			})
+		}
 	default:
 		utils.HandleError(w, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
 	}

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720" controls=true>
+  <video id="player" class="videoPlayer" poster="{{.video.ThumbnailUrl}}&w=1280&h=720" height="100%" width="100%" controls=true>
     {{if eq .stcStream.sd ""}}
     <source type="video/mp4" src="{{.stream}}">
     {{else}}

@@ -102,6 +102,10 @@ iframe {
   display: none;
 }
 
+#loadMore {
+  cursor: pointer
+}
+
 footer {
   display: flex;
   justify-content: center;
