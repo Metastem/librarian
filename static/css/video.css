@@ -57,6 +57,10 @@ video {
   width: 80%;
 }
 
+.description {
+  margin-top: -1em;
+}
+
 .videoDesc__channel {
   display: flex;
   flex-direction: row;
