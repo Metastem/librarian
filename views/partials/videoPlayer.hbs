@@ -1,11 +1,11 @@
 <div class="videoWrapper">
   <video id="player" class="videoPlayer" poster="{{claim.ThumbnailUrl}}&w=1280&h=720" controls=true>
     {{#if stcStream.sd}}
-    <source type="video/mp4" src="{{stream}}">
+    <source type="video/mp4" src="{{{stream}}}">
     {{else}}
-    <source type="video/webm" src="{{stcStream.fhd}}" size="1080">
-    <source type="video/webm" src="{{stcStream.hd}}" size="720">
-    <source type="video/webm" src="{{stcStream.sd}}" size="480">
+    <source type="video/webm" src="{{{stcStream.fhd}}}" size="1080">
+    <source type="video/webm" src="{{{stcStream.hd}}}" size="720">
+    <source type="video/webm" src="{{{stcStream.sd}}}" size="480">
     {{/if}}
   </video>
 </div>
