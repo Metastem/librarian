@@ -20,8 +20,23 @@
   <meta name="twitter:description" content="">
   <meta name="twitter:image" content="{{config.DOMAIN}}{{claim.ThumbnailUrl}}">
 
+  {{#if document}}
+  <style>
+    iframe {
+      border: none;
+      overflow: hidden;
+    }
+
+    main {
+      margin: 0 24vw;
+    }
+  </style>
+  {{else}}
   <link rel="stylesheet" href="/static/css/plyr.css" />
   <link rel="stylesheet" href="/static/css/video.css" />
+  {{/if}}
+
+  <link rel="stylesheet" href="/static/css/comments.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
   <title>{{claim.Title}} - Librarian</title>
@@ -40,7 +55,7 @@
 
     {{{document}}}
     {{/unless}}
-    
+
     <div class="videoData">
       <div class="videoData__left videoData__side">
         <div class="videoMeta__wrapper">

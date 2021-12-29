@@ -4,6 +4,12 @@
 <head>
   {{> 'partials/head' }}
 
+  <style>
+    .channelThumbnail {
+      object-fit: scale-down;
+    }
+  </style>
+
   <link rel="stylesheet" href="/static/css/search.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
@@ -14,7 +20,7 @@
   {{> 'partials/header' }}
 
   <main>
-    <div class="results">
+    <div class="claimsGrid">
       {{#each channels}}
       <div class="video">
         <div class="thumbnailWrapper">
@@ -22,7 +28,7 @@
             {{#if this.Thumbnail}}
             <img class="thumbnail channelThumbnail" src="{{this.Thumbnail}}&w=420&h=420" loading="lazy" />
             {{else}}
-            <img src="/static/img/spaceman.png" class="thumbnail channelThumbnail channelThumbnail--default" width="420" height="420" loading="lazy" />
+            <img src="/static/img/spaceman.png" class="thumbnail channelThumbnail pfp--default" width="420" height="420" loading="lazy" />
             {{/if}}
           </a>
         </div>

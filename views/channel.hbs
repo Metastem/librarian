@@ -22,7 +22,7 @@
 
   <link rel="alternate" type="application/rss+xml" title="{{channel.Title}} - Librarian" href="{{channel.Url}}/rss"/>
 
-  <link rel="stylesheet" href="/static/css/channel.css"/>  
+  <link rel="stylesheet" href="/static/css/channel.css"/>
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
   <title>{{channel.Title}} - Librarian</title>
@@ -44,7 +44,7 @@
       {{#if channel.Thumbnail}}
       <img src="{{channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy"/>
       {{else}}
-      <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
+      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy"/>
       {{/if}}
       <p>
         <b>{{channel.Title}}</b>
@@ -72,28 +72,9 @@
 
     <hr>
 
-    <div class="claims">
+    <div class="claimsGrid">
       {{#each claims}}
-        <div class="video">
-          <div class="thumbnailWrapper">
-            <a href={{this.RelUrl}}>
-              <img class="thumbnail" src="{{this.ThumbnailUrl}}&w=854&h=480" loading="lazy"/>
-            </a>
-            {{#equal this.StreamType "video" }}
-            <p class="duration">{{this.Duration}}</p>
-            {{/equal}}
-          </div>
-          <p>
-            <a class="videoLink" href={{this.RelUrl}}>{{this.Title}}</a>
-          </p>
-          <p>
-            <a class="videoLink" href={{this.Channel.RelUrl}}>{{this.Channel.Name}}</a>
-          </p>
-          <div class="videoMeta">
-            <p title="{{this.Date}}">Shared {{this.RelTime}}</p>
-            <p>{{this.Views}} views</p>
-          </div>
-        </div>
+        {{> 'partial/claim'}}
       {{/each}}
     </div>
     

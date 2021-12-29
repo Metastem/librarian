@@ -5,32 +5,6 @@
   {{> 'partials/head' }}
 
   <style>
-    a {
-      color: #1e88e5;
-    }
-    header {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-    }
-    .searchBar {
-      height: 16px;
-      font-size: 14px;
-      padding: 0.5em;
-      border: none;
-      outline: none;
-      background: none;
-    }
-    .searchLine {
-      border-bottom: 1px solid #d2d2d2;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
-    }
-    h2, p {
-      text-align: center;
-    }
     code {
       display: block;
       padding: 0.5em;
@@ -42,16 +16,6 @@
       font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
     }
     @media (prefers-color-scheme: dark) {
-      body {
-        background-color: black;
-        color: white;
-      }
-      .logo {
-        filter: invert(1) hue-rotate(180deg);
-      }
-      .searchBar {
-        color: white;
-      }
       code {
         background-color: #616161;
         color: white;
@@ -66,8 +30,8 @@
   {{> 'partials/header' }}
 
   <main>
-    <h2>An error occured.</h2>
-    <p>You may have found a bug in Librarian. If this is a bug, open an issue on <a href="https://codeberg.org/librarian/librarian/issues/new">Codeberg</a>.</p>
+    <h2 style="text-align: center;">An error occured.</h2>
+    <p style="text-align: center;">You may have found a bug in Librarian. If this is a bug, open an issue on <a href="https://codeberg.org/librarian/librarian/issues/new">Codeberg</a>.</p>
     <code>{{err}}</code>
   </main>
 

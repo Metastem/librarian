@@ -1,3 +1,12 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
 a {
   color: #1e88e5;
   text-decoration: none;
@@ -19,23 +28,67 @@ header {
   outline: none;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
-    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+.searchBar {
+  height: 16px;
+  font-size: 14px;
+  padding: 0.5em;
+  border: none;
+  border-bottom: 1px solid #d2d2d2;
+  outline: none;
 }
 
 main {
-  margin: 0 12vw 0 12vw;
+  margin: 0 12vw;
 }
 
-.results {
+.claimsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
 }
 
-.videoLink {
-  color: #212121;
+.pfp {
+  border-radius: 100%;
+  object-fit: cover;
+}
+
+.pfp--default {
+  background-color: lightskyblue;
+}
+
+.thumbnailWrapper {
+  padding: 28.125%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.description {
+  overflow: hidden;
+  max-height: 8.5em;
+}
+
+#expandBtn {
+  display: none;
+}
+
+#expandBtn ~ label > a::after {
+  content: "Show more";
+}
+
+label {
+  color: #0066cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#expandBtn:checked ~ label > a::after {
+  content: "Show less";
+}
+
+#expandBtn:checked ~ div {
+  overflow: unset;
+  max-height: none;
+  height: 100%;
 }
 
 .thumbnailWrapper {
@@ -53,14 +106,6 @@ main {
   object-fit: cover;
 }
 
-.channelThumbnail {
-  object-fit: scale-down;
-}
-
-.channelThumbnail--default {
-  background-color: lightskyblue;
-}
-
 .duration {
   position: absolute;
   background-color: rgba(35, 35, 35, 0.75);
@@ -72,7 +117,7 @@ main {
   bottom: -0.75em;
 }
 
-.videoMeta {
+.claimMeta {
   display: flex;
   font-weight: 600;
   font-size: 14px;
@@ -95,6 +140,28 @@ footer {
   main {
     margin: 0;
   }
+  .videoData {
+    flex-direction: column;
+  }
+  .videoData__side {
+    width: 100%;
+  }
+  .videoMeta {
+    width: 100%;
+  }
+  .videoMeta__wrapper {
+    flex-direction: column;
+  }
+  .videoMeta__thumbs {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    margin-top: -1.75em;
+    height: 1.5em;
+  }
+  .videoDesc {
+    width: 100%;
+  }
   footer {
     flex-direction: column;
     text-align: center;
@@ -104,12 +171,6 @@ footer {
 @media (prefers-color-scheme: dark) {
   body {
     background-color: black;
-    color: white;
-  }
-  a {
-    color: #2196f3;
-  }
-  .videoLink {
     color: white;
   }
   .logo {

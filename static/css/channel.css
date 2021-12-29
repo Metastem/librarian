@@ -1,33 +1,3 @@
-a {
-  color: #1e88e5;
-  text-decoration: none;
-}
-
-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.searchBar {
-  height: 16px;
-  font-size: 14px;
-  padding: 0.5em;
-  border: none;
-  border-bottom: 1px solid #d2d2d2;
-  outline: none;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
-    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
-}
-
-main {
-  margin: 0 12vw 0 12vw;
-}
-
 .channel {
   display: flex;
   flex-direction: row;
@@ -35,19 +5,10 @@ main {
   gap: 10px;
 }
 
-.pfp {
-  border-radius: 100%;
-  object-fit: cover;
-}
-
 .coverImg {
   object-fit: cover;
   width: 100%;
   height: 240px;
-}
-
-.defaultPfp {
-  background-color: #87cefa;
 }
 
 .subscribeBtn {
@@ -63,116 +24,8 @@ main {
   background-color: #2196f3;
 }
 
-.description {
-  overflow: hidden;
-  max-height: 8.5em;
-}
-
-#expandBtn {
-  display: none;
-}
-
-#expandBtn ~ label > a::after {
-  content: "Show more";
-}
-
-label {
-  color: #0066cc;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-#expandBtn:checked ~ label > a::after {
-  content: "Show less";
-}
-
-#expandBtn:checked ~ div {
-  overflow: unset;
-  max-height: none;
-  height: 100%;
-}
-
-.claims {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-}
-
-.videoLink {
-  color: #212121;
-}
-
-.thumbnailWrapper {
-  padding: 28.125%;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.thumbnail {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.duration {
-  position: absolute;
-  background-color: rgba(35, 35, 35, 0.75);
-  color: white;
-  border-radius: 2px;
-  padding: 2px;
-  font-size: 16px;
-  right: 0.25em;
-  bottom: -0.75em;
-}
-
-.videoMeta {
-  display: flex;
-  font-weight: 600;
-  font-size: 14px;
-  justify-content: space-between;
-}
-
-.pageSelector {
-  display: flex;
-  justify-content: space-between;
-}
-
-footer {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  gap: 10px;
-}
-
 @media only screen and (max-width: 812px) {
-  main {
-    margin: 0;
-  }
   .coverImg {
     max-height: 72px;
-  }
-  footer {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: black;
-    color: white;
-  }
-  .videoLink {
-    color: white;
-  }
-  .logo {
-    filter: invert(1) hue-rotate(180deg);
-  }
-  .searchBar {
-    background-color: black;
-    color: #d2d2d2;
   }
 }
