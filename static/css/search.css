@@ -57,6 +57,10 @@ main {
   object-fit: scale-down;
 }
 
+.channelThumbnail--default {
+  background-color: lightskyblue;
+}
+
 .duration {
   position: absolute;
   background-color: rgba(35, 35, 35, 0.75);
