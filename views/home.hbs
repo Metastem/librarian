@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> 'partials/head' }}
+
+  <meta name="description" content="An alternative frontend for LBRY/Odysee.">
+
+  <meta property="og:site_name" content="Librarian">
+  <meta property="og:url" content="{{config.DOMAIN}}/">
+  <meta property="og:title" content="Librarian">
+  <meta property="og:image" content="{{config.DOMAIN}}/static/favicon/apple-touch-icon.png">
+  <meta property="og:description" content="An alternative frontend for LBRY/Odysee.">
+  <meta property="og:type" content="website">
+
+  <link rel="stylesheet" href="/static/css/frontpage.css" />
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <title>Librarian</title>
+</head>
+
+<body>
+  {{> 'partials/header' }}
+
+  <main>
+    <div class="videos">
+      {{#each videos}}
+      {{> 'partials/claim' }}
+      {{/each}}
+    </div>
+  </main>
+
+  {{> 'partials/footer' }}
+
+  <script src="/sw.js"></script>
+</body>
+
+</html>

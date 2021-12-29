@@ -1,37 +1,32 @@
 package pages
 
 import (
-	"fmt"
-	"net/http"
 	"time"
 
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gorilla/feeds"
-	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
 )
 
-func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	w.Header().Set("Cache-Control", "public,max-age=1800")
-	w.Header().Set("Content-Type", "application/rss+xml")
+func ChannelRSSHandler(c *fiber.Ctx) error {
+	c.Set("Cache-Control", "public,max-age=1800")
+	c.Set("Content-Type", "application/rss+xml")
 
 	now := time.Now()
-	channel := api.GetChannel(vars["channel"], false)
+	channel := api.GetChannel(c.Params("channel"), false)
 	if channel.Id == "" {
-		w.WriteHeader(http.StatusNotFound)
-		w.Header().Del("Content-Type")
-		w.Write([]byte("404 Not Found\nERROR: Unable to find channel"))
-		return
+		c.Set("Content-Type", "text/plain")
+		_, err := c.Status(404).WriteString("404 Not Found\nERROR: Unable to find channel")
+		return err
 	}
 	claims := api.GetChannelClaims(1, channel.Id)
 
 	image, err := utils.UrlEncode(viper.GetString("DOMAIN") + channel.Thumbnail)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500 Internal Server Error\nERROR: "+err.Error()))
-		return
+		_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: "+err.Error())
+		return err
 	}
 
 	feed := &feeds.Feed{
@@ -53,12 +48,11 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 			Enclosure: 	 &feeds.Enclosure{},
 		}
 
-		if r.URL.Query().Get("enclosure") == "true" {
+		if c.Query("enclosure") == "true" {
 			url, err := utils.UrlEncode(api.GetVideoStream(claims[i].LbryUrl))
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("500 Internal Server Error\nERROR: "+err.Error()))
-				return
+				_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: "+err.Error())
+				return err
 			}
 			item.Enclosure.Url = url
 			item.Enclosure.Type = claims[i].MediaType
@@ -70,8 +64,9 @@ func ChannelRSSHandler(w http.ResponseWriter, r *http.Request) {
 
 	rss, err := feed.ToRss()
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
-	w.Write([]byte(rss))
+	_, err = c.Write([]byte(rss))
+	return err
 }

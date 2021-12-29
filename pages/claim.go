@@ -2,85 +2,72 @@ package pages
 
 import (
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"net/http"
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/templates"
 	"codeberg.org/librarian/librarian/utils"
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
 
-func ClaimHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	w.Header().Add("Cache-Control", "public,max-age=3600")
-	w.Header().Add("X-Frame-Options", "DENY")
-	w.Header().Add("Referrer-Policy", "no-referrer")
-	w.Header().Add("X-Content-Type-Options", "nosniff")
-	w.Header().Add("Strict-Transport-Security", "max-age=31557600")
-	w.Header().Add("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=*, battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
-	w.Header().Add("Content-Security-Policy", "default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src *; media-src *; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
+func ClaimHandler(c *fiber.Ctx) error {
+	c.Set("Cache-Control", "public,max-age=3600")
+	c.Set("X-Frame-Options", "DENY")
+	c.Set("Referrer-Policy", "no-referrer")
+	c.Set("X-Content-Type-Options", "nosniff")
+	c.Set("Strict-Transport-Security", "max-age=31557600")
+	c.Set("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=*, battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
+	c.Set("Content-Security-Policy", "default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src *; media-src *; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
-	claimData, err := api.GetClaim(vars["channel"], vars["claim"], "")
-	if claimData.ClaimId == "" {
-		notFoundTemplate, _ := template.ParseFS(templates.GetFiles(), "404.html")
-		err := notFoundTemplate.Execute(w, nil)
-		if err != nil {
-			fmt.Println(err)
-		}
-		return
-	}
+	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {
-		utils.HandleError(w, err)
-		return
+		return utils.HandleError(c, err)
+	}
+	if claimData.ClaimId == "" {
+		return c.Render("404", fiber.Map{})
 	}
 
 	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
-		blockTemplate, _ := template.ParseFS(templates.GetFiles(), "blocked.html")
-		err := blockTemplate.Execute(w, map[string]interface{}{
+		return c.Render("blocked", fiber.Map{
 			"claim": claimData,
 		})
-		if err != nil {
-			fmt.Println(err)
-		}
-		return
 	}
 
 	switch claimData.StreamType {
 	case "document":
 		docRes, err := http.Get(api.GetVideoStream(claimData.LbryUrl))
 		if err != nil {
-			fmt.Println(err)
+			return utils.HandleError(c, err)
 		}
 
 		if docRes.Header.Get("Content-Type") != "text/markdown" {
-			utils.HandleError(w, fmt.Errorf("document not type of text/markdown"))
+			return utils.HandleError(c, fmt.Errorf("document not type of text/markdown"))
 		}
 
-		docBody, err2 := ioutil.ReadAll(docRes.Body)
-		if err2 != nil {
-			fmt.Println(err2)
+		docBody, err := ioutil.ReadAll(docRes.Body)
+		if err != nil {
+			return utils.HandleError(c, err)
 		}
 		document := utils.ProcessMarkdown(string(docBody))
 
-		if r.URL.Query().Get("nojs") == "1" {
+		if c.Query("nojs") == "1" {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
-			articleTemplate, _ := template.ParseFS(templates.GetFiles(), "article_nojs.html")
-			articleTemplate.Execute(w, map[string]interface{}{
+			
+			return c.Render("claim", fiber.Map{
 				"document":				document,
 				"claim":          claimData,
 				"comments":       comments,
 				"commentsLength": len(comments),
+				"nojs":						true,
 				"config":         viper.AllSettings(),
 			})
 		} else {
-			articleTemplate, _ := template.ParseFS(templates.GetFiles(), "article.html")
-			articleTemplate.Execute(w, map[string]interface{}{
-			"document":				document,
+			return c.Render("claim", fiber.Map{
+				"document":				document,
 				"claim":          claimData,
+				"nojs":						false,
 				"config":         viper.AllSettings(),
 			})
 		}
@@ -93,33 +80,33 @@ func ClaimHandler(w http.ResponseWriter, r *http.Request) {
 
 		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
 		if err != nil {
-			utils.HandleError(w, err)
-			return
+			return utils.HandleError(c, err)
 		}
 
-		if r.URL.Query().Get("nojs") == "1" {
+		if c.Query("nojs") == "1" {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
-			videoNoJSTemplate, _ := template.ParseFS(templates.GetFiles(), "video_nojs.html")
-			videoNoJSTemplate.Execute(w, map[string]interface{}{
+			
+			return c.Render("claim", fiber.Map{
 				"stream":         videoStream,
-				"video":          claimData,
+				"claim":          claimData,
 				"comments":       comments,
 				"commentsLength": len(comments),
 				"relatedVids":    relatedVids,
 				"config":         viper.AllSettings(),
+				"nojs":						true,
 				"stcStream":      stcStream,
 			})
 		} else {
-			videoTemplate, _ := template.ParseFS(templates.GetFiles(), "video.html")
-			videoTemplate.Execute(w, map[string]interface{}{
+			return c.Render("claim", fiber.Map{
 				"stream":         videoStream,
-				"video":          claimData,
+				"claim":          claimData,
 				"relatedVids":    relatedVids,
 				"config":         viper.AllSettings(),
+				"nojs":						false,
 				"stcStream":      stcStream,
 			})
 		}
 	default:
-		utils.HandleError(w, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
+		return utils.HandleError(c, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
 	}
 }

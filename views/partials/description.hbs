@@ -1,0 +1,31 @@
+<div class="videoDesc">
+  <div class="videoDesc__channel">
+    <a href="{{claim.Channel.RelUrl}}">
+      {{#if claim.Channel.Thumbnail}}
+      <img src="{{claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
+      {{else}}
+      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+      {{/if}}
+    </a>
+    <a href="{{claim.Channel.RelUrl}}">
+      <p>
+        {{#if claim.Channel.Title}}
+        <b>{{claim.Channel.Title}}</b>
+        <br>
+        {{claim.Channel.Name}}
+        {{else}}
+        <b>{{claim.Channel.Name}}</b>
+        {{/if}}
+      </p>
+    </a>
+  </div>
+  <p><b>Shared {{claim.Date}}</b></p>
+  <div>
+    <input id="videoDesc__expandBtn" type="checkbox">
+    <div class="videoDesc__description">{{{claim.Description}}}</div>
+    <label class="videoDesc__expandBtn__label" for="videoDesc__expandBtn">
+      <a></a>
+    </label>
+  </div>
+  <p class="videoDesc__claimId">Claim ID: {{claim.ClaimId}}</p>
+</div>

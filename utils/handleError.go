@@ -1,15 +1,12 @@
 package utils
 
 import (
-	"html/template"
-	"net/http"
-
-	"codeberg.org/librarian/librarian/templates"
+	"github.com/gofiber/fiber/v2"
 )
 
-func HandleError(w http.ResponseWriter, err error) {
-	errorTemplate, _ := template.ParseFS(templates.GetFiles(), "error.html")
-	errorTemplate.Execute(w, map[string]interface{}{
+func HandleError(c *fiber.Ctx, err error) error {
+	c.Status(500)
+	return c.Render("error", fiber.Map{
 		"err": err,
 	})
 }

@@ -2,49 +2,34 @@ package pages
 
 import (
 	"fmt"
-	"html/template"
-	"net/http"
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/templates"
 	"codeberg.org/librarian/librarian/utils"
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
 
-func EmbedHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	w.Header().Add("Cache-Control", "public,max-age=3600")
-	w.Header().Add("Referrer-Policy", "no-referrer")
-	w.Header().Add("X-Content-Type-Options", "nosniff")
-	w.Header().Add("Strict-Transport-Security", "max-age=31557600")
-	w.Header().Add("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=*, battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
-	w.Header().Add("Content-Security-Policy", "default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src *; media-src *; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
+func EmbedHandler(c *fiber.Ctx) error {
+	c.Set("Cache-Control", "public,max-age=3600")
+	c.Set("Referrer-Policy", "no-referrer")
+	c.Set("X-Content-Type-Options", "nosniff")
+	c.Set("Strict-Transport-Security", "max-age=31557600")
+	c.Set("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=*, battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
+	c.Set("Content-Security-Policy", "default-src 'self'; style-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src *; media-src *; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
-	claimData, err := api.GetClaim(vars["channel"], vars["claim"], "")
+	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if claimData.ClaimId == "" {
-		notFoundTemplate, _ := template.ParseFS(templates.GetFiles(), "404.html")
-		err := notFoundTemplate.Execute(w, nil)
-		if err != nil {
-			fmt.Println(err)
-		}
-		return
+		return c.Render("404", fiber.Map{})
 	}
 	if err != nil {
-		utils.HandleError(w, err)
-		return
+		return utils.HandleError(c, err)
 	}
 
 	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
-		blockTemplate, _ := template.ParseFS(templates.GetFiles(), "blocked.html")
-		err := blockTemplate.Execute(w, map[string]interface{}{
+		return c.Render("blocked", fiber.Map{
 			"claim": claimData,
 		})
-		if err != nil {
-			fmt.Println(err)
-		}
-		return
 	}
 
 	if claimData.StreamType == "video" {
@@ -54,13 +39,12 @@ func EmbedHandler(w http.ResponseWriter, r *http.Request) {
 			stcStream = api.GetStcStream(claimData.ClaimId)
 		}
 
-		embedTemplate, _ := template.ParseFS(templates.GetFiles(), "embed.html")
-		embedTemplate.Execute(w, map[string]interface{}{
+		return c.Render("embed", fiber.Map{
 			"stream":         videoStream,
 			"video":          claimData,
 			"stcStream":      stcStream,
 		})
 	} else {
-		utils.HandleError(w, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
+		return utils.HandleError(c, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
 	}
 }

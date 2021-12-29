@@ -2,50 +2,45 @@ package pages
 
 import (
 	"fmt"
-	"html/template"
-	"net/http"
 	"strconv"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/templates"
 	"codeberg.org/librarian/librarian/utils"
+	"github.com/gofiber/fiber/v2"
 )
 
-func SearchHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Cache-Control", "public,max-age=1800")
-	w.Header().Add("X-Frame-Options", "DENY")
-	w.Header().Add("Referrer-Policy", "no-referrer")
-	w.Header().Add("X-Content-Type-Options", "nosniff")
-	w.Header().Add("Strict-Transport-Security", "max-age=31557600")
-	w.Header().Add("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
-	w.Header().Add("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
+func SearchHandler(c *fiber.Ctx) error {
+	c.Set("Cache-Control", "public,max-age=1800")
+	c.Set("X-Frame-Options", "DENY")
+	c.Set("Referrer-Policy", "no-referrer")
+	c.Set("X-Content-Type-Options", "nosniff")
+	c.Set("Strict-Transport-Security", "max-age=31557600")
+	c.Set("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
+	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
 	page := 1
-	pageParam, err := strconv.Atoi(r.URL.Query().Get("page"))
+	pageParam, err := strconv.Atoi(c.Query("page"))
 	if err == nil || pageParam != 0 {
 		page = pageParam
 	}
 
 	nsfw := false
-	if r.URL.Query().Get("nsfw") == "true" {
+	if c.Query("nsfw") == "true" {
 		nsfw = true
 	}
 
-	query := r.URL.Query().Get("q")
-	videoResults, err := api.Search(query, page, "file", nsfw, "")
+	query := c.Query("q")
+	claimResults, err := api.Search(query, page, "file", nsfw, "")
 	if err != nil {
-		utils.HandleError(w, err)
-		return
+		return utils.HandleError(c, err)
 	}
 	channelResults, err := api.Search(query, page, "channel", nsfw, "")
 	if err != nil {
-		utils.HandleError(w, err)
-		return
+		return utils.HandleError(c, err)
 	}
 
-	searchTemplate, _ := template.ParseFS(templates.GetFiles(), "search.html")
-	searchTemplate.Execute(w, map[string]interface{}{
-		"videos":   videoResults,
+	return c.Render("search", fiber.Map{
+		"claims":   claimResults,
 		"channels": channelResults,
 		"query": map[string]interface{}{
 			"query":    query,

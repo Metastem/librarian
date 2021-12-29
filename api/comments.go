@@ -15,37 +15,37 @@ import (
 	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
+	"github.com/gofiber/fiber/v2"
 	"github.com/patrickmn/go-cache"
 	"github.com/tidwall/gjson"
 )
 
 var commentCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func CommentsHandler(w http.ResponseWriter, r *http.Request) {
-	claimId := r.URL.Query().Get("claim_id")
-	channelId := r.URL.Query().Get("channel_id")
-	channelName := r.URL.Query().Get("channel_name")
-	page := r.URL.Query().Get("page")
-	pageSize := r.URL.Query().Get("page_size")
+func CommentsHandler(c *fiber.Ctx) error {
+	claimId := c.Query("claim_id")
+	channelId := c.Query("channel_id")
+	channelName := c.Query("channel_name")
+	page := c.Query("page")
+	pageSize := c.Query("page_size")
 	if claimId == "" || channelId == "" || channelName == "" || page == "" || pageSize == "" {
-		w.WriteHeader(400)
-		w.Write([]byte("missing query param. claim_id, channel_id, channel_name, page, page_size required"))
-		return
+		_, err := c.Status(400).WriteString("missing query param. claim_id, channel_id, channel_name, page, page_size required")
+		return err
 	}
 
 	newPage, err := strconv.Atoi(page)
 	if err != nil {
-		fmt.Println(err)
+		utils.HandleError(c, err)
 	}
 	newPageSize, err := strconv.Atoi(pageSize)
 	if err != nil {
-		fmt.Println(err)
+		utils.HandleError(c, err)
 	}
 
 	comments := GetComments(claimId, channelId, channelName, newPageSize, newPage)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]interface{}{
+	c.Set("Content-Type", "application/json")
+	return c.JSON(map[string]interface{}{
 		"comments": comments,
 	})
 }

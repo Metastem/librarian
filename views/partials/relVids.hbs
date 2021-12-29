@@ -1,0 +1,24 @@
+<div class="videoData__right videoData__side">
+  <div class="relVids">
+    {{#each relatedVids}}
+    <div>
+      <div class="relVid__thumbnailWrapper">
+        <a href={{this.RelUrl}}>
+          <img class="relVid__thumbnail" src="{{this.ThumbnailUrl}}&w=854&h=480" loading="lazy" />
+        </a>
+        <p class="relVid__duration">{{this.Duration}}</p>
+      </div>
+      <p>
+        <a class="relVid__link" href={{this.RelUrl}}>{{this.Title}}</a>
+      </p>
+      <p>
+        <a class="relVid__link" href={{this.Channel.RelUrl}}>{{this.Channel.Name}}</a>
+      </p>
+      <div class="relVid__meta">
+        <p title="{{this.Date}}">Shared {{this.RelTime}}</p>
+        <p>{{this.Views}} views</p>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> 'partials/head' }}
+
+  <meta name="thumbnail" content="{{config.DOMAIN}}{{channel.Thumbnail}}">
+  <meta name="description" content={{channel.DescriptionTxt}}>
+
+  <meta property="og:site_name" content="Librarian">
+  <meta property="og:url" content={{channel.Url}}>
+  <meta property="og:title" content={{channel.Title}}>
+  <meta property="og:image" content="{{config.DOMAIN}}{{channel.Thumbnail}}">
+  <meta property="og:description" content={{channel.DescriptionTxt}}>
+  <meta property="og:type" content="website">
+
+  <meta name="twitter:card" content="player">
+  <meta name="twitter:url" content={{channel.Url}}>
+  <meta name="twitter:title" content={{channel.Title}}>
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content="{{config.DOMAIN}}{{channel.Thumbnail}}">
+
+  <link rel="alternate" type="application/rss+xml" title="{{channel.Title}} - Librarian" href="{{channel.Url}}/rss"/>
+
+  <link rel="stylesheet" href="/static/css/channel.css"/>  
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <title>{{channel.Title}} - Librarian</title>
+</head>
+
+<body>
+  {{> 'partials/header' }}
+
+  <main>
+    
+    {{#if channel.CoverImg}}
+    <img src="{{channel.CoverImg}}&w=1920&h=240" class="coverImg" loading="lazy"/>
+    {{else}}
+    {{/if}}
+    
+    <hr>
+
+    <div class="channel">
+      {{#if channel.Thumbnail}}
+      <img src="{{channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy"/>
+      {{else}}
+      <img src="/static/img/spaceman.png" class="pfp defaultPfp" width="56" height="56" loading="lazy"/>
+      {{/if}}
+      <p>
+        <b>{{channel.Title}}</b>
+        <br>
+        {{channel.Name}}
+      </p>
+    </div>
+
+    <div>
+      <input id="expandBtn" type="checkbox">
+      <div class="description">{{{channel.Description}}}</div>
+      <label for="expandBtn">
+        <a></a>
+      </label>
+    </div>
+    <br>
+
+    <a href="{{channel.Url}}/rss">
+      <button class="subscribeBtn">
+        <span class="material-icons-outlined">rss_feed</span> Subscribe | {{channel.Followers}} followers
+      </button>
+    </a>
+    <br><br>
+    <a href="{{channel.OdyseeUrl}}">View on Odysee</a><br>
+
+    <hr>
+
+    <div class="claims">
+      {{#each claims}}
+        <div class="video">
+          <div class="thumbnailWrapper">
+            <a href={{this.RelUrl}}>
+              <img class="thumbnail" src="{{this.ThumbnailUrl}}&w=854&h=480" loading="lazy"/>
+            </a>
+            {{#equal this.StreamType "video" }}
+            <p class="duration">{{this.Duration}}</p>
+            {{/equal}}
+          </div>
+          <p>
+            <a class="videoLink" href={{this.RelUrl}}>{{this.Title}}</a>
+          </p>
+          <p>
+            <a class="videoLink" href={{this.Channel.RelUrl}}>{{this.Channel.Name}}</a>
+          </p>
+          <div class="videoMeta">
+            <p title="{{this.Date}}">Shared {{this.RelTime}}</p>
+            <p>{{this.Views}} views</p>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    
+    <br><br>
+
+    <div class="pageSelector">
+      {{#equal query.prevPage "0" }}
+      {{else}}
+      <a class="videoLink" href="{{channel.RelUrl}}?page={{query.prevPage}}">Previous page</a>
+      {{/equal}}
+      <a class="videoLink" href="{{channel.RelUrl}}?page={{query.nextPage}}">Next page</a>
+    </div>
+  </main>
+
+  {{> 'partials/footer' }}
+</body>
+
+</html>

@@ -3,37 +3,34 @@ package proxy
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	url2 "net/url"
 	"os"
 	"strings"
 
 	"codeberg.org/librarian/librarian/utils"
+	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
 
-func ProxyImage(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Query().Get("url")
-	hash := r.URL.Query().Get("hash")
+func ProxyImage(c *fiber.Ctx) error {
+	url := c.Query("url")
+	hash := c.Query("hash")
 	if hash == "" || url == "" {
-		w.WriteHeader(400)
-		w.Write([]byte("no hash or url"))
-		return
+		_, err := c.Status(400).WriteString("no hash or url")
+		return err
 	}
 
 	unescapedUrl, _ := url2.QueryUnescape(url)
 	unescapedUrl, _ = url2.PathUnescape(unescapedUrl)
 	if !utils.VerifyHMAC(unescapedUrl, hash) {
-		w.WriteHeader(403)
-		w.Write([]byte("invalid hash"))
-		return
+		_, err := c.Status(400).WriteString("invalid hash")
+		return err
 	}
 
-	width := r.URL.Query().Get("w")
-	height := r.URL.Query().Get("h")
+	width := c.Query("w")
+	height := c.Query("h")
 
 	optionsHash := ""
 	if viper.GetString("IMAGE_CACHE") == "true" {
@@ -43,12 +40,12 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 
 		image, err := os.ReadFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash)
 		if err == nil {
-			w.Write(image)
-			return
+			_, err := c.Write(image)
+			return err
 		}
 	}
 
-	w.Header().Set("Cache-Control", "public,max-age=31557600")
+	c.Set("Cache-Control", "public,max-age=31557600")
 
 	requestUrl := "https://thumbnails.odysee.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
 	if strings.Contains(url, "static.odycdn.com/emoticons") {
@@ -56,20 +53,24 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := http.Get(requestUrl)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
+	c.Set("Content-Type", res.Header.Get("Content-Type"))
 
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
-	w.Write(data)
+	_, err = c.Write(data)
 
 	if viper.GetString("IMAGE_CACHE") == "true" && res.StatusCode == 200 {
 		err := os.WriteFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash, data, 0644)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
+
+	return err
 }

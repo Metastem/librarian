@@ -16,4 +16,4 @@ COPY --from=build /src/librarian .
 
 EXPOSE 3000
 
-CMD ["/app/librarian"]
+CMD ["sh", "-c", "/app/librarian"]

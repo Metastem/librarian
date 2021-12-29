@@ -4,13 +4,16 @@ import (
 	"crypto/rand"
 	"fmt"
 	"net/http"
-	"time"
 
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/pages"
 	"codeberg.org/librarian/librarian/proxy"
-	"codeberg.org/librarian/librarian/templates"
-	"github.com/gorilla/mux"
+	"codeberg.org/librarian/librarian/static"
+	"codeberg.org/librarian/librarian/views"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/etag"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/template/handlebars"
 	"github.com/spf13/viper"
 )
 
@@ -38,38 +41,39 @@ func main() {
     viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
 		viper.WriteConfig()
 	}
-
-	fmt.Println("Librarian started on port " + viper.GetString("PORT"))
-
-	r := mux.NewRouter()
-	r.HandleFunc("/", pages.FrontpageHandler)
-	r.HandleFunc("/image", proxy.ProxyImage)
-	r.HandleFunc("/search", pages.SearchHandler)
-	r.PathPrefix("/static").Handler(http.StripPrefix("/", http.FileServer(http.FS(templates.GetStaticFiles()))))
-	r.HandleFunc("/sw.js", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "application/javascript")
-		file, _ := templates.GetStaticFiles().ReadFile("static/js/sw.js")
-		w.Write(file)
+	
+	engine := handlebars.NewFileSystem(http.FS(views.GetFiles()), ".hbs")
+	app := fiber.New(fiber.Config{
+		Views: engine,
+		Prefork: true,
+		StreamRequestBody: true,
 	})
 
-	r.HandleFunc("/api/comments", api.CommentsHandler)
+	app.Use("/", etag.New())
+	app.Use("/static", filesystem.New(filesystem.Config{
+		Root: http.FS(static.GetFiles()),
+	}))
 
-	r.HandleFunc("/{channel}", pages.ChannelHandler)
-	r.HandleFunc("/{channel}/", pages.ChannelHandler)
-	r.HandleFunc("/$/invite/{channel}", pages.ChannelHandler)
-	r.HandleFunc("/$/invite/{channel}/", pages.ChannelHandler)
-	r.HandleFunc("/{channel}/rss", pages.ChannelRSSHandler)
-	r.HandleFunc("/embed/{channel}/{claim}", pages.EmbedHandler)
-	r.HandleFunc("/{channel}/{claim}", pages.ClaimHandler)
+	app.Get("/", pages.FrontpageHandler)
+	app.Get("/image", proxy.ProxyImage)
+	app.Get("/search", pages.SearchHandler)
+	
+	app.Get("/sw.js", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "application/javascript")
+		file, _ := static.GetFiles().ReadFile("static/js/sw.js")
+		_, err := c.Write(file)
+		return err
+	})
 
-	http.Handle("/", r)
+	app.Get("/api/comments", api.CommentsHandler)
 
-	srv := &http.Server{
-		Handler:      r,
-		Addr:         ":" + viper.GetString("PORT"),
-		WriteTimeout: 30 * time.Second,
-		ReadTimeout:  30 * time.Second,
-	}
+	app.Get("/:channel/", pages.ChannelHandler)
+	app.Get("/$/invite/:channel", pages.ChannelHandler)
+	app.Get("/$/invite/:channel/", pages.ChannelHandler)
+	app.Get("/:channel/rss", pages.ChannelRSSHandler)
+	app.Get("/embed/:channel/:claim", pages.EmbedHandler)
+	app.Get("/:channel", pages.ChannelHandler)
+	app.Get("/:channel/:claim", pages.ClaimHandler)
 
-	fmt.Println(srv.ListenAndServe())
+	app.Listen(":" + viper.GetString("PORT"))
 }

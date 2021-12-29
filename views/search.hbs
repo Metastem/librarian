@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> 'partials/head' }}
+
+  <link rel="stylesheet" href="/static/css/search.css" />
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <title>{{query.query}} - Librarian</title>
+</head>
+
+<body>
+  {{> 'partials/header' }}
+
+  <main>
+    <div class="results">
+      {{#each channels}}
+      <div class="video">
+        <div class="thumbnailWrapper">
+          <a href={{this.RelUrl}}>
+            <img class="thumbnail channelThumbnail" src="{{this.Thumbnail}}&w=420&h=420" loading="lazy" />
+          </a>
+        </div>
+        <p>
+          <b><a class="videoLink" href={{this.RelUrl}}>{{this.Title}}</a></b>
+        </p>
+        <p>
+          <a class="videoLink" href={{this.RelUrl}}>{{this.Name}}</a>
+        </p>
+        <p>
+          {{this.Followers}} followers<br>
+          {{this.UploadCount}} uploads
+        </p>
+      </div>
+      {{/each}}
+      {{#each claims}}
+      {{> 'partials/claim' }}
+      {{/each}}
+    </div>
+
+    <br><br>
+
+    <div class="pageSelector">
+      {{#equal query.prevPage "0" }}
+      {{else}}
+      <a class="videoLink" href="/search?q={{query.query}}&page={{query.prevPage}}">Previous page</a>
+      {{/equal}}
+      <a class="videoLink" href="/search?q={{query.query}}&page={{query.nextPage}}">Next page</a>
+    </div>
+  </main>
+
+  {{> 'partials/footer' }}
+</body>
+
+</html>

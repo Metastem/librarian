@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> 'partials/head' }}
+
+  <style>
+    header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .searchBar {
+      height: 16px;
+      font-size: 14px;
+      padding: 0.5em;
+      border: none;
+      border-bottom: 1px solid #d2d2d2;
+      outline: none;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
+    }
+    h2, p {
+      text-align: center;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: black;
+        color: white;
+      }
+
+      .logo {
+        filter: invert(1) hue-rotate(180deg);
+      }
+    }
+  </style>
+
+  <title>Blocked - Librarian</title>
+</head>
+
+<body>
+  {{> 'partials/header' }}
+
+  <main>
+    <h2>Access to this content has been blocked.</h2>
+    <p>This is likely due to a request under the Digital Millennium Copyright Act. If you believe this was mistake,
+      contact the instance operator.</p>
+    <p>Claim ID: {{claim.ClaimId}}</p>
+  </main>
+
+</body>
+
+</html>

@@ -101,7 +101,6 @@ func ReplaceStickersAndEmotes(text string) string {
 	emotes := re.FindAllString(text, len(text) / 4)
 	for i := 0; i < len(emotes); i++ {
 		emote := strings.ReplaceAll(emotes[i], ":", "")
-		println(emote)
 		if data.Stickers[emote] != "" {
 			proxiedImage := "/image?width=0&height=200&url=" + data.Stickers[emote] + "&hash=" + EncodeHMAC(data.Stickers[emote])
 			htmlEmote := `<img loading="lazy" src="` + proxiedImage + `" height="200px">`
