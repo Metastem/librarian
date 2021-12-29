@@ -4,11 +4,13 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"net/url"
 
 	"github.com/spf13/viper"
 )
 
 func EncodeHMAC(data string) string {
+	data, _ = url.QueryUnescape(data)
 	hmac := hmac.New(sha256.New, []byte(viper.GetString("HMAC_KEY")))
 	hmac.Write([]byte(data))
 
@@ -16,9 +18,6 @@ func EncodeHMAC(data string) string {
 }
 
 func VerifyHMAC(data string, mac string) bool {
-	h := hmac.New(sha256.New, []byte(viper.GetString("HMAC_KEY")))
-	h.Write([]byte(data))
-	expectedMAC := hex.EncodeToString(h.Sum(nil))
-
+	expectedMAC := EncodeHMAC(data)
 	return expectedMAC == mac
 }

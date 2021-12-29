@@ -102,6 +102,10 @@ iframe {
   display: none;
 }
 
+.emote {
+  display: inline;
+}
+
 #loadMore {
   cursor: pointer
 }

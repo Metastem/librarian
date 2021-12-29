@@ -7,10 +7,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	url2 "net/url"
 	"os"
+	"strings"
 
 	"codeberg.org/librarian/librarian/utils"
-  "github.com/spf13/viper"
+	"github.com/spf13/viper"
 )
 
 func ProxyImage(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +24,9 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !utils.VerifyHMAC(url, hash) {
+	unescapedUrl, _ := url2.QueryUnescape(url)
+	unescapedUrl, _ = url2.PathUnescape(unescapedUrl)
+	if !utils.VerifyHMAC(unescapedUrl, hash) {
 		w.WriteHeader(403)
 		w.Write([]byte("invalid hash"))
 		return
@@ -45,7 +49,12 @@ func ProxyImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Cache-Control", "public,max-age=31557600")
-	res, err := http.Get("https://thumbnails.odysee.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url)
+
+	requestUrl := "https://thumbnails.odysee.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
+	if strings.Contains(url, "static.odycdn.com/emoticons") {
+		requestUrl = url
+	}
+	res, err := http.Get(requestUrl)
 	if err != nil {
 		fmt.Println(err)
 	}

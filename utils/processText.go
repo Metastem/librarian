@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"codeberg.org/librarian/librarian/data"
 	"github.com/gomarkdown/markdown"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/spf13/viper"
@@ -29,6 +30,7 @@ func ProcessText(text string, newline bool) string {
 	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
 	text = html.UnescapeString(text)
 	text = bluemonday.UGCPolicy().Sanitize(text)
+	text = ReplaceStickersAndEmotes(text)
 
 	return text
 }
@@ -92,4 +94,26 @@ func LbryTo(link string, linkType string) string {
 func UrlEncode(link string) (string, error) {
 	link2, err := url.Parse(link)
 	return link2.String(), err
+}
+
+func ReplaceStickersAndEmotes(text string) string {
+	re := regexp.MustCompile(":(.*?):")
+	emotes := re.FindAllString(text, len(text) / 4)
+	for i := 0; i < len(emotes); i++ {
+		emote := strings.ReplaceAll(emotes[i], ":", "")
+		println(emote)
+		if data.Stickers[emote] != "" {
+			proxiedImage := "/image?width=0&height=200&url=" + data.Stickers[emote] + "&hash=" + EncodeHMAC(data.Stickers[emote])
+			htmlEmote := `<img loading="lazy" src="` + proxiedImage + `" height="200px">`
+
+			text = strings.ReplaceAll(text, emotes[i], htmlEmote)
+		} else if data.Emotes[emote] != "" {
+			proxiedImage := "/image?url=" + data.Emotes[emote] + "&hash=" + EncodeHMAC(data.Emotes[emote])
+			htmlEmote := `<img loading="lazy" class="emote" src="` + proxiedImage + `" height="24px">`
+
+			text = strings.ReplaceAll(text, emotes[i], htmlEmote)
+		}
+	}
+
+	return text
 }
