@@ -8,6 +8,10 @@
   display: none;
 }
 
+.comments__expandBtn__txt {
+  color: #000
+}
+
 .comments__expandBtn__label {
   display: flex;
   flex-direction: row;
@@ -15,6 +19,8 @@
   align-items: center;
   cursor: pointer;
   user-select: none;
+  text-decoration: none;
+  color: #000
 }
 
 .comments__expandBtn__icon {
