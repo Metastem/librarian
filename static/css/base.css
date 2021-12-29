@@ -47,6 +47,17 @@ main {
   gap: 1rem;
 }
 
+.claimLink {
+  color: #000;
+}
+
+.claimMeta {
+  display: flex;
+  font-weight: 600;
+  font-size: 14px;
+  justify-content: space-between;
+}
+
 .pfp {
   border-radius: 100%;
   object-fit: cover;
@@ -115,13 +126,6 @@ label {
   font-size: 16px;
   right: 0.25em;
   bottom: -0.75em;
-}
-
-.claimMeta {
-  display: flex;
-  font-weight: 600;
-  font-size: 14px;
-  justify-content: space-between;
 }
 
 .pageSelector {
