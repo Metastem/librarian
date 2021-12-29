@@ -76,7 +76,9 @@
   {{> 'partials/footer' }}
 
   {{#unless nojs}}
+  {{#unless document}}
   <script src="/static/js/plyr.js"></script>
+  {{/if}}
   <script src="/static/js/comments.js"></script>
   <script>
     document.getElementById("nojs").remove();
