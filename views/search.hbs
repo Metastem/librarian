@@ -21,27 +21,7 @@
   <main>
     <div class="claimsGrid">
       {{#each channels}}
-      <div class="video">
-        <div class="thumbnailWrapper">
-          <a href={{this.RelUrl}}>
-            {{#if this.Thumbnail}}
-            <img class="thumbnail channelThumbnail" src="{{this.Thumbnail}}&w=420&h=420" loading="lazy" />
-            {{else}}
-            <img src="/static/img/spaceman.png" class="thumbnail channelThumbnail pfp--default" width="420" height="420" loading="lazy" />
-            {{/if}}
-          </a>
-        </div>
-        <p>
-          <b><a class="videoLink" href={{this.RelUrl}}>{{this.Title}}</a></b>
-        </p>
-        <p>
-          <a class="videoLink" href={{this.RelUrl}}>{{this.Name}}</a>
-        </p>
-        <p>
-          {{this.Followers}} followers<br>
-          {{this.UploadCount}} uploads
-        </p>
-      </div>
+      {{> partials/claim}}
       {{/each}}
       {{#each claims}}
       {{> 'partials/claim' }}
