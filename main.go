@@ -46,6 +46,7 @@ func main() {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 		Prefork: viper.GetBool("FIBER_PREFORK"),
+		UnescapePath: true,
 		StreamRequestBody: true,
 	})
 
