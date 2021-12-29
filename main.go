@@ -45,7 +45,7 @@ func main() {
 	engine := handlebars.NewFileSystem(http.FS(views.GetFiles()), ".hbs")
 	app := fiber.New(fiber.Config{
 		Views: engine,
-		Prefork: true,
+		Prefork: viper.GetBool("FIBER_PREFORK"),
 		StreamRequestBody: true,
 	})
 

@@ -1,6 +1,7 @@
 DOMAIN: 'https://domain.tld'
 PORT: '3000'
 API_URL: 'https://api.na-backend.odysee.com/api/v1/proxy'
+FIBER_PREFORK: false
 # Block access to claims in case of DMCA
 BLOCKED_CLAIMS: 'claimid,claim2'
 # AUTH_TOKEN and HMAC_KEY is automatically generated
@@ -12,3 +13,4 @@ VIDEO_STREAMING_URL: ''
 IMAGE_CACHE: 'false'
 IMAGE_CACHE_DIR: '/var/cache/librarian'
 # Experimental: Optimized video delivery for Odysee YouTube synced videos. https://codeberg.org/librarian/staticache
+STC_URL: ''
