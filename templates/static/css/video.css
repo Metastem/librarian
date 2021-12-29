@@ -190,6 +190,7 @@ video {
   width: 32px;
   height: 32px;
 }
+
 .spinner:after {
   content: " ";
   display: block;
@@ -200,6 +201,7 @@ video {
   border-color: #000 transparent #000 transparent;
   animation: spinner 1.2s linear infinite;
 }
+
 @keyframes spinner {
   0% {
     transform: rotate(0deg);
@@ -208,7 +210,6 @@ video {
     transform: rotate(360deg);
   }
 }
-
 
 .relVids {
   display: flex;

@@ -101,44 +101,15 @@
           <h3>Comments ({{.commentsLength}})</h3>
           <span class="comments__expandBtn__icon material-icons-outlined"></span>
         </label>
-        <div class="comments">
-          {{range $index, $value := .comments}}
-          <div class="comment">
-            {{if $value.Channel.Thumbnail}}
-            <img src="{{$value.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
-            {{else}}
-            <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
-            {{end}}
-            <div>
-              <a href="{{$value.Channel.Url}}">
-                <p>
-                  {{if $value.Channel.Title}}
-                  <b>{{$value.Channel.Title}}</b>
-                  <br>
-                  {{$value.Channel.Name}}
-                  {{else}}
-                  <b>{{$value.Channel.Name}}</b>
-                  {{end}}
-                </p>
-              </a>
-              {{$value.Comment}}
-
-              {{if eq $value.RelTime "a long while ago"}}
-              <p>
-                {{$value.Time}} |
-                <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
-                <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
-              </p>
-              {{else}}
-              <p title="{{$value.Time}}">
-                {{$value.RelTime}} |
-                <span class="material-icons-outlined">thumb_up</span> {{$value.Likes}}
-                <span class="material-icons-outlined">thumb_down</span> {{$value.Dislikes}}
-              </p>
-              {{end}}
-            </div>
-          </div>
-          {{end}}
+        <div id="comments" class="comments">
+          <p id="nojs">
+            <a href="{{.video.RelUrl}}?nojs=1">
+              Hi! Looks like you have JavaScript turned off. Click here to view comments, keep in mind they may take a bit longer to load.
+            </a>
+          </p>
+        </div>
+        <div id="spinner" class="center">
+          <div class="spinner"></div>
         </div>
       </div>
       <hr>
