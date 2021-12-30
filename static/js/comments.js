@@ -56,7 +56,6 @@ async function comments(claimId, channelId, channelName, page) {
 }
 
 function renderComments() {
-  console.log(commentsArr)
   commentsArr = commentsArr.sort((a, b) => (b.Likes - b.Dislikes) - (a.Likes - a.Dislikes))
 
   let commentsHTML = "";
