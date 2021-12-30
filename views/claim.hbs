@@ -20,7 +20,9 @@
   <meta name="twitter:description" content="">
   <meta name="twitter:image" content="{{config.DOMAIN}}{{claim.ThumbnailUrl}}">
 
+
   {{#if document}}
+  <link rel="stylesheet" href="/static/css/video.css" />
   <style>
     iframe {
       border: none;
@@ -37,8 +39,8 @@
   </style>
   {{else}}
   <link rel="stylesheet" href="/static/css/plyr.css" />
-  {{/if}}
   <link rel="stylesheet" href="/static/css/video.css" />
+  {{/if}}
 
   <link rel="stylesheet" href="/static/css/comments.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
