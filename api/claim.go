@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/types"
@@ -43,8 +44,14 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
 	claimDataRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	if err != nil {
+		return types.Claim{}, err
+	}
 
 	claimDataBody, err := ioutil.ReadAll(claimDataRes.Body)
+	if err != nil {
+		return types.Claim{}, err
+	}
 
 	claimData := gjson.Get(string(claimDataBody), "result.lbry*")
 	if claimData.Get("error.name").String() != "" {
@@ -57,13 +64,19 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 }
 
 func ProcessClaim(claimData gjson.Result) types.Claim {
+	wg := sync.WaitGroup{}
+
 	tags := make([]string, 0)
-	claimData.Get("value.tags").ForEach(
-		func(key gjson.Result, value gjson.Result) bool {
-			tags = append(tags, value.String())
-			return true
-		},
-	)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		claimData.Get("value.tags").ForEach(
+			func(key gjson.Result, value gjson.Result) bool {
+				tags = append(tags, value.String())
+				return true
+			},
+		)
+	}()
 
 	claimId := claimData.Get("claim_id").String()
 	lbryUrl := claimData.Get("canonical_url").String()
@@ -72,12 +85,23 @@ func ProcessClaim(claimData gjson.Result) types.Claim {
 	time := time.Unix(claimData.Get("value.release_time").Int(), 0)
 	thumbnail := claimData.Get("value.thumbnail.url").String()
 	channelThumbnail := claimData.Get("signing_channel.value.thumbnail.url").String()
-	if channelThumbnail != "" {
-		channelThumbnail = "/image?url=" + channelThumbnail + "&hash=" + utils.EncodeHMAC(channelThumbnail)
-	}
 
-	likeDislike := GetLikeDislike(claimId)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if channelThumbnail != "" {
+			channelThumbnail = "/image?url=" + channelThumbnail + "&hash=" + utils.EncodeHMAC(channelThumbnail)
+		}
+	}()
 
+	likeDislike := []int64{}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		likeDislike = GetLikeDislike(claimId)
+	}()
+
+	wg.Wait()
 	return types.Claim{
 		Url:       utils.LbryTo(lbryUrl, "http"),
 		LbryUrl:   lbryUrl,
@@ -105,7 +129,7 @@ func ProcessClaim(claimData gjson.Result) types.Claim {
 		Tags:         tags,
 		RelTime:      humanize.Time(time),
 		Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-		StreamType: 	claimData.Get("value.stream_type").String(),
+		StreamType:   claimData.Get("value.stream_type").String(),
 	}
 }
 

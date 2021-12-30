@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/patrickmn/go-cache"
@@ -47,20 +48,27 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	results := make([]interface{}, 0)
 	resultsData := gjson.Parse(string(searchDataBody))
 
+	wg := sync.WaitGroup{}
 	resultsData.ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			if claimType == "file" {
-				vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
-				if err == nil {
-					results = append(results, vid)
+			wg.Add(1)
+
+			go func() {
+				defer wg.Done()
+				if claimType == "file" {
+					vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
+					if err == nil {
+						results = append(results, vid)
+					}
+				} else if claimType == "channel" {
+					results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
 				}
-			} else if claimType == "channel" {
-				results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
-			}
+			}()
 
 			return true
 		},
 	)
+	wg.Wait()
 
 	searchCache.Set(query+fmt.Sprint(page)+claimType+fmt.Sprint(nsfw), results, cache.DefaultExpiration)
 	return results, nil

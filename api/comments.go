@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/types"
@@ -92,35 +93,41 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 
 	comments := make([]types.Comment, 0)
 
+	wg := sync.WaitGroup{}
 	gjson.Get(string(commentsDataBody), "result.items").ForEach(
 		func(key, value gjson.Result) bool {
+			wg.Add(1)
 
-			timestamp := time.Unix(value.Get("timestamp").Int(), 0)
+			go func() {
+				defer wg.Done()
+				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
-			comment := utils.ProcessText(value.Get("comment").String(), false)
+				comment := utils.ProcessText(value.Get("comment").String(), false)
 
-			commentId := value.Get("comment_id").String()
+				commentId := value.Get("comment_id").String()
 
-			comments = append(comments, types.Comment{
-				Channel:   GetChannel(value.Get("channel_url").String(), false),
-				Comment:   template.HTML(comment),
-				CommentId: commentId,
-				ParentId:  value.Get("parent_id").String(),
-				Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
-				RelTime:   humanize.Time(timestamp),
-				Likes:     likesDislikes[commentId][0],
-				Dislikes:  likesDislikes[commentId][1],
-			})
+				comments = append(comments, types.Comment{
+					Channel:   GetChannel(value.Get("channel_url").String(), false),
+					Comment:   template.HTML(comment),
+					CommentId: commentId,
+					ParentId:  value.Get("parent_id").String(),
+					Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
+					RelTime:   humanize.Time(timestamp),
+					Likes:     likesDislikes[commentId][0],
+					Dislikes:  likesDislikes[commentId][1],
+				})
+			}()
 
 			return true
 		},
 	)
+	wg.Wait()
 
 	sort.Slice(comments[:], func(i, j int) bool {
 		return comments[i].Likes > comments[j].Likes
 	})
 
-	commentCache.Set(claimId + fmt.Sprint(page) + fmt.Sprint(pageSize), comments, cache.DefaultExpiration)
+	commentCache.Set(claimId+fmt.Sprint(page)+fmt.Sprint(pageSize), comments, cache.DefaultExpiration)
 	return comments
 }
 
@@ -145,14 +152,12 @@ func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 	}
 
 	likesDislikes := make(map[string][]int64)
-
 	gjson.Get(string(commentsDataBody), "result.others_reactions").ForEach(
 		func(key, value gjson.Result) bool {
 			likesDislikes[key.String()] = []int64{
 				value.Get("like").Int(),
 				value.Get("dislike").Int(),
 			}
-
 			return true
 		},
 	)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/data"
@@ -30,12 +31,12 @@ func GetFrontpageVideos() []types.Claim {
 		"id":      1,
 		"method":  "claim_search",
 		"params": map[string]interface{}{
-			"page_size":  20,
-			"no_totals":  true,
-			"claim_type": "stream",
-			"any_tags":   []string{},
-			"not_tags":   []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"},
-			"channel_ids": data.Home,
+			"page_size":                20,
+			"no_totals":                true,
+			"claim_type":               "stream",
+			"any_tags":                 []string{},
+			"not_tags":                 []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"},
+			"channel_ids":              data.Home,
 			"not_channel_ids":          []string{},
 			"order_by":                 []string{"release_time"},
 			"fee_amount":               "<=0",
@@ -57,41 +58,48 @@ func GetFrontpageVideos() []types.Claim {
 	claims := make([]types.Claim, 0)
 	claimsData := gjson.Parse(string(frontpageDataBody))
 
+	wg := sync.WaitGroup{}
 	claimsData.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			claimId := value.Get("claim_id").String()
-			lbryUrl := value.Get("canonical_url").String()
-			channelLbryUrl := value.Get("signing_channel.canonical_url").String()
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				
+				claimId := value.Get("claim_id").String()
+				lbryUrl := value.Get("canonical_url").String()
+				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
 
-			time := time.Unix(value.Get("value.release_time").Int(), 0)
-			thumbnail := value.Get("value.thumbnail.url").String()
+				time := time.Unix(value.Get("value.release_time").Int(), 0)
+				thumbnail := value.Get("value.thumbnail.url").String()
 
-			claims = append(claims, types.Claim{
-				Url:       utils.LbryTo(lbryUrl, "http"),
-				LbryUrl:   lbryUrl,
-				RelUrl:    utils.LbryTo(lbryUrl, "rel"),
-				OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
-				ClaimId:   value.Get("claim_id").String(),
-				Channel: types.Channel{
-					Name:      value.Get("signing_channel.name").String(),
-					Title:     value.Get("signing_channel.value.title").String(),
-					Id:        value.Get("signing_channel.claim_id").String(),
-					Url:       utils.LbryTo(channelLbryUrl, "http"),
-					RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
-					OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
-				},
-				Title:        value.Get("value.title").String(),
-				ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-				Views:        GetViews(claimId),
-				Timestamp:    time.Unix(),
-				Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-				Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
-				RelTime:      humanize.Time(time),
-			})
+				claims = append(claims, types.Claim{
+					Url:       utils.LbryTo(lbryUrl, "http"),
+					LbryUrl:   lbryUrl,
+					RelUrl:    utils.LbryTo(lbryUrl, "rel"),
+					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+					ClaimId:   value.Get("claim_id").String(),
+					Channel: types.Channel{
+						Name:      value.Get("signing_channel.name").String(),
+						Title:     value.Get("signing_channel.value.title").String(),
+						Id:        value.Get("signing_channel.claim_id").String(),
+						Url:       utils.LbryTo(channelLbryUrl, "http"),
+						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
+						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
+					},
+					Title:        value.Get("value.title").String(),
+					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
+					Views:        GetViews(claimId),
+					Timestamp:    time.Unix(),
+					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
+					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
+					RelTime:      humanize.Time(time),
+				})
+			}()
 
 			return true
 		},
 	)
+	wg.Wait()
 
 	commentCache.Set("fp", claims, cache.DefaultExpiration)
 	return claims
