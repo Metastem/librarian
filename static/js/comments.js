@@ -1,4 +1,35 @@
 let commentsArr = [];
+const filterKeywords = [
+  "nigger",
+	"racist",
+	"leftist",
+	"immigration",
+	"immigrate",
+	"liberal",
+	"communist",
+	"commie",
+	"fuck",
+	"cunt",
+	"faggot",
+	"retard",
+	"woke",
+	"bitch",
+	"arab",
+  "jew",
+	"pussies",
+	"pussy",
+  "thug",
+	"asshole",
+	"entitled",
+	"virtue",
+	"signaling",
+	"covid-19",
+	"coronavirus",
+	"vaccine",
+	"soy",
+	"suck",
+	"hypocrite"
+];
 
 async function comments(claimId, channelId, channelName, page) {
   document.getElementById("spinner").style.display = "flex"
@@ -8,6 +39,12 @@ async function comments(claimId, channelId, channelName, page) {
   data.comments.forEach(comment => {
     commentsArr.push(comment)
   });
+  if (window.location.hash == "#filter") {
+    filterKeywords.forEach(keyword => {
+      commentsArr = commentsArr.filter(comment => !comment.Comment.toLowerCase().includes(keyword))
+    })
+  }
+
   renderComments()
 
   let comments = document.getElementById("comments").innerHTML;
