@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net/http"
 	"sort"
 	"strconv"
 	"strings"
@@ -70,7 +69,7 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := http.Post("https://comments.odysee.com/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
+	commentsDataRes, err := Client.Post("https://comments.odysee.com/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -141,7 +140,7 @@ func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := http.Post("https://api.na-backend.odysee.com/api/v1/proxy?m=comment_react_list", "application/json", bytes.NewBuffer(commentsData))
+	commentsDataRes, err := Client.Post("https://api.na-backend.odysee.com/api/v1/proxy?m=comment_react_list", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
 		fmt.Println(err)
 	}

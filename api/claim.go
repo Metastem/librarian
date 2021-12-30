@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 	"sync"
 	"time"
@@ -43,7 +42,7 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	claimDataRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	claimDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
 		return types.Claim{}, err
 	}
@@ -139,7 +138,7 @@ func GetViews(claimId string) int64 {
 		return cacheData.(int64)
 	}
 
-	viewCountRes, err := http.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	viewCountRes, err := Client.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -160,7 +159,7 @@ func GetLikeDislike(claimId string) []int64 {
 		return cacheData.([]int64)
 	}
 
-	likeDislikeRes, err := http.PostForm("https://api.odysee.com/reaction/list", url.Values{
+	likeDislikeRes, err := Client.PostForm("https://api.odysee.com/reaction/list", url.Values{
 		"claim_ids": []string{claimId},
 	})
 	if err != nil {

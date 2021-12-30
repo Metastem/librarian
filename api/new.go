@@ -3,14 +3,13 @@ package api
 import (
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 
 	"github.com/tidwall/gjson"
 )
 
 func NewUser() string {
-	response, err := http.PostForm("https://api.odysee.com/user/new", url.Values{
+	response, err := Client.PostForm("https://api.odysee.com/user/new", url.Values{
 		"auth_token": []string{},
 		"language": []string{"en"},
 		"app_id": []string{"odyseecom692EAWhtoqDuAfQ6KHMXxFxt8tkhmt7sfprEMHWKjy5hf6PwZcHDV542V"},

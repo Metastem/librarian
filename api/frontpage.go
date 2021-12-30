@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"sync"
 	"time"
 
@@ -45,7 +44,7 @@ func GetFrontpageVideos() []types.Claim {
 		},
 	}
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
-	frontpageDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
+	frontpageDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
 	if err != nil {
 		fmt.Println(err)
 	}

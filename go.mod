@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/template v1.6.20
 	github.com/gomarkdown/markdown v0.0.0-20210514010506-3b9f47219fe7
 	github.com/gorilla/feeds v1.1.1
+	github.com/lucas-clemente/quic-go v0.24.0
 	github.com/microcosm-cc/bluemonday v1.0.15
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/viper v1.8.1

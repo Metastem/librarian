@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
@@ -47,11 +48,13 @@ func ProxyImage(c *fiber.Ctx) error {
 
 	c.Set("Cache-Control", "public,max-age=31557600")
 
+	client := http.Client{}
 	requestUrl := "https://thumbnails.odysee.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
 	if strings.Contains(url, "static.odycdn.com/emoticons") {
 		requestUrl = url
+		client = *api.Client
 	}
-	res, err := http.Get(requestUrl)
+	res, err := client.Get(requestUrl)
 	if err != nil {
 		return err
 	}

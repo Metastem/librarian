@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -39,7 +38,7 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	channelRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	channelRes, err := Client.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
 		fmt.Println(err)
 		return types.Channel{}
@@ -111,7 +110,7 @@ func GetChannelFollowers(claimId string) (int64, error) {
 		return cacheData.(int64), nil
 	}
 
-	res, err := http.Get("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	res, err := Client.Get("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		return 0, err
 	}
@@ -146,7 +145,7 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 		},
 	}
 	channelData, _ := json.Marshal(channelDataMap)
-	channelDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
+	channelDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
 	if err != nil {
 		fmt.Println(err)
 	}
