@@ -3,6 +3,7 @@ package pages
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
@@ -30,14 +31,28 @@ func SearchHandler(c *fiber.Ctx) error {
 	}
 
 	query := c.Query("q")
-	claimResults, err := api.Search(query, page, "file", nsfw, "")
-	if err != nil {
+
+	wg := sync.WaitGroup{}
+	claimResults, err := make([]interface{}, 0), fmt.Errorf("")
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		claimResults, err = api.Search(query, page, "file", nsfw, "")
+	}()
+	if err.Error() != "" {
 		return utils.HandleError(c, err)
 	}
-	channelResults, err := api.Search(query, page, "channel", nsfw, "")
-	if err != nil {
+
+	channelResults, err := make([]interface{}, 0), fmt.Errorf("")
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		channelResults, err = api.Search(query, page, "channel", nsfw, "")
+	}()
+	if err.Error() != "" {
 		return utils.HandleError(c, err)
 	}
+	wg.Wait()
 
 	return c.Render("search", fiber.Map{
 		"claims":   claimResults,

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
@@ -54,38 +55,56 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 		if c.Query("nojs") == "1" {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
-			
+
 			return c.Render("claim", fiber.Map{
-				"document":				document,
+				"document":       document,
 				"claim":          claimData,
 				"comments":       comments,
 				"commentsLength": len(comments),
-				"nojs":						true,
+				"nojs":           true,
 				"config":         viper.AllSettings(),
 			})
 		} else {
 			return c.Render("claim", fiber.Map{
-				"document":				document,
-				"claim":          claimData,
-				"nojs":						false,
-				"config":         viper.AllSettings(),
+				"document": document,
+				"claim":    claimData,
+				"nojs":     false,
+				"config":   viper.AllSettings(),
 			})
 		}
 	case "video":
-		videoStream := api.GetVideoStream(claimData.LbryUrl)
-		stcStream := map[string]string{"sd": ""}
-		if viper.GetString("STC_URL") != "" {
-			stcStream = api.GetStcStream(claimData.ClaimId)
-		}
+		wg := sync.WaitGroup{}
 
-		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
-		if err != nil {
+		videoStream := ""
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			videoStream = api.GetVideoStream(claimData.LbryUrl)
+		}()
+
+		stcStream := map[string]string{"sd": ""}
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if viper.GetString("STC_URL") != "" {
+				stcStream = api.GetStcStream(claimData.ClaimId)
+			}
+		}()
+
+		relatedVids, err := make([]interface{}, 0), fmt.Errorf("")
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			relatedVids, err = api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
+		}()
+		if err.Error() != "" {
 			return utils.HandleError(c, err)
 		}
 
+		wg.Wait()
 		if c.Query("nojs") == "1" {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
-			
+
 			return c.Render("claim", fiber.Map{
 				"stream":         videoStream,
 				"claim":          claimData,
@@ -93,20 +112,20 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"commentsLength": len(comments),
 				"relatedVids":    relatedVids,
 				"config":         viper.AllSettings(),
-				"nojs":						true,
+				"nojs":           true,
 				"stcStream":      stcStream,
 			})
 		} else {
 			return c.Render("claim", fiber.Map{
-				"stream":         videoStream,
-				"claim":          claimData,
-				"relatedVids":    relatedVids,
-				"config":         viper.AllSettings(),
-				"nojs":						false,
-				"stcStream":      stcStream,
+				"stream":      videoStream,
+				"claim":       claimData,
+				"relatedVids": relatedVids,
+				"config":      viper.AllSettings(),
+				"nojs":        false,
+				"stcStream":   stcStream,
 			})
 		}
 	default:
-		return utils.HandleError(c, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
+		return utils.HandleError(c, fmt.Errorf("unsupported stream type: "+claimData.StreamType))
 	}
 }
