@@ -12,7 +12,7 @@ var Client = &http.Client{
 }
 
 func CheckUseHttp3() {
-	if viper.GetBool("USE_HTTP3") == true {
+	if viper.GetBool("USE_HTTP3") {
 		Client = &http.Client{}
 	}
 }
