@@ -30,11 +30,15 @@
     main {
       margin: 0 24vw;
     }
+
+    .videoData__left {
+      width: 100%;
+    }
   </style>
   {{else}}
   <link rel="stylesheet" href="/static/css/plyr.css" />
-  <link rel="stylesheet" href="/static/css/video.css" />
   {{/if}}
+  <link rel="stylesheet" href="/static/css/video.css" />
 
   <link rel="stylesheet" href="/static/css/comments.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
@@ -78,11 +82,7 @@
   {{#unless nojs}}
   {{#unless document}}
   <script src="/static/js/plyr.js"></script>
-  {{/unless}}
-  <script src="/static/js/comments.js"></script>
   <script>
-    document.getElementById("nojs").remove();
-
     const player = new Plyr('#player');
 
     document.addEventListener('keydown', (event) => {
@@ -95,6 +95,11 @@
           break;
       }
     });
+  </script>
+  {{/unless}}
+  <script src="/static/js/comments.js"></script>
+  <script>
+    document.getElementById("nojs").remove();
 
     comments("{{claim.ClaimId}}", "{{claim.Channel.Id}}", "{{claim.Channel.Name}}", 1)
 
