@@ -10,6 +10,7 @@ const filterKeywords = [
 	"commie",
 	"fuck",
 	"cunt",
+  "fag",
 	"faggot",
 	"retard",
 	"woke",
