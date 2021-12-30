@@ -117,6 +117,10 @@ label {
   object-fit: cover;
 }
 
+.channelThumbnail {
+  object-fit: scale-down;
+}
+
 .duration {
   position: absolute;
   background-color: rgba(35, 35, 35, 0.75);
