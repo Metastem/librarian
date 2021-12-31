@@ -52,6 +52,11 @@ func GetVideoStream(video string) string {
 	return returnData
 }
 
+func GetVideoStreamType(url string) string {
+	res, _ := http.Head(url)
+	return res.Header.Get("Content-Type")
+}
+
 func GetStcStream(claimId string) map[string]string {
 	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?claim_id=" + claimId)
 	if err != nil {
