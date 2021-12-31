@@ -92,6 +92,7 @@ func GetFrontpageVideos() []types.Claim {
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
 					RelTime:      humanize.Time(time),
+					StreamType:   value.Get("value.stream_type").String(),
 				})
 			}()
 
