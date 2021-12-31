@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> 'partials/head' }}
+
+  <style>
+    main {
+      margin: 0 24vw
+    }
+    ul {
+      list-style: outside none none
+    }
+  </style>
+  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <title>Instance privacy - Librarian</title>
+</head>
+
+<body>
+  {{> 'partials/header' }}
+
+  <main>
+    <h1>Instance Privacy</h1>
+    <p>The instance operator has indicated their instance's privacy practices below. For more information, see the
+      instance operator's privacy policy.</p>
+
+    <p>For more details, see <a href="https://codeberg.org/librarian/librarian/wiki/Instance-privacy">https://codeberg.org/librarian/librarian/wiki/Instance-privacy</a></p>
+
+    {{#unless config.instance_privacy.data_not_collected}}
+    <h2>Data Collected</h2>
+    <p>The following data may be collected:</p>
+    <ul>
+      {{#if config.instance_privacy.data_collected_ip}}
+      <li>
+        <span class="material-icons-outlined">password</span>
+        IP Address
+      </li>
+      {{/if}}
+      {{#if config.instance_privacy.data_collected_url}}
+      <li>
+        <span class="material-icons-outlined">link</span>
+        Request URL
+      </li>
+      {{/if}}
+      {{#if config.instance_privacy.data_collected_device}}
+      <li>
+        <span class="material-icons-outlined">phonelink</span>
+        Device Type
+      </li>
+      {{/if}}
+      {{#if config.instance_privacy.data_collected_diagnostics}}
+      <li>
+        <span class="material-icons-outlined">settings</span>
+        Diagnostics
+      </li>
+      {{/if}}
+    </ul>
+    {{/unless}}
+
+    {{#if config.instance_privacy.data_not_collected}}
+    <h2>Data Not Collected</h2>
+    <p>The instance operator does not collect any data from this instance.</p>
+    {{/if}}
+    
+    {{#unless config.instance_privacy}}
+    <h2>No Details Provided</h2>
+    <p>The operator of this instance will be required to provide privacy details when being added to the instance list.</p>
+    {{/unless}}
+
+    <h2>Additional information</h2>
+    <ul>
+      <li>Country: {{config.instance_privacy.instance_country}}</li>
+      <li>Provider: {{config.instance_privacy.instance_provider}}</li>
+      {{#if config.instance_privacy.instance_cloudflare}}
+      <li>Cloudflare: ✅️</li>
+      {{else}}
+      <li>Cloudflare: ❌️</li>
+      {{/if}}
+      {{#if config.video_streaming_url}}
+      <li>Video streaming URL: {{config.video_streaming_url}}</li>
+      {{else}}
+      <li>Video streaming URL: https://cdn.lbryplayer.xyz</li>
+      {{/if}}
+    </ul>
+  </main>
+
+  {{> 'partials/footer' }}
+
+  <script src="/sw.js"></script>
+</body>
+
+</html>

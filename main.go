@@ -58,6 +58,7 @@ func main() {
 	app.Get("/", pages.FrontpageHandler)
 	app.Get("/image", proxy.ProxyImage)
 	app.Get("/search", pages.SearchHandler)
+	app.Get("/privacy", pages.PrivacyHandler)
 	
 	app.Get("/sw.js", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "application/javascript")
