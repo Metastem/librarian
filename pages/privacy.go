@@ -1,8 +1,6 @@
 package pages
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
