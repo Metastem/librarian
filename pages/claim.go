@@ -77,11 +77,15 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 		videoStream := ""
 		videoStreamType := ""
+		isHls := false
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			videoStream = api.GetVideoStream(claimData.LbryUrl)
 			videoStreamType = api.GetVideoStreamType(videoStream)
+			if videoStreamType == "application/x-mpegurl" {
+				isHls = true
+			}
 		}()
 
 		relatedVids, err := make([]interface{}, 0), fmt.Errorf("")
@@ -100,7 +104,6 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 			return c.Render("claim", fiber.Map{
 				"stream":         videoStream,
-				"streamType":	 videoStreamType,
 				"claim":          claimData,
 				"comments":       comments,
 				"commentsLength": len(comments),
@@ -112,6 +115,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			return c.Render("claim", fiber.Map{
 				"stream":      videoStream,
 				"streamType":	 videoStreamType,
+				"isHls":			 isHls,
 				"claim":       claimData,
 				"relatedVids": relatedVids,
 				"config":      viper.AllSettings(),
