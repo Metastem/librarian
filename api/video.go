@@ -56,23 +56,3 @@ func GetVideoStreamType(url string) string {
 	res, _ := http.Head(url)
 	return res.Header.Get("Content-Type")
 }
-
-func GetStcStream(claimId string) map[string]string {
-	stcRes, err := http.Get(viper.GetString("STC_URL") + "/find?claim_id=" + claimId)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	stcBody, err2 := ioutil.ReadAll(stcRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
-
-	data := gjson.Parse(string(stcBody))
-
-	return map[string]string{
-		"fhd": data.Get("1080p").String(),
-		"hd": data.Get("720p").String(),
-		"sd": data.Get("480p").String(),
-	}
-}

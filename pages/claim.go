@@ -84,15 +84,6 @@ func ClaimHandler(c *fiber.Ctx) error {
 			videoStreamType = api.GetVideoStreamType(videoStream)
 		}()
 
-		stcStream := map[string]string{"sd": ""}
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			if viper.GetString("STC_URL") != "" {
-				stcStream = api.GetStcStream(claimData.ClaimId)
-			}
-		}()
-
 		relatedVids, err := make([]interface{}, 0), fmt.Errorf("")
 		wg.Add(1)
 		go func() {
@@ -116,7 +107,6 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"relatedVids":    relatedVids,
 				"config":         viper.AllSettings(),
 				"nojs":           true,
-				"stcStream":      stcStream,
 			})
 		} else {
 			return c.Render("claim", fiber.Map{
@@ -126,7 +116,6 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"relatedVids": relatedVids,
 				"config":      viper.AllSettings(),
 				"nojs":        false,
-				"stcStream":   stcStream,
 			})
 		}
 	default:

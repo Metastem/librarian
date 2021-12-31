@@ -34,15 +34,10 @@ func EmbedHandler(c *fiber.Ctx) error {
 
 	if claimData.StreamType == "video" {
 		videoStream := api.GetVideoStream(claimData.LbryUrl)
-		stcStream := map[string]string{"sd": ""}
-		if viper.GetString("STC_URL") != "" {
-			stcStream = api.GetStcStream(claimData.ClaimId)
-		}
 
 		return c.Render("embed", fiber.Map{
 			"stream":         videoStream,
 			"video":          claimData,
-			"stcStream":      stcStream,
 		})
 	} else {
 		return utils.HandleError(c, fmt.Errorf("unsupported stream type: " + claimData.StreamType))

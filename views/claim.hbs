@@ -102,18 +102,13 @@
       })
     }
   </script>
-
+  {{#unless document}}
   {{#equal streamType "application/x-mpegurl"}}
-  {{#unless stcStream.sd}}
   <script src="/static/js/hls.js"></script>
   <script src="/static/js/plyr-hls.js"></script>
   {{else}}
-  <script>
-    const player = new Plyr('#player');
-  </script>
-  {{/unless}}
+  <script>const player = new Plyr('#player');</script>
   {{/equal}}
-  {{#unless document}}
   <script src="/static/js/plyr.js"></script>
   <script>
     document.addEventListener('keydown', (event) => {

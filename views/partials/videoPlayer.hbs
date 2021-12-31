@@ -1,17 +1,9 @@
 <div class="videoWrapper">
   <video id="player" class="videoPlayer" poster="{{claim.ThumbnailUrl}}&w=1280&h=720" controls=true>
-    {{#unless stcStream.sd}}
     {{#if nojs}}
     <source type="{{streamType}}" src="{{stream}}?download=1">
     {{else}}
     <source type="{{streamType}}" src="{{stream}}">
     {{/if}}
-    {{else}}
-    <source type="video/webm" src="{{stcStream.fhd}}" size="1080">
-    <source type="video/webm" src="{{stcStream.hd}}" size="720">
-    <source type="video/webm" src="{{stcStream.sd}}" size="480">
-    <!--For Apple devices-->
-    <source type="{{streamType}}" src="{{stream}}" size="LBRY Stream">
-    {{/unless}}
   </video>
 </div>
