@@ -22,8 +22,12 @@
 
   <main>
     <h1>Instance Privacy</h1>
+    {{#if config.instance_privacy.privacy_policy}}
     <p>The instance operator has indicated their instance's privacy practices below. For more information, see the
-      instance operator's privacy policy.</p>
+      instance operator's <a href="{{config.instance_privacy.privacy_policy}}">privacy policy</a>.</p>
+    {{else}}
+    <p>The instance operator has indicated their instance's privacy practices below.</p>
+    {{/if}}
 
     <p>For more details, see <a href="https://codeberg.org/librarian/librarian/wiki/Instance-privacy">https://codeberg.org/librarian/librarian/wiki/Instance-privacy</a></p>
 
