@@ -24,8 +24,8 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
 
 ## Demo
 
-[Video](https://librarian.bcow.xyz/@MusicARetro:e/Rick+Astley+Never+Gonna+Give+You+Up:4)<br>
-[Channel](https://librarian.bcow.xyz/@DistroTube:2)
+[Video](https://lbry.bcow.xyz/@MusicARetro:e/Rick+Astley+Never+Gonna+Give+You+Up:4)<br>
+[Channel](https://lbry.bcow.xyz/@DistroTube:2)
 
 ## Instances
 
@@ -33,7 +33,7 @@ Open an issue to have your instance listed here!
 
 | Website                                                     | Country             | Cloudflare |
 | ----------------------------------------------------------- | ------------------- | ---------- |
-| [librarian.bcow.xyz](https://librarian.bcow.xyz) (official) | 🇨🇦 CA |           |
+| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official) | 🇨🇦 CA |           |
 | [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |            |
 | [librarian.davidovski.xyz](https://librarian.davidovski.xyz/) | 🇬🇧 UK | |
