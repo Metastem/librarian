@@ -6,7 +6,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const cacheName = 'librarian-v0.8.0';
+const cacheName = 'librarian-v0.10.0-beta';
 const files = [
   '/static/css/channel.css',
   '/static/css/frontpage.css',
