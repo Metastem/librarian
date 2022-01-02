@@ -59,10 +59,15 @@ func main() {
 	app.Get("/image", proxy.ProxyImage)
 	app.Get("/search", pages.SearchHandler)
 	app.Get("/privacy", pages.PrivacyHandler)
-	
+
+	app.Get("/robots.txt", func(c *fiber.Ctx) error {
+		file, _ := static.GetFiles().ReadFile("robots.txt")
+		_, err := c.Write(file)
+		return err
+	})
 	app.Get("/sw.js", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "application/javascript")
-		file, _ := static.GetFiles().ReadFile("static/js/sw.js")
+		file, _ := static.GetFiles().ReadFile("js/sw.js")
 		_, err := c.Write(file)
 		return err
 	})
