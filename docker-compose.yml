@@ -2,8 +2,8 @@ version: '3'
 
 services:
   librarian:
-    # build: . Uncomment to build from source
-    image: nineteengladespool/librarian
+    build: .
+    # image: nineteengladespool/librarian Uncomment to use image
     ports:
       - 3000:3000
     volumes:
