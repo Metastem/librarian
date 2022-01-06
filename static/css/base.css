@@ -181,6 +181,9 @@ footer {
     background-color: black;
     color: white;
   }
+  .claimLink {
+    color: #fff;
+  }
   .logo {
     filter: invert(1) hue-rotate(180deg);
   }
