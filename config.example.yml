@@ -1,7 +1,7 @@
 DOMAIN: 'https://domain.tld'
 PORT: '3000'
 API_URL: 'https://api.na-backend.odysee.com/api/v1/proxy'
-USE_HTTP3: true
+USE_HTTP3: false
 FIBER_PREFORK: false
 # Block access to claims in case of DMCA
 BLOCKED_CLAIMS: 'claimid,claim2'
