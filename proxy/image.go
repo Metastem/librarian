@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"io/ioutil"
-	"net/http"
 	url2 "net/url"
 	"os"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/spf13/viper"
 )
 
@@ -48,11 +48,12 @@ func ProxyImage(c *fiber.Ctx) error {
 
 	c.Set("Cache-Control", "public,max-age=31557600")
 
-	client := http.Client{}
+	client := retryablehttp.NewClient()
+	client.Logger = nil
 	requestUrl := "https://thumbnails.odysee.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
 	if strings.Contains(url, "static.odycdn.com/emoticons") {
 		requestUrl = url
-		client = *api.Client
+		client = api.Client
 	}
 	res, err := client.Get(requestUrl)
 	if err != nil {

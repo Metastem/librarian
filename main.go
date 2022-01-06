@@ -33,6 +33,8 @@ func main() {
 		fmt.Println(err)
 	}
 
+	api.CheckUseHttp3()
+
 	viper.Set("AUTH_TOKEN", api.NewUser())
 	viper.WriteConfig()
 	if (viper.GetString("HMAC_KEY") == "") {

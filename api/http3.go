@@ -8,18 +8,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-var retryClient = retryablehttp.NewClient()
-
-var Client = &http.Client{
-	Transport: &http3.RoundTripper{},
-}
+var Client = retryablehttp.NewClient()
 
 func CheckUseHttp3() {
-	if viper.GetBool("USE_HTTP3") {
-		Client = &http.Client{}
-	}
+	Client.Logger = nil
+	Client.RetryMax = 4
 
-	retryClient.RetryMax = 4
-	retryClient.HTTPClient = Client
-	Client = retryClient.StandardClient()
+	Client.HTTPClient = &http.Client{}
+	if viper.GetBool("USE_HTTP3") {
+		Client.HTTPClient = &http.Client{
+			Transport: &http3.RoundTripper{},
+		}
+	}
 }
