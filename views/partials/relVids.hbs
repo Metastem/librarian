@@ -1,6 +1,7 @@
 <div class="videoData__right videoData__side">
   <div class="relVids">
     {{#each relatedVids}}
+    {{#if this.Title}}
     <div>
       <div class="relVid__thumbnailWrapper">
         <a href={{this.RelUrl}}>
@@ -19,6 +20,7 @@
         <p>{{this.Views}} views</p>
       </div>
     </div>
+    {{/if}}
     {{/each}}
   </div>
 </div>

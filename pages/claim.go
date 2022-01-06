@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"sync"
 
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
@@ -73,32 +72,18 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	case "video":
-		wg := sync.WaitGroup{}
-
-		videoStream := ""
-		videoStreamType := ""
+		videoStream := api.GetVideoStream(claimData.LbryUrl)
+		videoStreamType := api.GetVideoStreamType(videoStream)
 		isHls := false
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			videoStream = api.GetVideoStream(claimData.LbryUrl)
-			videoStreamType = api.GetVideoStreamType(videoStream)
-			if videoStreamType == "application/x-mpegurl" {
-				isHls = true
-			}
-		}()
+		if videoStreamType == "application/x-mpegurl" {
+			isHls = true
+		}
 
-		relatedVids, err := make([]interface{}, 0), fmt.Errorf("")
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			relatedVids, err = api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
-		}()
-		if err.Error() != "" {
+		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
+		if err != nil {
 			return utils.HandleError(c, err)
 		}
 
-		wg.Wait()
 		if c.Query("nojs") == "1" {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
 
@@ -114,8 +99,8 @@ func ClaimHandler(c *fiber.Ctx) error {
 		} else {
 			return c.Render("claim", fiber.Map{
 				"stream":      videoStream,
-				"streamType":	 videoStreamType,
-				"isHls":			 isHls,
+				"streamType":  videoStreamType,
+				"isHls":       isHls,
 				"claim":       claimData,
 				"relatedVids": relatedVids,
 				"config":      viper.AllSettings(),
