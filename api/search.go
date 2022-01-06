@@ -3,11 +3,13 @@ package api
 import (
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/lucas-clemente/quic-go/http3"
 	"github.com/patrickmn/go-cache"
 	"github.com/tidwall/gjson"
 )
@@ -34,7 +36,10 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	if relatedTo != "" {
 		url = url + "&related_to=" + relatedTo
 	}
-	searchDataRes, err := Client.Get(url)
+	client := http.Client{
+		Transport: &http3.RoundTripper{},
+	}
+	searchDataRes, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}

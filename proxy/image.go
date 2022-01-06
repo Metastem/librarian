@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 
-	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-retryablehttp"
@@ -50,10 +49,11 @@ func ProxyImage(c *fiber.Ctx) error {
 
 	client := retryablehttp.NewClient()
 	client.Logger = nil
+	client.Backoff = retryablehttp.LinearJitterBackoff
 	requestUrl := "https://thumbnails.odysee.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
 	if strings.Contains(url, "static.odycdn.com/emoticons") {
 		requestUrl = url
-		client = api.Client
+		client = utils.NewClient()
 	}
 	res, err := client.Get(requestUrl)
 	if err != nil {

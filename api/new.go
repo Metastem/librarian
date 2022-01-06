@@ -5,10 +5,12 @@ import (
 	"io/ioutil"
 	"net/url"
 
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/tidwall/gjson"
 )
 
 func NewUser() string {
+	Client := utils.NewClient()
 	response, err := Client.PostForm("https://api.odysee.com/user/new", url.Values{
 		"auth_token": []string{},
 		"language": []string{"en"},

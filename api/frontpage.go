@@ -25,6 +25,7 @@ func GetFrontpageVideos() []types.Claim {
 		return cacheData.([]types.Claim)
 	}
 
+	Client := utils.NewClient()
 	claimSearchData := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,

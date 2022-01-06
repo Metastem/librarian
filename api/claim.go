@@ -31,6 +31,7 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		return cacheData.(types.Claim), nil
 	}
 
+	Client := utils.NewClient()
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -138,6 +139,7 @@ func GetViews(claimId string) int64 {
 		return cacheData.(int64)
 	}
 
+	Client := utils.NewClient()
 	viewCountRes, err := Client.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		fmt.Println(err)
@@ -159,6 +161,7 @@ func GetLikeDislike(claimId string) []int64 {
 		return cacheData.([]int64)
 	}
 
+	Client := utils.NewClient()
 	likeDislikeRes, err := Client.PostForm("https://api.odysee.com/reaction/list", url.Values{
 		"claim_ids": []string{claimId},
 	})

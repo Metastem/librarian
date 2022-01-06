@@ -1,4 +1,4 @@
-package api
+package utils
 
 import (
 	"net/http"
@@ -8,9 +8,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-var Client = retryablehttp.NewClient()
-
-func CheckUseHttp3() {
+func NewClient() *retryablehttp.Client {
+	Client := retryablehttp.NewClient()
 	Client.Logger = nil
 	Client.RetryMax = 4
 
@@ -20,4 +19,6 @@ func CheckUseHttp3() {
 			Transport: &http3.RoundTripper{},
 		}
 	}
+
+	return Client
 }

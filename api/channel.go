@@ -27,6 +27,7 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		return cacheData.(types.Channel)
 	}
 
+	Client := utils.NewClient()
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -110,6 +111,7 @@ func GetChannelFollowers(claimId string) (int64, error) {
 		return cacheData.(int64), nil
 	}
 
+	Client := utils.NewClient()
 	res, err := Client.Get("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
 		return 0, err
@@ -128,6 +130,7 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 		return cacheData.([]types.Claim)
 	}
 
+	Client := utils.NewClient()
 	channelDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,

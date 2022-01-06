@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -22,6 +23,7 @@ func GetVideoStream(video string) string {
 		return cacheData.(string)
 	}
 
+	Client := utils.NewClient()
 	getDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "get",

@@ -56,6 +56,7 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 		return cacheData.([]types.Comment)
 	}
 
+	Client := utils.NewClient()
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -131,6 +132,7 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 }
 
 func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
+	Client := utils.NewClient()
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
