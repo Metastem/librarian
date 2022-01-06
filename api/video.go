@@ -32,7 +32,7 @@ func GetVideoStream(video string) string {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamRes, err := Client.Post(viper.GetString("API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
+	videoStreamRes, err := Client.Post(viper.GetString("STREAMING_API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
 	if err != nil {
 		fmt.Println(err)
 	}
