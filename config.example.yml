@@ -23,11 +23,11 @@ INSTANCE_PRIVACY:
   DATA_COLLECTED_URL: true
   DATA_COLLECTED_DEVICE: true
   DATA_COLLECTED_DIAGNOSTIC_ONLY: false
-  # The country your instance is located
+  # The country your instance is located. Leave blank if hosting on darknet.
   INSTANCE_COUNTRY: "United States"
-  # Put the name of your hosting provider. If hosting from home, use the name of your ISP
+  # Put the name of your hosting provider. If hosting from home, use the name of your ISP. Leave blank if hosting on darknet.
   INSTANCE_PROVIDER: "Amazon Web Services"
-  # Cloudflare use is discouraged (you can set this to false if it is not proxied, grey cloud icon)
+  # Cloudflare use is discouraged. You can set this to false if it is not proxied (gray cloud icon)
   INSTANCE_CLOUDFLARE: false
-  # Link to your privacy policy, leave blank if you don't have one
+  # Link to your privacy policy, leave blank if you don't have one.
   PRIVACY_POLICY: ""
