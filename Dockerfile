@@ -10,8 +10,6 @@ FROM alpine:latest as bin
 
 WORKDIR /app
 RUN mkdir /var/cache/librarian
-COPY --from=build /src/templates/static /static
-COPY --from=build /src/config.example.yml config.yml
 COPY --from=build /src/librarian .
 
 EXPOSE 3000
