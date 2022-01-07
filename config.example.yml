@@ -30,5 +30,7 @@ INSTANCE_PRIVACY:
   INSTANCE_PROVIDER: "Amazon Web Services"
   # Cloudflare use is discouraged. You can set this to false if it is not proxied (gray cloud icon)
   INSTANCE_CLOUDFLARE: false
+  # Optional: Explain your usage of data (if collected) and how it is stored.
+  MESSAGE: ""
   # Link to your privacy policy, leave blank if you don't have one.
   PRIVACY_POLICY: ""

@@ -62,6 +62,10 @@
     </ul>
     {{/unless}}
 
+    {{#if config.instance_privacy.message}}
+      <blockquote>{{config.instance_privacy.message}}</blockquote>
+    {{/if}}
+
     {{#if config.instance_privacy.data_not_collected}}
     <h2>Data Not Collected</h2>
     <p>The instance operator does not collect any data from this instance.</p>
