@@ -13,6 +13,7 @@ import (
 func ChannelHandler(c *fiber.Ctx) error {
 	c.Set("Cache-Control", "public,max-age=1800")
 	c.Set("X-Frame-Options", "DENY")
+	c.Set("X-Robots-Tag", "noindex, noimageindex, nofollow")
 	c.Set("Referrer-Policy", "no-referrer")
 	c.Set("X-Content-Type-Options", "nosniff")
 	c.Set("Strict-Transport-Security", "max-age=31557600")
