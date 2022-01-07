@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -55,6 +56,9 @@ func GetVideoStream(video string) string {
 }
 
 func GetVideoStreamType(url string) string {
-	res, _ := http.Head(url)
+	res, err := http.Head(url)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return res.Header.Get("Content-Type")
 }
