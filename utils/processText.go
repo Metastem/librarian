@@ -29,7 +29,7 @@ func ProcessText(text string, newline bool) string {
 	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
 	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
 	text = html.UnescapeString(text)
-	text = bluemonday.UGCPolicy().Sanitize(text)
+	text = bluemonday.UGCPolicy().RequireNoReferrerOnLinks(true).Sanitize(text)
 	text = ReplaceStickersAndEmotes(text)
 
 	return text
