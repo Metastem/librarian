@@ -21,7 +21,7 @@ func EmbedHandler(c *fiber.Ctx) error {
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if claimData.ClaimId == "" {
-		return c.Render("404", fiber.Map{})
+		return c.Status(404).Render("404", fiber.Map{})
 	}
 	if err != nil {
 		return utils.HandleError(c, err)

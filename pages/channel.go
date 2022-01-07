@@ -29,7 +29,7 @@ func ChannelHandler(c *fiber.Ctx) error {
 	channelData := api.GetChannel(c.Params("channel"), true)
 
 	if (channelData.Id == "") {
-		return c.Render("404", fiber.Map{})
+		return c.Status(404).Render("404", fiber.Map{})
 	}
 
 	/*TO-DO: Add playlists

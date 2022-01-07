@@ -27,7 +27,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		return utils.HandleError(c, err)
 	}
 	if claimData.ClaimId == "" {
-		return c.Render("404", fiber.Map{})
+		return c.Status(404).Render("404", fiber.Map{})
 	}
 
 	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
