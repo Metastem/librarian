@@ -1,7 +1,8 @@
 FROM golang:alpine AS build
 
 WORKDIR /src
-COPY . .
+RUN apk --no-cache add git
+RUN git clone https://codeberg.org/librarian/librarian .
 
 ARG GOARCH=amd64
 RUN env GOARCH=${GOARCH} go build
