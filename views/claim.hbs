@@ -23,26 +23,7 @@
 
   {{#if document}}
   <link rel="stylesheet" href="/static/css/video.css" />
-  <style>
-    iframe {
-      border: none;
-      overflow: hidden;
-    }
-
-    main {
-      margin: 0 24vw;
-    }
-
-    .videoData__left {
-      width: 100%;
-    }
-
-    @media only screen and (max-width: 812px) {
-      main {
-        margin: 0;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/article.css" />
   {{else}}
   <link rel="stylesheet" href="/static/css/plyr.css" />
   <link rel="stylesheet" href="/static/css/video.css" />
@@ -62,11 +43,6 @@
     {{> 'partials/videoPlayer' }}
 
     <h2>{{claim.Title}}</h2>
-    {{else}}
-    <h2>{{claim.Title}}</h2>
-
-    {{{document}}}
-    {{/unless}}
 
     <div class="videoData">
       <div class="videoData__left videoData__side">
@@ -83,46 +59,88 @@
       {{> 'partials/relVids'}}
       {{/unless}}
     </div>
+    {{else}}
+
+    <h1 class="postTitle">{{claim.Title}}</h1>
+    <p><b>{{claim.Date}}</b></p>
+
+    <div class="articleMeta__wrapper">
+      <div>
+        <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">View on Odysee</a><br>
+        <div class="articleMeta">
+          <p><span class="material-icons-outlined" title="Views">visibility</span> {{claim.Views}}</p>
+          <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{claim.Likes}}</p>
+          <p><span class="material-icons-outlined" title="Dislilkes">thumb_down</span> {{claim.Dislikes}}</p>
+        </div>
+      </div>
+      <div class="videoDesc__channel">
+        <a href="{{claim.Channel.RelUrl}}">
+          {{#if claim.Channel.Thumbnail}}
+          <img src="{{claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
+          {{else}}
+          <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+          {{/if}}
+        </a>
+        <a href="{{claim.Channel.RelUrl}}">
+          <p>
+            {{#if claim.Channel.Title}}
+            <b>{{claim.Channel.Title}}</b>
+            <br>
+            {{claim.Channel.Name}}
+            {{else}}
+            <b>{{claim.Channel.Name}}</b>
+            {{/if}}
+          </p>
+        </a>
+      </div>
+    </div>
+
+    {{{document}}}
+
+    <p class="videoDesc__claimId">Claim ID: {{claim.ClaimId}}</p>
+
+    {{> 'partials/comments' }}
+    {{/unless}}
   </main>
 
   {{> 'partials/footer' }}
 
   {{#unless nojs}}
-    <script src="/static/js/comments.js"></script>
-    <script>
-      document.getElementById("nojs").remove();
+  <script src="/static/js/comments.js"></script>
+  <script>
+    document.getElementById("nojs").remove();
 
-      comments("{{claim.ClaimId}}", "{{claim.Channel.Id}}", "{{claim.Channel.Name}}", 1)
+    comments("{{claim.ClaimId}}", "{{claim.Channel.Id}}", "{{claim.Channel.Name}}", 1)
 
-      function loadMoreBtn(page) {
-        let loadMore = document.getElementById("loadMore");
-        loadMore.addEventListener('click', () => {
-          loadMore.remove()
-          comments("{{claim.ClaimId}}", "{{claim.Channel.Id}}", "{{claim.Channel.Name}}", page + 1)
-        })
+    function loadMoreBtn(page) {
+      let loadMore = document.getElementById("loadMore");
+      loadMore.addEventListener('click', () => {
+        loadMore.remove()
+        comments("{{claim.ClaimId}}", "{{claim.Channel.Id}}", "{{claim.Channel.Name}}", page + 1)
+      })
+    }
+  </script>
+  {{#unless document}}
+  <script src="/static/js/plyr.js"></script>
+  {{#if isHls}}
+  <script src="/static/js/hls.js"></script>
+  <script src="/static/js/plyr-hls.js"></script>
+  {{else}}
+  <script>const player = new Plyr('#player');</script>
+  {{/if}}
+  <script>
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'j':
+          player.rewind(15);
+          break;
+        case 'l':
+          player.forward(15);
+          break;
       }
-    </script>
-    {{#unless document}}
-      <script src="/static/js/plyr.js"></script>
-      {{#if isHls}}
-        <script src="/static/js/hls.js"></script>
-        <script src="/static/js/plyr-hls.js"></script>
-      {{else}}
-        <script>const player = new Plyr('#player');</script>     
-      {{/if}}
-      <script>
-        document.addEventListener('keydown', (event) => {
-          switch (event.key) {
-            case 'j':
-              player.rewind(15);
-              break;
-            case 'l':
-              player.forward(15);
-              break;
-            }
-          });
-      </script>
-    {{/unless}}
+    });
+  </script>
+  {{/unless}}
   {{/unless}}
 </body>
 

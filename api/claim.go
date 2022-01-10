@@ -82,7 +82,11 @@ func ProcessClaim(claimData gjson.Result) types.Claim {
 	lbryUrl := claimData.Get("canonical_url").String()
 	channelLbryUrl := claimData.Get("signing_channel.canonical_url").String()
 
-	time := time.Unix(claimData.Get("value.release_time").Int(), 0)
+	timestamp := claimData.Get("value.release_time").Int()
+	if timestamp == 0 {
+		timestamp = claimData.Get("timestamp").Int()
+	}
+	time := time.Unix(timestamp, 0)
 	thumbnail := claimData.Get("value.thumbnail.url").String()
 	thumbnail = url.QueryEscape(thumbnail)
 	channelThumbnail := claimData.Get("signing_channel.value.thumbnail.url").String()
