@@ -84,7 +84,9 @@ func ProcessClaim(claimData gjson.Result) types.Claim {
 
 	time := time.Unix(claimData.Get("value.release_time").Int(), 0)
 	thumbnail := claimData.Get("value.thumbnail.url").String()
+	thumbnail = url.QueryEscape(thumbnail)
 	channelThumbnail := claimData.Get("signing_channel.value.thumbnail.url").String()
+	channelThumbnail = url.QueryEscape(channelThumbnail)
 
 	wg.Add(1)
 	go func() {

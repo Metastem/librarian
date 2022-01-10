@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -175,6 +176,7 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 
 				time := time.Unix(value.Get("value.release_time").Int(), 0)
 				thumbnail := value.Get("value.thumbnail.url").String()
+				thumbnail = url.QueryEscape(thumbnail)
 
 				claims = append(claims, types.Claim{
 					Url:       utils.LbryTo(lbryUrl, "http"),
