@@ -1,4 +1,4 @@
-<img src="https://codeberg.org/librarian/librarian/raw/branch/main/templates/static/img/librarian.svg" width="96" height="96" />
+<img src="https://codeberg.org/librarian/librarian/raw/branch/main/static/img/librarian.svg" width="96" height="96" />
 # librarian
 An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.com/iv-org/invidious).
 
