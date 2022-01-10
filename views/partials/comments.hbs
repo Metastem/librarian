@@ -6,12 +6,41 @@
     <span class="comments__expandBtn__icon material-icons-outlined"></span>
   </label>
   <div id="comments" class="comments">
+    {{#unless nojs}}
     <p id="nojs">
       <a href="{{claim.RelUrl}}?nojs=1">
         Hi! Looks like you have JavaScript turned off. Click here to view comments, keep in mind they may take a bit
         longer to load.
       </a>
     </p>
+    {{else}}
+    {{#each comments}}
+    <div class="comment">
+      {{#if this.Channel.Thumbnail}}
+      <img src="{{this.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
+      {{else}}
+      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
+      {{/if}}
+      <div>
+        <a href="{{this.Channel.Url}}">
+          <p>
+            {{#if this.Channel.Title}}
+            <b>{{this.Channel.Title}}</b><br>{{this.Channel.Name}}
+            {{else}}
+            <b>{{this.Channel.Name}}</b>
+            {{/if}}
+          </p>
+        </a>
+        {{{this.Comment}}}
+        <p title="{{this.Time}}">
+          {{this.RelTime}} |
+          <span class="material-icons-outlined">thumb_up</span> {{this.Likes}}
+          <span class="material-icons-outlined">thumb_down</span> {{this.Dislikes}}
+        </p>
+      </div>
+    </div>
+    {{/each}}
+    {{/unless}}
   </div>
   <div id="spinner" class="center">
     <div class="spinner"></div>

@@ -106,13 +106,19 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 
 				commentId := value.Get("comment_id").String()
 
+				time := timestamp.UTC().Format("January 2, 2006 15:04")
+				relTime := humanize.Time(timestamp)
+				if relTime == "a long while ago" {
+					relTime = time
+				}
+
 				comments = append(comments, types.Comment{
 					Channel:   GetChannel(value.Get("channel_url").String(), false),
 					Comment:   template.HTML(comment),
 					CommentId: commentId,
 					ParentId:  value.Get("parent_id").String(),
-					Time:      timestamp.UTC().Format("January 2, 2006 15:04"),
-					RelTime:   humanize.Time(timestamp),
+					Time:      time,
+					RelTime:   relTime,
 					Likes:     likesDislikes[commentId][0],
 					Dislikes:  likesDislikes[commentId][1],
 				})
