@@ -7,5 +7,5 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./config.yml:/app/config.yml
+      - ./data/config.yml:/app/config.yml
     restart: always
