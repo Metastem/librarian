@@ -73,3 +73,9 @@
     transform: rotate(360deg);
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  .comments__expandBtn__label {
+    color: #fff
+  }
+}
