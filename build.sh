@@ -12,4 +12,4 @@ tar -cf librarian-${VERSION}-openbsd-amd64.tar.gz librarian
 rm librarian
 
 sudo docker buildx create --use
-sudo docker buildx build --platform linux/amd64,linux/arm64 -t nineteengladespool:latest -t nineteengladespool:${VERSION} --push .
+sudo docker buildx build --platform linux/amd64,linux/arm64 -t nineteengladespool/librarian:latest -t nineteengladespool/librarian:${VERSION} --push .
