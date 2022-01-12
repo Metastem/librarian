@@ -3,13 +3,13 @@ package api
 import (
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/lucas-clemente/quic-go/http3"
+	"codeberg.org/librarian/librarian/utils"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/patrickmn/go-cache"
 	"github.com/tidwall/gjson"
 )
@@ -36,10 +36,25 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	if relatedTo != "" {
 		url = url + "&related_to=" + relatedTo
 	}
-	client := http.Client{
-		Transport: &http3.RoundTripper{},
+
+	req, err := retryablehttp.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
 	}
-	searchDataRes, err := client.Get(url)
+
+	req.Header.Set("Accept-Language", "en-US,en;q=0.5")
+	req.Header.Set("Cache-Control", "no-cache")
+	req.Header.Set("Pragma", "no-cache")
+	req.Header.Set("DNT", "1")
+	req.Header.Set("Origin", "https://odysee.com")
+	req.Header.Set("Referer", "https://odysee.com/")
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "same-site")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0")
+
+	client := utils.NewClient()
+	searchDataRes, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
