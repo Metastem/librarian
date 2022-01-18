@@ -44,13 +44,14 @@ Open an issue to have your instance listed here!
 ## Install
 Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
 
-> Librarian is still in beta and changes frequently, building the latest version from source is recommended.
+### Docker (recommended)
 
-### Requirements
-- Go v1.16 or later
 
 ### Build from source
 > For more detailed instructions, follow the [guide](https://codeberg.org/librarian/librarian/wiki/Setup-guide-%28manual%29).
+
+#### Requirements
+- Go v1.16 or later
 
 Clone the repository and `cd` into it.
 ```
