@@ -44,8 +44,24 @@ Open an issue to have your instance listed here!
 ## Install
 Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
 
-### Docker (recommended)
+### Docker (recommeded)
+Install Docker and docker-compose, then clone this repository.
+```
+git clone https://codeberg.org/librarian/librarian
+cd librarian
+```
 
+Edit the config file using your preferred editor.
+```
+cp config.example.yml config.yml
+nvim config.yml
+```
+You can also edit `docker-compose.yml` if you want to change ports or use the image instead of building it.
+
+You can now run Librarian.
+```
+sudo docker-compose up -d
+```
 
 ### Build from source
 > For more detailed instructions, follow the [guide](https://codeberg.org/librarian/librarian/wiki/Setup-guide-%28manual%29).
@@ -91,22 +107,4 @@ You can now run Librarian.
 ```
 librarian # If GOBIN is in your PATH
 $HOME/go/bin/librarian # If GOBIN is not in PATH
-```
-
-### Docker
-Install Docker and docker-compose, then clone this repository.
-```
-git clone https://codeberg.org/librarian/librarian
-cd librarian
-```
-
-Edit the config file using your preferred editor.
-```
-cp config.example.yml config.yml
-nvim config.yml
-```
-
-You can now run Librarian.
-```
-sudo docker-compose up -d
 ```
