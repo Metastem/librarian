@@ -33,7 +33,7 @@ Open an issue to have your instance listed here!
 
 | Website                                                     | Country             | Cloudflare |
 | ----------------------------------------------------------- | ------------------- | ---------- |
-| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official) | 🇨🇦 CA |           |
+| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official) | 🇺🇸 US |           |
 | [lbry.itzzen.net](https://lbry.itzzen.net) | 🇺🇸 US |            |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |            |
 | [librarian.davidovski.xyz](https://librarian.davidovski.xyz/) | 🇬🇧 UK | |
