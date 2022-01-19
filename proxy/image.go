@@ -3,9 +3,10 @@ package proxy
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"io/ioutil"
+	"io"
 	url2 "net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	"codeberg.org/librarian/librarian/utils"
@@ -62,19 +63,22 @@ func ProxyImage(c *fiber.Ctx) error {
 
 	c.Set("Content-Type", res.Header.Get("Content-Type"))
 
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
+	contentLen, _ := strconv.Atoi(res.Header.Get("Content-Length"))
 
-	_, err = c.Write(data)
-
-	if viper.GetString("IMAGE_CACHE") == "true" && res.StatusCode == 200 {
-		err := os.WriteFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash, data, 0644)
+	if viper.GetBool("IMAGE_CACHE") && res.StatusCode == 200 {
+		data, err := io.ReadAll(res.Body)
 		if err != nil {
 			return err
 		}
-	}
 
-	return err
+		err = os.WriteFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash, data, 0644)
+		if err != nil {
+			return err
+		}
+
+		_, err = c.Write(data)
+		return err
+	} else {
+		return c.SendStream(res.Body, contentLen)
+	}
 }
