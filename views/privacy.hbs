@@ -8,8 +8,44 @@
     main {
       margin: 0 24vw
     }
+
     ul {
-      list-style: outside none none
+      list-style: outside none none;
+      padding: 0;
+      margin: 0.25em;
+    }
+
+    .largeIcon {
+      font-size: 36px;
+      color: #1e88e5;
+    }
+
+    .badgeWrapper {
+      margin: 0 10vw
+    }
+
+    .badge {
+      background-color: #f8f8f8;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25em;
+      padding: 1em;
+      text-align: center;
+    }
+
+    .badge h3,
+    .badge p,
+    .largeIcon {
+      margin: 0;
+    }
+
+    @media only screen and (max-width: 812px) {
+      .badgeWrapper,
+      main {
+        margin: 0
+      }
     }
   </style>
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
@@ -29,51 +65,74 @@
     <p>The instance operator has indicated their instance's privacy practices below.</p>
     {{/if}}
 
-    <p>For more details, see <a href="https://codeberg.org/librarian/librarian/wiki/Instance-privacy">https://codeberg.org/librarian/librarian/wiki/Instance-privacy</a></p>
-
-    {{#unless config.instance_privacy.data_not_collected}}
-    <h2>Data Collected</h2>
-    <p>The following data may be collected:</p>
-    <ul>
-      {{#if config.instance_privacy.data_collected_ip}}
-      <li>
-        <span class="material-icons-outlined">password</span>
-        IP Address
-      </li>
-      {{/if}}
-      {{#if config.instance_privacy.data_collected_url}}
-      <li>
-        <span class="material-icons-outlined">link</span>
-        Request URL
-      </li>
-      {{/if}}
-      {{#if config.instance_privacy.data_collected_device}}
-      <li>
-        <span class="material-icons-outlined">phonelink</span>
-        Device Type
-      </li>
-      {{/if}}
-      {{#if config.instance_privacy.data_collected_diagnostics}}
-      <li>
-        <span class="material-icons-outlined">settings</span>
-        Diagnostics
-      </li>
-      {{/if}}
-    </ul>
-    {{/unless}}
+    <p>For more details, see <a
+        href="https://codeberg.org/librarian/librarian/wiki/Instance-privacy">https://codeberg.org/librarian/librarian/wiki/Instance-privacy</a>
+    </p>
 
     {{#if config.instance_privacy.message}}
-      <blockquote>{{config.instance_privacy.message}}</blockquote>
+    <blockquote>{{config.instance_privacy.message}}</blockquote>
     {{/if}}
 
     {{#if config.instance_privacy.data_not_collected}}
-    <h2>Data Not Collected</h2>
-    <p>The instance operator does not collect any data from this instance.</p>
+    <div class="badgeWrapper">
+      <div class="badge">
+        <span class="material-icons-outlined largeIcon">
+          check_circle
+        </span>
+        <h3>Data Not Collected</h3>
+        <p>The instance operator does not collect any data from this instance.</p>
+      </div>
+    </div>
     {{/if}}
-    
+
     {{#unless config.instance_privacy}}
-    <h2>No Details Provided</h2>
-    <p>The operator of this instance will be required to provide privacy details when being added to the instance list.</p>
+    <div class="badgeWrapper">
+      <div class="badge">
+        <span class="material-icons-outlined largeIcon">
+          report_problem
+        </span>
+        <h3>No Details Provided</h3>
+        <p>The operator of this instance will be required to provide privacy details to be added to the instance list.</p>
+      </div>
+    </div>
+    {{else}}
+    {{#unless config.instance_privacy.data_not_collected}}
+    <div class="badgeWrapper">
+      <div class="badge">
+        <span class="material-icons-outlined largeIcon">
+          error_outline
+        </span>
+        <h3>Data Collected</h3>
+        <p>The following data may be collected:</p>
+        <ul>
+          {{#if config.instance_privacy.data_collected_ip}}
+          <li>
+            <span class="material-icons-outlined">password</span>
+            IP Address
+          </li>
+          {{/if}}
+          {{#if config.instance_privacy.data_collected_url}}
+          <li>
+            <span class="material-icons-outlined">link</span>
+            Request URL
+          </li>
+          {{/if}}
+          {{#if config.instance_privacy.data_collected_device}}
+          <li>
+            <span class="material-icons-outlined">phonelink</span>
+            Device Type
+          </li>
+          {{/if}}
+          {{#if config.instance_privacy.data_collected_diagnostics}}
+          <li>
+            <span class="material-icons-outlined">settings</span>
+            Diagnostics
+          </li>
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+    {{/unless}}
     {{/unless}}
 
     <h2>Additional information</h2>
@@ -81,14 +140,14 @@
       <li>Country: {{config.instance_privacy.instance_country}}</li>
       <li>Provider: {{config.instance_privacy.instance_provider}}</li>
       {{#if config.instance_privacy.instance_cloudflare}}
-      <li>Cloudflare: ✅️</li>
+      <li>Using Cloudflare?: Yes</li>
       {{else}}
-      <li>Cloudflare: ❌️</li>
+      <li>Using Cloudflare?: No</li>
       {{/if}}
       {{#if config.video_streaming_url}}
-      <li>Video streaming URL: {{config.video_streaming_url}}</li>
+      <li>Video streaming URL: {{config.video_streaming_url}} (proxied or using custom video server)</li>
       {{else}}
-      <li>Video streaming URL: https://cdn.lbryplayer.xyz</li>
+      <li>Video streaming URL: https://cdn.lbryplayer.xyz (streaming directly from Odysee)</li>
       {{/if}}
     </ul>
   </main>
