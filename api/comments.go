@@ -35,11 +35,11 @@ func CommentsHandler(c *fiber.Ctx) error {
 
 	newPage, err := strconv.Atoi(page)
 	if err != nil {
-		utils.HandleError(c, err)
+		return err
 	}
 	newPageSize, err := strconv.Atoi(pageSize)
 	if err != nil {
-		utils.HandleError(c, err)
+		return err
 	}
 
 	comments := GetComments(claimId, channelId, channelName, newPageSize, newPage)
@@ -112,8 +112,14 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 					relTime = time
 				}
 
+				channel, err := GetChannel(value.Get("channel_url").String(), false)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
 				comments = append(comments, types.Comment{
-					Channel:   GetChannel(value.Get("channel_url").String(), false),
+					Channel:   channel,
 					Comment:   template.HTML(comment),
 					CommentId: commentId,
 					ParentId:  value.Get("parent_id").String(),

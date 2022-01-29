@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -24,7 +23,7 @@ func EmbedHandler(c *fiber.Ctx) error {
 		return c.Status(404).Render("404", fiber.Map{})
 	}
 	if err != nil {
-		return utils.HandleError(c, err)
+		return err
 	}
 
 	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
@@ -34,13 +33,16 @@ func EmbedHandler(c *fiber.Ctx) error {
 	}
 
 	if claimData.StreamType == "video" {
-		videoStream := api.GetVideoStream(claimData.LbryUrl)
+		videoStream, err := api.GetVideoStream(claimData.LbryUrl)
+		if err != nil {
+			return err
+		}
 
 		return c.Render("embed", fiber.Map{
 			"stream":         videoStream,
 			"video":          claimData,
 		})
 	} else {
-		return utils.HandleError(c, fmt.Errorf("unsupported stream type: " + claimData.StreamType))
+		return fmt.Errorf("unsupported stream type: " + claimData.StreamType)
 	}
 }

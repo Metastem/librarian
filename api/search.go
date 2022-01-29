@@ -80,7 +80,12 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 						results = append(results, vid)
 					}
 				} else if claimType == "channel" {
-					results = append(results, GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true))
+					channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true)
+					if err != nil {
+						fmt.Println()
+						return
+					}
+					results = append(results, channel)
 				}
 			}()
 

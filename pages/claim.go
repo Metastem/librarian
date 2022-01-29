@@ -24,7 +24,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {
-		return utils.HandleError(c, err)
+		return err
 	}
 	if claimData.ClaimId == "" {
 		return c.Status(404).Render("404", fiber.Map{})
@@ -38,18 +38,23 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	switch claimData.StreamType {
 	case "document":
-		docRes, err := http.Get(api.GetVideoStream(claimData.LbryUrl))
+		stream, err := api.GetVideoStream(claimData.LbryUrl)
 		if err != nil {
-			return utils.HandleError(c, err)
+			return err
+		}
+
+		docRes, err := http.Get(stream)
+		if err != nil {
+			return err
 		}
 
 		if docRes.Header.Get("Content-Type") != "text/markdown" {
-			return utils.HandleError(c, fmt.Errorf("document not type of text/markdown"))
+			return fmt.Errorf("document not type of text/markdown")
 		}
 
 		docBody, err := ioutil.ReadAll(docRes.Body)
 		if err != nil {
-			return utils.HandleError(c, err)
+			return err
 		}
 		document := utils.ProcessMarkdown(string(docBody))
 
@@ -73,8 +78,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	case "video":
-		videoStream := api.GetVideoStream(claimData.LbryUrl)
-		videoStreamType := api.GetVideoStreamType(videoStream)
+		videoStream, err := api.GetVideoStream(claimData.LbryUrl)
+		if err != nil {
+			return err
+		}
+		videoStreamType, err := api.GetVideoStreamType(videoStream)
+		if err != nil {
+			return err
+		}
 		isHls := false
 		if videoStreamType == "application/x-mpegurl" {
 			isHls = true
@@ -82,7 +93,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
 		if err != nil {
-			return utils.HandleError(c, err)
+			return err
 		}
 
 		if c.Query("nojs") == "1" {
@@ -109,6 +120,6 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	default:
-		return utils.HandleError(c, fmt.Errorf("unsupported stream type: "+claimData.StreamType))
+		return fmt.Errorf("unsupported stream type: "+claimData.StreamType)
 	}
 }

@@ -3,9 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -18,10 +16,10 @@ import (
 
 var videoCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func GetVideoStream(video string) string {
+func GetVideoStream(video string) (string, error) {
 	cacheData, found := videoCache.Get(video + "-stream")
 	if found {
-		return cacheData.(string)
+		return cacheData.(string), nil
 	}
 
 	Client := utils.NewClient()
@@ -37,12 +35,12 @@ func GetVideoStream(video string) string {
 	getData, _ := json.Marshal(getDataMap)
 	videoStreamRes, err := Client.Post(viper.GetString("STREAMING_API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
 	if err != nil {
-		fmt.Println(err)
+		return "", err
 	}
 
-	videoStreamBody, err2 := ioutil.ReadAll(videoStreamRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
+	videoStreamBody, err := ioutil.ReadAll(videoStreamRes.Body)
+	if err != nil {
+		return "", err
 	}
 
 	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
@@ -52,13 +50,13 @@ func GetVideoStream(video string) string {
 	}
 
 	videoCache.Set(video+"-stream", returnData, cache.DefaultExpiration)
-	return returnData
+	return returnData, nil
 }
 
-func GetVideoStreamType(url string) string {
+func GetVideoStreamType(url string) (string, error) {
 	res, err := http.Head(url)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
-	return res.Header.Get("Content-Type")
+	return res.Header.Get("Content-Type"), nil
 }

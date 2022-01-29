@@ -15,13 +15,19 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 	c.Set("Content-Type", "application/rss+xml")
 
 	now := time.Now()
-	channel := api.GetChannel(c.Params("channel"), false)
+	channel, err := api.GetChannel(c.Params("channel"), false)
+	if err != nil {
+		return err
+	}
 	if channel.Id == "" {
 		c.Set("Content-Type", "text/plain")
 		_, err := c.Status(404).WriteString("404 Not Found\nERROR: Unable to find channel")
 		return err
 	}
-	claims := api.GetChannelClaims(1, channel.Id)
+	claims, err := api.GetChannelClaims(1, channel.Id)
+	if err != nil {
+		return err
+	}
 
 	image, err := utils.UrlEncode(viper.GetString("DOMAIN") + channel.Thumbnail)
 	if err != nil {
@@ -49,7 +55,11 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 		}
 
 		if c.Query("enclosure") == "true" {
-			url, err := utils.UrlEncode(api.GetVideoStream(claims[i].LbryUrl))
+			stream, err := api.GetVideoStream(claims[i].LbryUrl)
+			if err != nil {
+				return err
+			}
+			url, err := utils.UrlEncode(stream)
 			if err != nil {
 				_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: "+err.Error())
 				return err

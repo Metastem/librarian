@@ -74,6 +74,12 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 				thumbnail := value.Get("value.thumbnail.url").String()
 				thumbnail = url.QueryEscape(thumbnail)
 
+				views, err := GetViews(claimId)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
 				claims = append(claims, types.Claim{
 					Url:       utils.LbryTo(lbryUrl, "http"),
 					LbryUrl:   lbryUrl,
@@ -90,7 +96,7 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 					},
 					Title:        value.Get("value.title").String(),
 					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:        GetViews(claimId),
+					Views:        views,
 					Timestamp:    time.Unix(),
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),

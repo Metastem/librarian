@@ -1,8 +1,8 @@
 package api
 
 import (
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/url"
 
 	"codeberg.org/librarian/librarian/utils"
@@ -17,13 +17,13 @@ func NewUser() string {
 		"app_id": []string{"odyseecom692EAWhtoqDuAfQ6KHMXxFxt8tkhmt7sfprEMHWKjy5hf6PwZcHDV542V"},
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	return gjson.Get(string(body), "data.auth_token").String()

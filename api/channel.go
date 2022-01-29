@@ -22,10 +22,10 @@ import (
 
 var channelCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func GetChannel(channel string, getFollowers bool) types.Channel {
+func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 	cacheData, found := channelCache.Get(channel)
 	if found {
-		return cacheData.(types.Channel)
+		return cacheData.(types.Channel), nil
 	}
 
 	Client := utils.NewClient()
@@ -42,14 +42,12 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 	resolveData, _ := json.Marshal(resolveDataMap)
 	channelRes, err := Client.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
-		fmt.Println(err)
-		return types.Channel{}
+		return types.Channel{}, err
 	}
 
 	channelBody, err := ioutil.ReadAll(channelRes.Body)
 	if err != nil {
-		fmt.Println(err)
-		return types.Channel{}
+		return types.Channel{}, err
 	}
 
 	channelData := gjson.Get(string(channelBody), "result."+strings.ReplaceAll(channel, ".", "\\."))
@@ -75,16 +73,16 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		}
 	}()
 
-	followers := int64(0)
+	followers, err := int64(0), nil
 	go func() {
 		defer wg.Done()
 		if getFollowers {
 			followers, err = GetChannelFollowers(channelData.Get("claim_id").String())
-			if err != nil {
-				fmt.Println(err)
-			}
 		}
 	}()
+	if err != nil {
+		return types.Channel{}, err
+	}
 
 	wg.Wait()
 
@@ -103,7 +101,7 @@ func GetChannel(channel string, getFollowers bool) types.Channel {
 		UploadCount:    channelData.Get("meta.claims_in_channel").Int(),
 	}
 	channelCache.Set(channel, returnData, cache.DefaultExpiration)
-	return returnData
+	return returnData, nil
 }
 
 func GetChannelFollowers(claimId string) (int64, error) {
@@ -125,10 +123,10 @@ func GetChannelFollowers(claimId string) (int64, error) {
 	return returnData, err
 }
 
-func GetChannelClaims(page int, channelId string) []types.Claim {
+func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 	cacheData, found := channelCache.Get(channelId + "-claims-" + fmt.Sprint(page))
 	if found {
-		return cacheData.([]types.Claim)
+		return cacheData.([]types.Claim), nil
 	}
 
 	Client := utils.NewClient()
@@ -151,12 +149,12 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 	channelData, _ := json.Marshal(channelDataMap)
 	channelDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
 	if err != nil {
-		fmt.Println(err)
+		return []types.Claim{}, nil
 	}
 
 	channelDataBody, err := ioutil.ReadAll(channelDataRes.Body)
 	if err != nil {
-		fmt.Println(err)
+		return []types.Claim{}, nil
 	}
 
 	claims := make([]types.Claim, 0)
@@ -178,6 +176,12 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 				thumbnail := value.Get("value.thumbnail.url").String()
 				thumbnail = url.QueryEscape(thumbnail)
 
+				views, err := GetViews(claimId)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
 				claims = append(claims, types.Claim{
 					Url:       utils.LbryTo(lbryUrl, "http"),
 					LbryUrl:   lbryUrl,
@@ -195,7 +199,7 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 					Description:  template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
 					Title:        value.Get("value.title").String(),
 					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:        GetViews(claimId),
+					Views:        views,
 					Timestamp:    time.Unix(),
 					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
@@ -212,5 +216,5 @@ func GetChannelClaims(page int, channelId string) []types.Claim {
 	wg.Wait()
 
 	channelCache.Set(channelId+"-claims-"+fmt.Sprint(page), claims, cache.DefaultExpiration)
-	return claims
+	return claims, nil
 }

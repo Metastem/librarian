@@ -4,7 +4,6 @@ import (
 	"sort"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -21,7 +20,7 @@ func FrontpageHandler(c *fiber.Ctx) error {
 
 	videos, err := api.GetFrontpageVideos()
 	if err != nil {
-		return utils.HandleError(c, err)
+		return err
 	}
 	sort.Slice(videos, func(i int, j int) bool {
 		return videos[i].Timestamp > videos[j].Timestamp

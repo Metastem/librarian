@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -34,24 +33,24 @@ func SearchHandler(c *fiber.Ctx) error {
 	query := c.Query("q")
 
 	wg := sync.WaitGroup{}
-	claimResults, err := make([]interface{}, 0), fmt.Errorf("")
+	claimResults, err := make([]interface{}, 0), error(nil)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		claimResults, err = api.Search(query, page, "file", nsfw, "")
 	}()
-	if err.Error() != "" {
-		return utils.HandleError(c, err)
+	if err != nil {
+		return err
 	}
 
-	channelResults, err := make([]interface{}, 0), fmt.Errorf("")
+	channelResults, err := make([]interface{}, 0), error(nil)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		channelResults, err = api.Search(query, page, "channel", nsfw, "")
 	}()
-	if err.Error() != "" {
-		return utils.HandleError(c, err)
+	if err != nil {
+		return err
 	}
 	wg.Wait()
 

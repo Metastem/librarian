@@ -58,12 +58,12 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		return types.Claim{}, fmt.Errorf("API Error: " + claimData.Get("error.name").String() + claimData.Get("error.text").String())
 	}
 
-	returnData := ProcessClaim(claimData)
+	returnData, err := ProcessClaim(claimData)
 	claimCache.Set(urls[0], returnData, cache.DefaultExpiration)
 	return returnData, err
 }
 
-func ProcessClaim(claimData gjson.Result) types.Claim {
+func ProcessClaim(claimData gjson.Result) (types.Claim, error) {
 	wg := sync.WaitGroup{}
 
 	tags := make([]string, 0)
@@ -100,14 +100,24 @@ func ProcessClaim(claimData gjson.Result) types.Claim {
 		}
 	}()
 
-	likeDislike := []int64{}
+	likeDislike, err := []int64{}, error(nil)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		likeDislike = GetLikeDislike(claimId)
+		likeDislike, err = GetLikeDislike(claimId)
+	}()
+
+	views, err := int64(0), error(nil)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		views, err = GetViews(claimId)
 	}()
 
 	wg.Wait()
+	if err != nil {
+		return types.Claim{}, err
+	}
 	return types.Claim{
 		Url:       utils.LbryTo(lbryUrl, "http"),
 		LbryUrl:   lbryUrl,
@@ -129,42 +139,42 @@ func ProcessClaim(claimData gjson.Result) types.Claim {
 		ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
 		Description:  template.HTML(utils.ProcessText(claimData.Get("value.description").String(), true)),
 		License:      claimData.Get("value.license").String(),
-		Views:        GetViews(claimId),
+		Views:        views,
 		Likes:        likeDislike[0],
 		Dislikes:     likeDislike[1],
 		Tags:         tags,
 		RelTime:      humanize.Time(time),
 		Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 		StreamType:   claimData.Get("value.stream_type").String(),
-	}
+	}, nil
 }
 
-func GetViews(claimId string) int64 {
+func GetViews(claimId string) (int64, error) {
 	cacheData, found := claimCache.Get(claimId + "-views")
 	if found {
-		return cacheData.(int64)
+		return cacheData.(int64), nil
 	}
 
 	Client := utils.NewClient()
 	viewCountRes, err := Client.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
 	if err != nil {
-		fmt.Println(err)
+		return 0, err
 	}
 
-	viewCountBody, err2 := ioutil.ReadAll(viewCountRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
+	viewCountBody, err := ioutil.ReadAll(viewCountRes.Body)
+	if err != nil {
+		return 0, err
 	}
 
 	returnData := gjson.Get(string(viewCountBody), "data.0").Int()
 	claimCache.Set(claimId+"-views", returnData, cache.DefaultExpiration)
-	return returnData
+	return returnData, nil
 }
 
-func GetLikeDislike(claimId string) []int64 {
+func GetLikeDislike(claimId string) ([]int64, error) {
 	cacheData, found := claimCache.Get(claimId + "-reactions")
 	if found {
-		return cacheData.([]int64)
+		return cacheData.([]int64), nil
 	}
 
 	Client := utils.NewClient()
@@ -172,12 +182,12 @@ func GetLikeDislike(claimId string) []int64 {
 		"claim_ids": []string{claimId},
 	})
 	if err != nil {
-		fmt.Println(err)
+		return []int64{}, err
 	}
 
-	likeDislikeBody, err2 := ioutil.ReadAll(likeDislikeRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
+	likeDislikeBody, err := ioutil.ReadAll(likeDislikeRes.Body)
+	if err != nil {
+		return []int64{}, err
 	}
 
 	returnData := []int64{
@@ -185,5 +195,5 @@ func GetLikeDislike(claimId string) []int64 {
 		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int(),
 	}
 	claimCache.Set(claimId+"-reactions", returnData, cache.DefaultExpiration)
-	return returnData
+	return returnData, nil
 }

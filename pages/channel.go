@@ -26,25 +26,16 @@ func ChannelHandler(c *fiber.Ctx) error {
 		page = pageParam
 	}
 
-	channelData := api.GetChannel(c.Params("channel"), true)
+	channelData, err := api.GetChannel(c.Params("channel"), true)
 
 	if (channelData.Id == "") {
 		return c.Status(404).Render("404", fiber.Map{})
 	}
 
-	/*TO-DO: Add playlists
-
-	videos := make([]types.Video, 0)
-	claimType := r.URL.Query().Get("claimType")
-	if claimType == "" || claimType == "stream" {
-		claimType = "stream"
-		videos := api.GetChannelVideos(page, channelData.Id)
-		sort.Slice(videos, func (i int, j int) bool {
-			return videos[i].Timestamp > videos[j].Timestamp
-		})
-	}*/
-
-	claims := api.GetChannelClaims(page, channelData.Id)
+	claims, err := api.GetChannelClaims(page, channelData.Id)
+	if err != nil {
+		return err
+	}
 	sort.Slice(claims, func(i int, j int) bool {
 		return claims[i].Timestamp > claims[j].Timestamp
 	})

@@ -13,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/handlebars"
 	"github.com/spf13/viper"
 )
@@ -36,20 +37,38 @@ func main() {
 
 	viper.Set("AUTH_TOKEN", api.NewUser())
 	viper.WriteConfig()
-	if (viper.GetString("HMAC_KEY") == "") {
+	if viper.GetString("HMAC_KEY") == "" {
 		b := make([]byte, 36)
-    rand.Read(b)
-    viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
+		rand.Read(b)
+		viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
 		viper.WriteConfig()
 	}
-	
+
 	engine := handlebars.NewFileSystem(http.FS(views.GetFiles()), ".hbs")
 	app := fiber.New(fiber.Config{
-		Views: engine,
-		Prefork: viper.GetBool("FIBER_PREFORK"),
-		UnescapePath: true,
+		Views:             engine,
+		Prefork:           viper.GetBool("FIBER_PREFORK"),
+		UnescapePath:      true,
 		StreamRequestBody: true,
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			code := fiber.StatusInternalServerError
+
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
+			}
+
+			err = ctx.Status(code).Render("error", fiber.Map{
+				"err": err,
+			})
+			if err != nil {
+				return ctx.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+			}
+
+			return nil
+		},
 	})
+
+	app.Use(recover.New())
 
 	app.Use("/", etag.New())
 	app.Use("/static", filesystem.New(filesystem.Config{
