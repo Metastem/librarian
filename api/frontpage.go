@@ -20,10 +20,10 @@ import (
 
 var fpCache = cache.New(30*time.Minute, 30*time.Minute)
 
-func GetFrontpageVideos() []types.Claim {
+func GetFrontpageVideos() ([]types.Claim, error) {
 	cacheData, found := fpCache.Get("fp")
 	if found {
-		return cacheData.([]types.Claim)
+		return cacheData.([]types.Claim), nil
 	}
 
 	Client := utils.NewClient()
@@ -48,12 +48,12 @@ func GetFrontpageVideos() []types.Claim {
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
 	frontpageDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
 	if err != nil {
-		fmt.Println(err)
+		return []types.Claim{}, err
 	}
 
 	frontpageDataBody, err := ioutil.ReadAll(frontpageDataRes.Body)
 	if err != nil {
-		fmt.Println(err)
+		return []types.Claim{}, err
 	}
 
 	claims := make([]types.Claim, 0)
@@ -105,5 +105,5 @@ func GetFrontpageVideos() []types.Claim {
 	wg.Wait()
 
 	commentCache.Set("fp", claims, cache.DefaultExpiration)
-	return claims
+	return claims, nil
 }
