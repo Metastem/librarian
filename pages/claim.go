@@ -124,6 +124,9 @@ func ClaimHandler(c *fiber.Ctx) error {
 		if err != nil && err.Error() != "no data associated with claim id" {
 			return err
 		} else if live.ClaimId != "" {
+			if !viper.GetBool("ENABLE_LIVE_STREAM") {
+				return fmt.Errorf("live streams are disabled on this instance")
+			}
 			return c.Render("live", fiber.Map{
 				"live":   live,
 				"claim":  claimData,
