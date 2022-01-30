@@ -77,6 +77,7 @@ func main() {
 
 	app.Get("/", pages.FrontpageHandler)
 	app.Get("/image", proxy.ProxyImage)
+	app.Get("/live/hls/:claimId/:path", proxy.ProxyLive)
 	app.Get("/search", pages.SearchHandler)
 	app.Get("/privacy", pages.PrivacyHandler)
 

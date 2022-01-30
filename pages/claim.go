@@ -120,6 +120,16 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	default:
-		return fmt.Errorf("unsupported stream type: "+claimData.StreamType)
+		live, err := api.GetLive(claimData.Channel.Id)
+		if err != nil && err.Error() != "no data associated with claim id" {
+			return err
+		} else if live.ClaimId != "" {
+			return c.Render("live", fiber.Map{
+				"live":   live,
+				"claim":  claimData,
+				"config": viper.AllSettings(),
+			})
+		}
+		return fmt.Errorf("unsupported stream type: " + claimData.StreamType)
 	}
 }
