@@ -27,6 +27,9 @@ func ChannelHandler(c *fiber.Ctx) error {
 	}
 
 	channelData, err := api.GetChannel(c.Params("channel"), true)
+	if err != nil {
+		return err
+	}
 
 	if (channelData.Id == "") {
 		return c.Status(404).Render("404", fiber.Map{})
