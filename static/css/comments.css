@@ -78,4 +78,8 @@
   .comments__expandBtn__label {
     color: #fff
   }
+  .spinner:after {
+    border: 3px solid #fff;
+    border-color: #fff transparent #fff transparent;
+  }
 }
