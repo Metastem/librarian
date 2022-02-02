@@ -1,9 +1,8 @@
 <div class="videoWrapper">
   <video id="player" class="videoPlayer" poster="{{claim.ThumbnailUrl}}&w=1280&h=720" controls=true>
-    {{#if nojs}}
-    <source type="{{streamType}}" src="{{stream}}?download=1">
-    {{else}}
     <source type="{{streamType}}" src="{{stream}}">
-    {{/if}}
+    {{#equal streamType "application/x-mpegurl"}}
+    <source type="video/mp4" src="{{stream}}?download=1">
+    {{/equal}}
   </video>
 </div>
