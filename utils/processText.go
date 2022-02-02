@@ -41,10 +41,11 @@ func ProcessMarkdown(text string) template.HTML {
 	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
 	imgs := re.FindAllString(text, len(text) / 4)
 	for i := 0; i < len(imgs); i++ {
-		hmac := EncodeHMAC(imgs[i])
-		text = re.ReplaceAllString(text, "/image?url=$1"+hmac)
+		imgUrlRe := regexp.MustCompile(`https?:\/\/[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_:%&;\?\#\/.=]+`)
+		imgUrl := imgUrlRe.FindString(imgs[i])
+		hmac := EncodeHMAC(imgUrl)
+		text = strings.ReplaceAll(text, imgs[i], `img src="/image?` + `hash=` + hmac + `&url=` + imgUrl + `"`)
 	}
-	text = strings.ReplaceAll(text, `img src="`, `img src="/image?url=`)
 
 	re2 := regexp.MustCompile(`<iframe src="http(.*)>`)
 	text = re2.ReplaceAllString(text, "")
@@ -62,6 +63,7 @@ func ProcessMarkdown(text string) template.HTML {
 	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
 
 	p := bluemonday.UGCPolicy()
+	p.AllowImages()
 	p.AllowElements("iframe")
 	p.AllowAttrs("width").Matching(bluemonday.Number).OnElements("iframe")
 	p.AllowAttrs("height").Matching(bluemonday.Number).OnElements("iframe")

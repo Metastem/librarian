@@ -25,6 +25,11 @@ h1 {
   gap: 2rem;
 }
 
+article img {
+  text-align: center;
+  max-width: 100%;
+}
+
 @media only screen and (min-width: 813px) and (max-width: 1366px) {
   main {
     margin: 0 12vw;
