@@ -68,6 +68,7 @@ They also use your data for these purposes and you cannot opt-out of it.
 **Ads/trackers:** (as of Feb 1, 2022)
 - Google
 - Vidcrunch
+- and many more listed on the list of partners in the cookie banner.
 
 And they have previously used:
 - Traffic Junky (P***Hub)
