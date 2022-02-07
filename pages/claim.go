@@ -126,6 +126,18 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"nojs":        false,
 			})
 		}
+	case "binary":
+		stream, err := api.GetVideoStream(claimData.LbryUrl)
+		if err != nil {
+			return err
+		}
+
+		return c.Render("claim", fiber.Map{
+			"stream":      stream,
+			"download":		 true,
+			"claim":       claimData,
+			"config":      viper.AllSettings(),
+		})
 	default:
 		if claimData.ValueType == "repost" {
 			repostLink, err := utils.LbryTo(claimData.Repost)

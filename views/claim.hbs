@@ -29,6 +29,22 @@
   <link rel="stylesheet" href="/static/css/video.css" />
   {{/if}}
 
+  {{#if download}}
+  <style>
+    .dl {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    .largeIcon {
+      font-size: 36px;
+    }
+    .videoMeta__download {
+      margin-top: 0;
+    }
+  </style>
+  {{/if}}
+
   <link rel="stylesheet" href="/static/css/comments.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
@@ -39,8 +55,24 @@
   {{> 'partials/header' }}
 
   <main>
+    {{#if download}}
+    <div class="dl">
+      <span class="material-icons-outlined largeIcon">
+        report_problem
+      </span>
+      <p>This file could not be displayed.</p>
+      <a href="{{stream}}?download=1" rel="nofollow noreferrer">
+        <button class="videoMeta__download">
+          <span class="material-icons-outlined">download</span> Download
+        </button>
+      </a>
+    </div>
+    {{/if}}
+
     {{#unless document}}
+    {{#unless download}}
     {{> 'partials/videoPlayer' }}
+    {{/unless}}
 
     <h2>{{claim.Title}}</h2>
 
@@ -65,34 +97,9 @@
     <p><b>{{claim.Date}}</b></p>
 
     <div class="articleMeta__wrapper">
-      <div>
-        <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">View on Odysee</a><br>
-        <div class="articleMeta">
-          <p><span class="material-icons-outlined" title="Views">visibility</span> {{claim.Views}}</p>
-          <p><span class="material-icons-outlined" title="Likes">thumb_up</span> {{claim.Likes}}</p>
-          <p><span class="material-icons-outlined" title="Dislilkes">thumb_down</span> {{claim.Dislikes}}</p>
-        </div>
-      </div>
-      <div class="videoDesc__channel">
-        <a href="{{claim.Channel.RelUrl}}">
-          {{#if claim.Channel.Thumbnail}}
-          <img src="{{claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
-          {{else}}
-          <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
-          {{/if}}
-        </a>
-        <a href="{{claim.Channel.RelUrl}}">
-          <p>
-            {{#if claim.Channel.Title}}
-            <b>{{claim.Channel.Title}}</b>
-            <br>
-            {{claim.Channel.Name}}
-            {{else}}
-            <b>{{claim.Channel.Name}}</b>
-            {{/if}}
-          </p>
-        </a>
-      </div>
+      {{> 'partials/meta' }}
+      
+      {{> 'partials/channel' }}
     </div>
 
     <article>
