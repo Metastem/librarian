@@ -22,8 +22,10 @@ var claimCache = cache.New(30*time.Minute, 15*time.Minute)
 
 func GetClaim(channel string, video string, claimId string) (types.Claim, error) {
 	urls := []string{"lbry://" + channel + "/" + video}
-	if channel == "" {
+	if channel == "" && video != "" {
 		urls = []string{"lbry://" + video + "#" + claimId}
+	} else if video == "" {
+		urls = []string{"lbry://" + channel}
 	}
 
 	cacheData, found := claimCache.Get(urls[0])
