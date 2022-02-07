@@ -65,7 +65,7 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				
+
 				claimId := value.Get("claim_id").String()
 				lbryUrl := value.Get("canonical_url").String()
 				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
@@ -80,19 +80,31 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 					return
 				}
 
+				url, err := utils.LbryTo(lbryUrl)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				channelUrl, err := utils.LbryTo(channelLbryUrl)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
 				claims = append(claims, types.Claim{
-					Url:       utils.LbryTo(lbryUrl, "http"),
+					Url:       url["http"],
 					LbryUrl:   lbryUrl,
-					RelUrl:    utils.LbryTo(lbryUrl, "rel"),
-					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+					RelUrl:    url["rel"],
+					OdyseeUrl: url["odysee"],
 					ClaimId:   value.Get("claim_id").String(),
 					Channel: types.Channel{
 						Name:      value.Get("signing_channel.name").String(),
 						Title:     value.Get("signing_channel.value.title").String(),
 						Id:        value.Get("signing_channel.claim_id").String(),
-						Url:       utils.LbryTo(channelLbryUrl, "http"),
-						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
-						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
+						Url:       channelUrl["http"],
+						RelUrl:    channelUrl["rel"],
+						OdyseeUrl: channelUrl["odysee"],
 					},
 					Title:        value.Get("value.title").String(),
 					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),

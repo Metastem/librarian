@@ -86,19 +86,24 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 
 	wg.Wait()
 
+	url, err := utils.LbryTo(channelData.Get("canonical_url").String())
+	if err != nil {
+		return types.Channel{}, err
+	}
+
 	returnData := types.Channel{
 		Name:           channelData.Get("name").String(),
 		Title:          channelData.Get("value.title").String(),
 		Id:             channelData.Get("claim_id").String(),
-		Url:            utils.LbryTo(channelData.Get("canonical_url").String(), "http"),
-		OdyseeUrl:      utils.LbryTo(channelData.Get("canonical_url").String(), "odysee"),
-		RelUrl:         utils.LbryTo(channelData.Get("canonical_url").String(), "rel"),
+		Url:            url["http"],
+		OdyseeUrl:      url["odysee"],
+		RelUrl:         url["rel"],
 		CoverImg:       coverImg,
 		Description:    template.HTML(description),
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
 		Thumbnail:      thumbnail,
 		Followers:      followers,
-		ValueType: 			channelData.Get("value_type").String(),
+		ValueType:      channelData.Get("value_type").String(),
 		UploadCount:    channelData.Get("meta.claims_in_channel").Int(),
 	}
 	channelCache.Set(channel, returnData, cache.DefaultExpiration)
@@ -183,19 +188,31 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 					return
 				}
 
+				url, err := utils.LbryTo(lbryUrl)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
+				channelUrl, err := utils.LbryTo(channelLbryUrl)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+
 				claims = append(claims, types.Claim{
-					Url:       utils.LbryTo(lbryUrl, "http"),
+					Url:       url["http"],
 					LbryUrl:   lbryUrl,
-					RelUrl:    utils.LbryTo(lbryUrl, "rel"),
-					OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+					RelUrl:    url["rel"],
+					OdyseeUrl: url["odysee"],
 					ClaimId:   value.Get("claim_id").String(),
 					Channel: types.Channel{
 						Name:      value.Get("signing_channel.name").String(),
 						Title:     value.Get("signing_channel.value.title").String(),
 						Id:        value.Get("signing_channel.claim_id").String(),
-						Url:       utils.LbryTo(channelLbryUrl, "http"),
-						RelUrl:    utils.LbryTo(channelLbryUrl, "rel"),
-						OdyseeUrl: utils.LbryTo(channelLbryUrl, "odysee"),
+						Url:       channelUrl["http"],
+						RelUrl:    channelUrl["rel"],
+						OdyseeUrl: channelUrl["odysee"],
 					},
 					Description:  template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
 					Title:        value.Get("value.title").String(),

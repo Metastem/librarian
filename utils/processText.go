@@ -19,7 +19,7 @@ func ProcessText(text string, newline bool) string {
 		text = strings.ReplaceAll(text, "\n", "<br>")
 	}
 	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
-	imgs := re.FindAllString(text, len(text) / 4)
+	imgs := re.FindAllString(text, len(text)/4)
 	for i := 0; i < len(imgs); i++ {
 		hmac := EncodeHMAC(imgs[i])
 		text = re.ReplaceAllString(text, "/image?url=$1"+hmac)
@@ -40,19 +40,19 @@ func ProcessDocument(text string, isMd bool) string {
 	}
 
 	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
-	imgs := re.FindAllString(text, len(text) / 4)
+	imgs := re.FindAllString(text, len(text)/4)
 	for i := 0; i < len(imgs); i++ {
 		imgUrlRe := regexp.MustCompile(`https?:\/\/[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_:%&;\?\#\/.=]+`)
 		imgUrl := imgUrlRe.FindString(imgs[i])
 		hmac := EncodeHMAC(imgUrl)
-		text = strings.ReplaceAll(text, imgs[i], `img src="/image?` + `hash=` + hmac + `&url=` + imgUrl + `"`)
+		text = strings.ReplaceAll(text, imgs[i], `img src="/image?`+`hash=`+hmac+`&url=`+imgUrl+`"`)
 	}
 
 	re2 := regexp.MustCompile(`<iframe src="http(.*)>`)
 	text = re2.ReplaceAllString(text, "")
 
 	re3 := regexp.MustCompile(`<iframe src="(.*)>`)
-	embeds := re3.FindAllString(text, len(text) / 4)
+	embeds := re3.FindAllString(text, len(text)/4)
 	for i := 0; i < len(embeds); i++ {
 		embed := embeds[i]
 		newEmbed := strings.ReplaceAll(embed, "#", ":")
@@ -70,11 +70,11 @@ func ProcessDocument(text string, isMd bool) string {
 	p.AllowAttrs("height").Matching(bluemonday.Number).OnElements("iframe")
 	p.AllowAttrs("src").OnElements("iframe")
 	text = p.Sanitize(text)
-	
+
 	return text
 }
 
-func LbryTo(link string, linkType string) string {
+func LbryTo(link string) (map[string]string, error) {
 	link = strings.ReplaceAll(link, "#", ":")
 	split := strings.Split(strings.ReplaceAll(link, "lbry://", ""), "/")
 	link = "lbry://" + url.PathEscape(split[0])
@@ -82,16 +82,21 @@ func LbryTo(link string, linkType string) string {
 		link = "lbry://" + url.PathEscape(split[0]) + "/" + url.PathEscape(split[1])
 	}
 
-	switch linkType {
-	case "rel":
-		link = strings.ReplaceAll(link, "lbry://", "/")
-	case "http":
-		link = strings.ReplaceAll(link, "lbry://", viper.GetString("DOMAIN") + "/")
-	case "odysee":
-		link = strings.ReplaceAll(link, "lbry://", "https://odysee.com/")
+	link = strings.ReplaceAll(link, "lbry://", "http://domain.tld/")
+	parsedLink, err := url.Parse(link)
+	if err != nil {
+		return map[string]string{}, err
 	}
-	
-	return link
+	link = parsedLink.String()
+
+	link = strings.ReplaceAll(link, "%3A", ":")
+	link = strings.ReplaceAll(link, "+", "%2B")
+
+	return map[string]string{
+		"rel": strings.ReplaceAll(link, "http://domain.tld/", "/"),
+		"http": strings.ReplaceAll(link, "http://domain.tld/", viper.GetString("DOMAIN")+"/"),
+		"odysee": strings.ReplaceAll(link, "http://domain.tld/", "https://odysee.com/"),
+	}, nil
 }
 
 func UrlEncode(link string) (string, error) {
@@ -101,7 +106,7 @@ func UrlEncode(link string) (string, error) {
 
 func ReplaceStickersAndEmotes(text string) string {
 	re := regexp.MustCompile(":(.*?):")
-	emotes := re.FindAllString(text, len(text) / 4)
+	emotes := re.FindAllString(text, len(text)/4)
 	for i := 0; i < len(emotes); i++ {
 		emote := strings.ReplaceAll(emotes[i], ":", "")
 		if data.Stickers[emote] != "" {

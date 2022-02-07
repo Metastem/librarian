@@ -120,19 +120,30 @@ func ProcessClaim(claimData gjson.Result) (types.Claim, error) {
 	if err != nil {
 		return types.Claim{}, err
 	}
+
+	url, err := utils.LbryTo(lbryUrl)
+	if err != nil {
+		return types.Claim{}, err
+	}
+
+	channelUrl, err := utils.LbryTo(channelLbryUrl)
+	if err != nil {
+		return types.Claim{}, err
+	}
+
 	return types.Claim{
-		Url:       utils.LbryTo(lbryUrl, "http"),
+		Url:       url["http"],
 		LbryUrl:   lbryUrl,
-		RelUrl:    utils.LbryTo(lbryUrl, "rel"),
-		OdyseeUrl: utils.LbryTo(lbryUrl, "odysee"),
+		RelUrl:    url["rel"],
+		OdyseeUrl: url["odysee"],
 		ClaimId:   claimData.Get("claim_id").String(),
 		Channel: types.Channel{
 			Name:        claimData.Get("signing_channel.name").String(),
 			Title:       claimData.Get("signing_channel.value.title").String(),
 			Id:          claimData.Get("signing_channel.claim_id").String(),
-			Url:         utils.LbryTo(channelLbryUrl, "http"),
-			RelUrl:      utils.LbryTo(channelLbryUrl, "rel"),
-			OdyseeUrl:   utils.LbryTo(channelLbryUrl, "odysee"),
+			Url:         channelUrl["http"],
+			RelUrl:      channelUrl["rel"],
+			OdyseeUrl:   channelUrl["odysee"],
 			Description: template.HTML(claimData.Get("signing_channel.value.description").String()),
 			Thumbnail:   channelThumbnail,
 		},
