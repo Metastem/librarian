@@ -110,7 +110,7 @@ nvim data/config.yml
 ```
 You can also edit `docker-compose.yml` if you want to change ports or use the image instead of building it.
 
-You can now run Librarian.
+You can now run Librarian. 🎉
 ```
 sudo docker-compose up -d
 ```
@@ -138,7 +138,7 @@ cp config.example.yml config.yml
 nvim config.yml
 ```
 
-You can now run Librarian.
+You can now run Librarian. 🎉
 ```
 ./librarian
 ```
@@ -155,7 +155,7 @@ cp config.example.yml config.yml
 nvim config.yml
 ```
 
-You can now run Librarian.
+You can now run Librarian. 🎉
 ```
 librarian # If GOBIN is in your PATH
 $HOME/go/bin/librarian # If GOBIN is not in PATH
