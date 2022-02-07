@@ -127,6 +127,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	default:
+		if claimData.ValueType == "repost" {
+			repostLink, err := utils.LbryTo(claimData.Repost)
+			if err != nil {
+				return err
+			}
+			return c.Redirect(repostLink["rel"])
+		}
+
 		live, err := api.GetLive(claimData.Channel.Id)
 		if err != nil && err.Error() != "no data associated with claim id" {
 			return err

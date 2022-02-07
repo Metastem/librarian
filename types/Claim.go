@@ -22,6 +22,8 @@ type Claim struct {
 	Date         string
 	Duration		 string
 	MediaType		 string
+	Repost			 string
+	ValueType		 string
 	SrcSize			 string
 	StreamType	 string
 }
