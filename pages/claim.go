@@ -48,15 +48,22 @@ func ClaimHandler(c *fiber.Ctx) error {
 			return err
 		}
 
-		if docRes.Header.Get("Content-Type") != "text/markdown" {
-			return fmt.Errorf("document not type of text/markdown")
-		}
-
 		docBody, err := ioutil.ReadAll(docRes.Body)
 		if err != nil {
 			return err
 		}
-		document := utils.ProcessMarkdown(string(docBody))
+
+		document := ""
+		switch docRes.Header.Get("Content-Type") {
+		case "text/html":
+			document = utils.ProcessDocument(string(docBody), false)
+		case "text/plain":
+			document = string(docBody)
+		case "text/markdown":
+			document = utils.ProcessDocument(string(docBody), true)
+		default:
+			return fmt.Errorf("document type not supported: " + docRes.Header.Get("Content-Type"))
+		}
 
 		if c.Query("nojs") == "1" {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)

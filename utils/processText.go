@@ -2,7 +2,6 @@ package utils
 
 import (
 	"html"
-	"html/template"
 	"net/url"
 	"regexp"
 	"strings"
@@ -35,8 +34,10 @@ func ProcessText(text string, newline bool) string {
 	return text
 }
 
-func ProcessMarkdown(text string) template.HTML {
-	text = string(markdown.ToHTML([]byte(text), nil, nil))
+func ProcessDocument(text string, isMd bool) string {
+	if isMd {
+		text = string(markdown.ToHTML([]byte(text), nil, nil))
+	}
 
 	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
 	imgs := re.FindAllString(text, len(text) / 4)
@@ -70,7 +71,7 @@ func ProcessMarkdown(text string) template.HTML {
 	p.AllowAttrs("src").OnElements("iframe")
 	text = p.Sanitize(text)
 	
-	return template.HTML(text)
+	return text
 }
 
 func LbryTo(link string, linkType string) string {
