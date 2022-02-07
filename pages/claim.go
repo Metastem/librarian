@@ -36,13 +36,13 @@ func ClaimHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	stream, err := api.GetVideoStream(claimData.LbryUrl)
+	if err != nil {
+		return err
+	}
+
 	switch claimData.StreamType {
 	case "document":
-		stream, err := api.GetVideoStream(claimData.LbryUrl)
-		if err != nil {
-			return err
-		}
-
 		docRes, err := http.Get(stream)
 		if err != nil {
 			return err
@@ -85,11 +85,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	case "video":
-		videoStream, err := api.GetVideoStream(claimData.LbryUrl)
-		if err != nil {
-			return err
-		}
-		videoStreamType, err := api.GetVideoStreamType(videoStream)
+		videoStreamType, err := api.GetVideoStreamType(stream)
 		if err != nil {
 			return err
 		}
@@ -107,7 +103,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			comments := api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
 
 			return c.Render("claim", fiber.Map{
-				"stream":         videoStream,
+				"stream":         stream,
 				"claim":          claimData,
 				"comments":       comments,
 				"commentsLength": len(comments),
@@ -117,7 +113,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		} else {
 			return c.Render("claim", fiber.Map{
-				"stream":      videoStream,
+				"stream":      stream,
 				"streamType":  videoStreamType,
 				"isHls":       isHls,
 				"claim":       claimData,
@@ -127,16 +123,11 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	case "binary":
-		stream, err := api.GetVideoStream(claimData.LbryUrl)
-		if err != nil {
-			return err
-		}
-
 		return c.Render("claim", fiber.Map{
-			"stream":      stream,
-			"download":		 true,
-			"claim":       claimData,
-			"config":      viper.AllSettings(),
+			"stream":   stream,
+			"download": true,
+			"claim":    claimData,
+			"config":   viper.AllSettings(),
 		})
 	default:
 		if claimData.ValueType == "repost" {
@@ -160,6 +151,12 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"config": viper.AllSettings(),
 			})
 		}
-		return fmt.Errorf("unsupported stream type: " + claimData.StreamType)
+
+		return c.Render("claim", fiber.Map{
+			"stream":   stream,
+			"download": true,
+			"claim":    claimData,
+			"config":   viper.AllSettings(),
+		})
 	}
 }
