@@ -4,7 +4,6 @@ variables:
 
 stages:
   - build
-  - buildx
   - deploy
 
 bin:
@@ -24,22 +23,6 @@ bin:
         - librarian-linux-arm64
         - librarian-openbsd-amd64
 
-buildx:
-  image: docker:20-git
-  stage: buildx
-  variables:
-    GIT_STRATEGY: none
-  artifacts:
-    paths:
-      - buildx
-    expire_in: 1 hour
-  services:
-    - docker:20-dind
-  script:
-    - export DOCKER_BUILDKIT=1
-    - git clone git://github.com/docker/buildx ./docker-buildx
-    - docker build --platform=local -o . ./docker-buildx
-
 deploy:
   image: docker:20
   stage: deploy
@@ -48,7 +31,8 @@ deploy:
       command: ["--experimental"]
   before_script:
     - mkdir -p ~/.docker/cli-plugins
-    - mv buildx ~/.docker/cli-plugins/docker-buildx
+    - wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64
+    - chmod +x ~/.docker/cli-plugins/docker-buildx
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
   script:
     - docker login -u $DOCKER_USERNAME -p $DOCKER_ACCESS_TOKEN
