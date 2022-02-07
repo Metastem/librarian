@@ -14,5 +14,6 @@ type Channel struct {
 	Description template.HTML
 	DescriptionTxt string
 	Thumbnail   string
+	ValueType		string
 	UploadCount	int64
 }

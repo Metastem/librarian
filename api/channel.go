@@ -98,6 +98,7 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
 		Thumbnail:      thumbnail,
 		Followers:      followers,
+		ValueType: 			channelData.Get("value_type").String(),
 		UploadCount:    channelData.Get("meta.claims_in_channel").Int(),
 	}
 	channelCache.Set(channel, returnData, cache.DefaultExpiration)
