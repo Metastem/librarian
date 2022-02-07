@@ -104,8 +104,9 @@ cd librarian
 
 Edit the config file using your preferred editor.
 ```
-cp config.example.yml config.yml
-nvim config.yml
+mkdir data
+cp config.example.yml data/config.yml
+nvim data/config.yml
 ```
 You can also edit `docker-compose.yml` if you want to change ports or use the image instead of building it.
 
