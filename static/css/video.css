@@ -58,8 +58,8 @@ video {
   width: 80%;
 }
 
-.description {
-  margin-top: -1em;
+.description p {
+  margin: 0
 }
 
 .videoDesc__channel {
