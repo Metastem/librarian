@@ -9,47 +9,63 @@
 
   <meta property="og:site_name" content="Librarian">
   <meta property="og:url" content={{channel.Url}}>
-  <meta property="og:title" content={{channel.Title}}>
   <meta property="og:image" content="{{config.DOMAIN}}{{channel.Thumbnail}}">
   <meta property="og:description" content={{channel.DescriptionTxt}}>
   <meta property="og:type" content="website">
 
   <meta name="twitter:card" content="player">
   <meta name="twitter:url" content={{channel.Url}}>
-  <meta name="twitter:title" content={{channel.Title}}>
   <meta name="twitter:description" content="">
   <meta name="twitter:image" content="{{config.DOMAIN}}{{channel.Thumbnail}}">
 
-  <link rel="alternate" type="application/rss+xml" title="{{channel.Title}} - Librarian" href="{{channel.Url}}/rss"/>
+  {{#if channel.Title}}
+  <meta property="og:title" content={{channel.Title}}>
+  <meta name="twitter:title" content={{channel.Title}}>
+  {{else}}
+  <meta property="og:title" content={{channel.Name}}>
+  <meta name="twitter:title" content={{channel.Name}}>
+  {{/if}}
 
-  <link rel="stylesheet" href="/static/css/channel.css"/>
+  <link rel="alternate" type="application/rss+xml" title="{{channel.Title}} - Librarian" href="{{channel.Url}}/rss" />
+
+  <link rel="stylesheet" href="/static/css/channel.css" />
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
 
-  <title>{{channel.Title}} - Librarian</title>
+  <title>
+    {{#if channel.Title}}
+    {{channel.Title}}
+    {{else}}
+    {{channel.Name}}
+    {{/if}}
+    - Librarian
+  </title>
 </head>
 
 <body>
   {{> 'partials/header' }}
 
   <main>
-    
     {{#if channel.CoverImg}}
-    <img src="{{channel.CoverImg}}&w=1920&h=240" class="coverImg" loading="lazy"/>
+    <img src="{{channel.CoverImg}}&w=1920&h=240" class="coverImg" loading="lazy" />
     {{else}}
     {{/if}}
-    
+
     <hr>
 
     <div class="channel">
       {{#if channel.Thumbnail}}
-      <img src="{{channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy"/>
+      <img src="{{channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
       {{else}}
-      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy"/>
+      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
       {{/if}}
       <p>
+        {{#if channel.Title}}
         <b>{{channel.Title}}</b>
         <br>
         {{channel.Name}}
+        {{else}}
+        <b>{{channel.Name}}</b>
+        {{/if}}
       </p>
     </div>
 
@@ -74,10 +90,10 @@
 
     <div class="claimsGrid">
       {{#each claims}}
-        {{> 'partials/claim'}}
+      {{> 'partials/claim'}}
       {{/each}}
     </div>
-    
+
     <br><br>
 
     <div class="pageSelector">
