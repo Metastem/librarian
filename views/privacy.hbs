@@ -49,7 +49,8 @@
           report_problem
         </span>
         <h3>No Details Provided</h3>
-        <p>The operator of this instance will be required to provide privacy details to be added to the instance list.</p>
+        <p>The operator of this instance will be required to provide privacy details to be added to the instance list.
+        </p>
       </div>
     </div>
     {{else}}
@@ -65,19 +66,19 @@
           {{#if config.instance_privacy.data_collected_ip}}
           <li>
             <span class="material-icons-outlined">password</span>
-            IP Address
+            Internet address (IP Address)
           </li>
           {{/if}}
           {{#if config.instance_privacy.data_collected_url}}
           <li>
             <span class="material-icons-outlined">link</span>
-            Request URL
+            Page viewed (Request URL)
           </li>
           {{/if}}
           {{#if config.instance_privacy.data_collected_device}}
           <li>
             <span class="material-icons-outlined">phonelink</span>
-            Device Type
+            Device Type (User agent)
           </li>
           {{/if}}
           {{#if config.instance_privacy.data_collected_diagnostics}}
@@ -91,6 +92,33 @@
     </div>
     {{/unless}}
     {{/unless}}
+
+    <details class="privacyDetails">
+      <summary>What's this?</summary>
+      <ul>
+        <li>
+          <span class="material-icons-outlined">password</span>
+          Internet address (IP Address) - Your IP address tells the server (another computer) where to send things. It
+          can be used to find the city you live in but it isn't very accurate and can change depending on your internet
+          connection.
+        </li>
+        <li>
+          <span class="material-icons-outlined">link</span>
+          Page viewed (Request URL) - This is what's in the bar on your browser, it contains information like the video
+          you're watching or channel you're looking at.
+        </li>
+        <li>
+          <span class="material-icons-outlined">phonelink</span>
+          Device Type (User agent) - Your browser sends what browser, device, and operating system you are using. This
+          can be changed in some browsers with an extension or setting.
+        </li>
+        <li>
+          <span class="material-icons-outlined">settings</span>
+          Diagnostics - When this data is only collected when there is an error and only a short amount of time while
+          diagnosing an issue.
+        </li>
+      </ul>
+    </details>
 
     <h2>Additional information</h2>
     <ul>

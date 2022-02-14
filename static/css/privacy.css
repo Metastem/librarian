@@ -6,6 +6,7 @@ ul {
   list-style: outside none none;
   padding: 0;
   margin: 0.25em;
+  text-align: left;
 }
 
 .largeIcon {
@@ -32,6 +33,11 @@ ul {
 .badge p,
 .largeIcon {
   margin: 0;
+}
+
+.privacyDetails summary {
+  cursor: pointer;
+  user-select: none;
 }
 
 @media only screen and (max-width: 812px) {
