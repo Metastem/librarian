@@ -159,6 +159,7 @@ func ProcessClaim(claimData gjson.Result) (types.Claim, error) {
 		RelTime:      humanize.Time(time),
 		ValueType:		claimData.Get("value_type").String(),
 		Repost: 			claimData.Get("reposted_claim.canonical_url").String(),
+		MediaType: 		claimData.Get("value.source.media_type").String(),
 		Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
 		StreamType:   claimData.Get("value.stream_type").String(),
 	}, nil

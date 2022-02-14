@@ -138,13 +138,16 @@ func ClaimHandler(c *fiber.Ctx) error {
 			return c.Redirect(repostLink["rel"])
 		}
 
-		live, err := api.GetLive(claimData.Channel.Id)
-		if err != nil && err.Error() != "no data associated with claim id" {
-			return err
-		} else if live.ClaimId != "" {
+		if claimData.MediaType == "" && claimData.ValueType == "stream" {
+			live, err := api.GetLive(claimData.Channel.Id)
+			if err != nil && err.Error() != "no data associated with claim id" {
+				return err
+			}
+
 			if !viper.GetBool("ENABLE_LIVE_STREAM") {
 				return fmt.Errorf("live streams are disabled on this instance")
 			}
+
 			return c.Render("live", fiber.Map{
 				"live":   live,
 				"claim":  claimData,

@@ -16,6 +16,12 @@ video {
   background-color: black;
 }
 
+.streamOffline {
+  border-radius: 4px;
+  padding: 8px;
+  background-color: #ffe9b4;
+}
+
 .videoData {
   display: flex;
   flex-direction: row;
@@ -148,5 +154,8 @@ video {
 @media (prefers-color-scheme: dark) {
   .relVid__link {
     color: #ffffff;
+  }
+  .streamOffline {
+    background-color: #290164;
   }
 }

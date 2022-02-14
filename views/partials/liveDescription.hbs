@@ -19,12 +19,14 @@
       </p>
     </a>
   </div>
+  {{#if live.Live}}
   <p>
     <b>
       Started streaming 
       <span title="{{live.Time}}">{{live.RelTime}}</span>
     </b>
   </p>
+  {{/if}}
   <div>
     <input id="expandBtn" type="checkbox">
     <div class="description">{{{claim.Description}}}</div>
