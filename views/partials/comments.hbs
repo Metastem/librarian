@@ -22,6 +22,7 @@
       <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
       {{/if}}
       <div>
+        {{#if this.Channel.Name}}
         <a href="{{this.Channel.Url}}">
           <p>
             {{#if this.Channel.Title}}
@@ -31,6 +32,9 @@
             {{/if}}
           </p>
         </a>
+        {{else}}
+        <p><b>[deleted]</b></p>
+        {{/if}}
         {{{this.Comment}}}
         <p title="{{this.Time}}">
           {{this.RelTime}} |
