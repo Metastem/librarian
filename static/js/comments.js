@@ -69,7 +69,7 @@ function renderComments() {
         : `<img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">`
       }
       <div>
-        ${comment.Channel.Url !== "" ? `<a href="${comment.Channel.Url}">` : ""}
+        ${comment.Channel.Name !== "" ? `<a href="${comment.Channel.Url}">` : ""}
           <p>
             ${comment.Channel.Title ?
               `<b>${comment.Channel.Title}</b><br>${comment.Channel.Name}`
@@ -78,7 +78,7 @@ function renderComments() {
               : "<b>[deleted]</b>"
             }
           </p>
-          ${comment.Channel.Url !== "" ? `</a>` : ""}
+          ${comment.Channel.Name !== "" ? `</a>` : ""}
         ${comment.Comment}
         ${comment.RelTime == "a long while ago" ? 
             `<p>
