@@ -43,11 +43,6 @@
   cursor: pointer
 }
 
-.comment a,
-.comment p {
-  word-break: break-word
-}
-
 #spinner {
   display: none;
   margin-bottom: 1em;
