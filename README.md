@@ -75,7 +75,7 @@ And they have previously used:
 - Unruly Media
 
 #### Librarian
-Privacy varies by instance. You can view a "privacy nutrition label" by clicking on the "Privacy" link at the bottom. The official [lbry.bcow.xyz](https://lbry.bcow.xyz/privacy) instance does not collect any data.
+Privacy varies by instance. You can view a "privacy nutrition label" by clicking on the "Privacy" link at the bottom. The official [lbry.bcow.xyz](https://lbry.bcow.xyz/privacy) instance collects some data for video streaming.
 
 ## Instances
 
