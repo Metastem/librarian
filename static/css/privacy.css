@@ -38,6 +38,8 @@ ul {
 .privacyDetails summary {
   cursor: pointer;
   user-select: none;
+  color: #1e88e5;
+  font-weight: 700;
 }
 
 @media only screen and (max-width: 812px) {
