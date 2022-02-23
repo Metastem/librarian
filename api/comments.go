@@ -70,7 +70,7 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := Client.Post("https://comments.odysee.com/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
+	commentsDataRes, err := Client.Post("https://comments.odysee.tv/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
 	if err != nil {
 		fmt.Println(err)
 	}
