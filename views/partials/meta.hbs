@@ -1,11 +1,13 @@
 <div class="videoMeta">
   <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">View on Odysee</a><br>
   {{#unless download}}
+  {{#unless live}}
   <a href="{{stream}}?download=1" rel="nofollow noreferrer">
     <button class="videoMeta__download">
       <span class="material-icons-outlined">download</span> Download
     </button>
   </a>
+  {{/unless}}
   {{/unless}}
   <p><span class="material-icons-outlined" title="Views">visibility</span> {{claim.Views}}</p>
   <div class="videoMeta__thumbs">
