@@ -78,7 +78,8 @@ func main() {
 	app.Get("/", pages.FrontpageHandler)
 	app.Get("/image", proxy.ProxyImage)
 	if viper.GetBool("ENABLE_LIVE_STREAM") {
-		app.Get("/live/hls/:claimId/:path", proxy.ProxyLive)
+		app.Get("/live/:type/:path", proxy.ProxyLive)
+		app.Get("/live/:type/:claimId/:path", proxy.ProxyLive)
 	}
 	app.Get("/search", pages.SearchHandler)
 	app.Get("/privacy", pages.PrivacyHandler)

@@ -11,8 +11,13 @@ func ProxyLive(c *fiber.Ctx) error {
 	client := retryablehttp.NewClient()
 	client.Logger = nil
 	client.Backoff = retryablehttp.LinearJitterBackoff
+
+	url := "https://cdn.odysee.live/" + c.Params("type") + "/" + c.Params("claimId") + "/" + c.Params("path")
+	if c.Params("claimId") == "" {
+		url = "https://cdn.odysee.live/" + c.Params("type") + "/" + c.Params("path")
+	}
 	
-	req, err := retryablehttp.NewRequest("GET", "https://cdn.odysee.live/hls/" + c.Params("claimId") + "/" + c.Params("path"), nil)
+	req, err := retryablehttp.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
