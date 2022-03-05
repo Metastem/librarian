@@ -15,16 +15,6 @@ h1 {
   font-size: 32px;
 }
 
-.articleMeta__wrapper,
-.articleMeta {
-  display: flex;
-  gap: 12px;
-}
-
-.articleMeta__wrapper {
-  gap: 2rem;
-}
-
 article img {
   text-align: center;
   max-width: 100%;
@@ -47,10 +37,5 @@ article img {
 
   .articleMeta {
     margin-top: 1em;
-  }
-
-  .articleMeta__wrapper {
-    flex-direction: column;
-    gap: 12px;
   }
 }
