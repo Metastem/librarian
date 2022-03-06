@@ -60,12 +60,12 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		return types.Claim{}, fmt.Errorf("API Error: " + claimData.Get("error.name").String() + claimData.Get("error.text").String())
 	}
 
-	returnData, err := ProcessClaim(claimData)
+	returnData, err := ProcessClaim(claimData, true, true)
 	claimCache.Set(urls[0], returnData, cache.DefaultExpiration)
 	return returnData, err
 }
 
-func ProcessClaim(claimData gjson.Result) (types.Claim, error) {
+func ProcessClaim(claimData gjson.Result, getViews bool, getRatings bool) (types.Claim, error) {
 	wg := sync.WaitGroup{}
 
 	tags := make([]string, 0)
@@ -102,18 +102,22 @@ func ProcessClaim(claimData gjson.Result) (types.Claim, error) {
 		}
 	}()
 
-	likeDislike, err := []int64{}, error(nil)
+	likeDislike, err := []int64{0, 0}, error(nil)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		likeDislike, err = GetLikeDislike(claimId)
+		if getRatings {
+			likeDislike, err = GetLikeDislike(claimId)
+		}
 	}()
 
 	views, err := int64(0), error(nil)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		views, err = GetViews(claimId)
+		if getViews {
+			views, err = GetViews(claimId)
+		}
 	}()
 
 	wg.Wait()

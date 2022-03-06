@@ -5,14 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/url"
 	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/data"
 	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
-	"github.com/dustin/go-humanize"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -21,7 +19,7 @@ import (
 var fpCache = cache.New(30*time.Minute, 30*time.Minute)
 
 func GetFrontpageVideos() ([]types.Claim, error) {
-	cacheData, found := fpCache.Get("fp")
+	cacheData, found := fpCache.Get("featured")
 	if found {
 		return cacheData.([]types.Claim), nil
 	}
@@ -32,15 +30,19 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 		"id":      1,
 		"method":  "claim_search",
 		"params": map[string]interface{}{
-			"page_size":                20,
+			"page_size":                12,
+			"page":											1,
 			"no_totals":                true,
-			"claim_type":               "stream",
+			"claim_type":               []string{"stream"},
 			"any_tags":                 []string{},
 			"not_tags":                 []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"},
-			"channel_ids":              data.Home,
+			"channel_ids":              data.Featured,
 			"not_channel_ids":          []string{},
-			"order_by":                 []string{"release_time"},
+			"order_by":                 []string{"trending_group", "trending_mixed"},
 			"fee_amount":               "<=0",
+			"remove_duplicates":				true,
+			"has_source":								true,
+			"limit_claims_per_channel":	1,
 			"release_time":             ">" + fmt.Sprint(time.Now().Unix()-15778458),
 			"include_purchase_receipt": true,
 		},
@@ -66,55 +68,8 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 			go func() {
 				defer wg.Done()
 
-				claimId := value.Get("claim_id").String()
-				lbryUrl := value.Get("canonical_url").String()
-				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
-
-				time := time.Unix(value.Get("value.release_time").Int(), 0)
-				thumbnail := value.Get("value.thumbnail.url").String()
-				thumbnail = url.QueryEscape(thumbnail)
-
-				views, err := GetViews(claimId)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				url, err := utils.LbryTo(lbryUrl)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				channelUrl, err := utils.LbryTo(channelLbryUrl)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				claims = append(claims, types.Claim{
-					Url:       url["http"],
-					LbryUrl:   lbryUrl,
-					RelUrl:    url["rel"],
-					OdyseeUrl: url["odysee"],
-					ClaimId:   value.Get("claim_id").String(),
-					Channel: types.Channel{
-						Name:      value.Get("signing_channel.name").String(),
-						Title:     value.Get("signing_channel.value.title").String(),
-						Id:        value.Get("signing_channel.claim_id").String(),
-						Url:       channelUrl["http"],
-						RelUrl:    channelUrl["rel"],
-						OdyseeUrl: channelUrl["odysee"],
-					},
-					Title:        value.Get("value.title").String(),
-					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:        views,
-					Timestamp:    time.Unix(),
-					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
-					RelTime:      humanize.Time(time),
-					StreamType:   value.Get("value.stream_type").String(),
-				})
+				claim, _ := ProcessClaim(value, true, false)
+				claims = append(claims, claim)
 			}()
 
 			return true
@@ -122,6 +77,6 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 	)
 	wg.Wait()
 
-	commentCache.Set("fp", claims, cache.DefaultExpiration)
+	fpCache.Set("featured", claims, cache.DefaultExpiration)
 	return claims, nil
 }
