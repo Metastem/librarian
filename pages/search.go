@@ -2,8 +2,9 @@ package pages
 
 import (
 	"fmt"
+	"reflect"
+	"sort"
 	"strconv"
-	"sync"
 
 	"codeberg.org/librarian/librarian/api"
 	"github.com/gofiber/fiber/v2"
@@ -32,31 +33,21 @@ func SearchHandler(c *fiber.Ctx) error {
 
 	query := c.Query("q")
 
-	wg := sync.WaitGroup{}
-	claimResults, err := make([]interface{}, 0), error(nil)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		claimResults, err = api.Search(query, page, "file", nsfw, "")
-	}()
+	results, err := api.Search(query, page, "file,channel", nsfw, "", 12)
 	if err != nil {
 		return err
 	}
-
-	channelResults, err := make([]interface{}, 0), error(nil)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		channelResults, err = api.Search(query, page, "channel", nsfw, "")
-	}()
-	if err != nil {
-		return err
-	}
-	wg.Wait()
-
+	sort.Slice(results, func(i int, j int) bool {
+		valueType := reflect.ValueOf(&results[i]).Elem().Elem().FieldByName("ValueType").String()
+		if valueType == "channel" {
+			return true
+		} else {
+			return false
+		}
+	})
+	
 	return c.Render("search", fiber.Map{
-		"claims":   claimResults,
-		"channels": channelResults,
+		"results":   results,
 		"query": map[string]interface{}{
 			"query":    query,
 			"page":     fmt.Sprint(page),

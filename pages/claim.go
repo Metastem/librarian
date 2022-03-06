@@ -94,7 +94,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			isHls = true
 		}
 
-		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId)
+		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId, 9)
 		if err != nil {
 			return err
 		}

@@ -50,22 +50,31 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		return types.Channel{}, err
 	}
 
-	channelData := gjson.Get(string(channelBody), "result."+strings.ReplaceAll(channel, ".", "\\."))
+	data := gjson.Get(string(channelBody), "result."+strings.ReplaceAll(channel, ".", "\\."))
+	channelData, err := ProcessChannel(data, getFollowers)
+	if err != nil {
+		return types.Channel{}, err
+	}
+	
+	channelCache.Set(channel, channelData, cache.DefaultExpiration)
+	return channelData, nil
+}
 
+func ProcessChannel(data gjson.Result, getFollowers bool) (types.Channel, error) {
 	wg := sync.WaitGroup{}
 	wg.Add(3)
 
 	description := ""
-	thumbnail := channelData.Get("value.thumbnail.url").String()
+	thumbnail := data.Get("value.thumbnail.url").String()
 	go func() {
 		defer wg.Done()
-		description = utils.ProcessText(channelData.Get("value.description").String(), true)
+		description = utils.ProcessText(data.Get("value.description").String(), true)
 		if thumbnail != "" {
 			thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
 		}
 	}()
 
-	coverImg := channelData.Get("value.cover.url").String()
+	coverImg := data.Get("value.cover.url").String()
 	go func() {
 		defer wg.Done()
 		if coverImg != "" {
@@ -73,11 +82,11 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		}
 	}()
 
-	followers, err := int64(0), nil
+	followers, err := int64(0), error(nil)
 	go func() {
 		defer wg.Done()
 		if getFollowers {
-			followers, err = GetChannelFollowers(channelData.Get("claim_id").String())
+			followers, err = GetChannelFollowers(data.Get("claim_id").String())
 		}
 	}()
 	if err != nil {
@@ -86,15 +95,15 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 
 	wg.Wait()
 
-	url, err := utils.LbryTo(channelData.Get("canonical_url").String())
+	url, err := utils.LbryTo(data.Get("canonical_url").String())
 	if err != nil {
 		return types.Channel{}, err
 	}
 
-	returnData := types.Channel{
-		Name:           channelData.Get("name").String(),
-		Title:          channelData.Get("value.title").String(),
-		Id:             channelData.Get("claim_id").String(),
+	return types.Channel{
+		Name:           data.Get("name").String(),
+		Title:          data.Get("value.title").String(),
+		Id:             data.Get("claim_id").String(),
 		Url:            url["http"],
 		OdyseeUrl:      url["odysee"],
 		RelUrl:         url["rel"],
@@ -103,11 +112,9 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
 		Thumbnail:      thumbnail,
 		Followers:      followers,
-		ValueType:      channelData.Get("value_type").String(),
-		UploadCount:    channelData.Get("meta.claims_in_channel").Int(),
-	}
-	channelCache.Set(channel, returnData, cache.DefaultExpiration)
-	return returnData, nil
+		ValueType:      data.Get("value_type").String(),
+		UploadCount:    data.Get("meta.claims_in_channel").Int(),
+	}, nil
 }
 
 func GetChannelFollowers(claimId string) (int64, error) {

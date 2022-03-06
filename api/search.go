@@ -6,25 +6,16 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/patrickmn/go-cache"
 	"github.com/tidwall/gjson"
 )
 
-var searchCache = cache.New(60*time.Minute, 30*time.Minute)
-
-func Search(query string, page int, claimType string, nsfw bool, relatedTo string) ([]interface{}, error) {
-	cacheData, found := searchCache.Get(query + fmt.Sprint(page) + claimType + fmt.Sprint(nsfw))
-	if found {
-		return cacheData.([]interface{}), nil
-	}
-
+func Search(query string, page int, claimType string, nsfw bool, relatedTo string, size int) ([]interface{}, error) {
 	from := 0
 	if page > 1 {
-		from = page * 9
+		from = page * size
 	}
 
 	if len(query) <= 3 {
@@ -32,7 +23,7 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	}
 
 	query = strings.ReplaceAll(query, " ", "+")
-	url := "https://lighthouse.odysee.com/search?s=" + query + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType
+	url := "https://lighthouse.odysee.tv/search?s=" + query + "&size=" + fmt.Sprint(size) + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType
 	if relatedTo != "" {
 		url = url + "&related_to=" + relatedTo
 	}
@@ -81,11 +72,19 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 					}
 				} else if claimType == "channel" {
 					channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true)
-					if err != nil {
-						fmt.Println()
-						return
+					if err == nil {
+						results = append(results, channel)
 					}
-					results = append(results, channel)
+				} else if claimType == "file,channel" {
+					vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
+					if err == nil && vid.ClaimId != relatedTo {
+						results = append(results, vid)
+					} else if err != nil && err.Error() == "value type is channel" {
+						channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true)
+						if err == nil {
+							results = append(results, channel)
+						}
+					}
 				}
 			}()
 
@@ -94,6 +93,5 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 	)
 	wg.Wait()
 
-	searchCache.Set(query+fmt.Sprint(page)+claimType+fmt.Sprint(nsfw), results, cache.DefaultExpiration)
 	return results, nil
 }

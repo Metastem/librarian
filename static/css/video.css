@@ -44,6 +44,10 @@ video {
   font-size: 12px;
 }
 
+.videoDesc__channel p {
+  margin: 0;
+}
+
 .relVids {
   display: flex;
   flex-direction: column;
@@ -87,6 +91,7 @@ video {
   }
   .videoDesc__meta {
     align-self: auto;
+    flex-direction: row-reverse;
   }
   .videoData__left,
   .videoData__right {

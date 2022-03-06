@@ -61,11 +61,18 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 	}
 
 	returnData, err := ProcessClaim(claimData, true, true)
+	if err != nil {
+		return types.Claim{}, err
+	}
 	claimCache.Set(urls[0], returnData, cache.DefaultExpiration)
-	return returnData, err
+	return returnData, nil
 }
 
 func ProcessClaim(claimData gjson.Result, getViews bool, getRatings bool) (types.Claim, error) {
+	if claimData.Get("value_type").String() == "channel" {
+		return types.Claim{}, fmt.Errorf("value type is channel")
+	}
+	
 	wg := sync.WaitGroup{}
 
 	tags := make([]string, 0)

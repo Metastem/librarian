@@ -15,6 +15,13 @@
   height: 240px;
 }
 
+.videoDesc__data--channel {
+  flex-direction: column;
+  gap: 0;
+  align-items: flex-start;
+  padding-bottom: 0.75em;
+}
+
 .description {
   margin-top: -1em;
 }

@@ -38,6 +38,7 @@ header {
   font-size: 14px;
   padding: 0.5em;
   border: none;
+  border-radius: 6px;
   outline: none;
   color: var(--text);
   background-color: var(--bg-100);
@@ -87,10 +88,6 @@ main {
 .description {
   overflow: hidden;
   max-height: 8.5em;
-}
-
-.description br:last-of-type {
-  display: none;
 }
 
 .videoDesc__meta {
@@ -224,6 +221,9 @@ footer {
   }
   .videoDesc {
     width: 100%;
+  }
+  .videoDesc__meta__item-btn div {
+    padding: 0.35em;
   }
   footer {
     flex-direction: column;
