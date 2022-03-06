@@ -1,4 +1,5 @@
 :root {
+  --text: #000;
   --bg-100: #f1f1f1;
   --bg-200: #e1e1e1;
   --accent: #1e88e5;
@@ -37,8 +38,9 @@ header {
   font-size: 14px;
   padding: 0.5em;
   border: none;
-  border-bottom: 1px solid var(--bg-200);
   outline: none;
+  color: var(--text);
+  background-color: var(--bg-100);
 }
 
 .sectionHeader {
@@ -56,7 +58,7 @@ main {
 }
 
 .claimLink {
-  color: #000;
+  color: var(--text);
 }
 
 .claimMeta {
@@ -109,7 +111,7 @@ main {
 }
 
 .videoDesc__meta__item-btn a {
-  color: #000;
+  color: var(--text);
   display: flex;
   align-items: center;
 }
@@ -231,20 +233,15 @@ footer {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-100: #212121;
-    --bg-200: #313131;
+    --text: #fff;
+    --bg-100: #414141;
+    --bg-200: #515151;
   }
   body {
     background-color: #000;
-    color: white;
-  }
-  .claimLink {
     color: #fff;
   }
   .logo {
     filter: invert(1) hue-rotate(180deg);
-  }
-  .searchBar {
-    background-color: #000;
   }
 }
