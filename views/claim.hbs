@@ -36,9 +36,11 @@
       align-items: center;
       flex-direction: column;
     }
+
     .largeIcon {
       font-size: 36px;
     }
+
     .videoMeta__download {
       margin-top: 0;
     }
@@ -61,11 +63,16 @@
         report_problem
       </span>
       <p>This file could not be displayed.</p>
-      <a href="{{stream}}?download=1" rel="nofollow noreferrer">
-        <button class="videoMeta__download">
-          <span class="material-icons-outlined">download</span> Download
-        </button>
-      </a>
+      <div class="videoDesc__meta">
+        <div class="videoDesc__meta__item videoDesc__meta__item-btn">
+          <div>
+            <a href="{{stream}}?download=1" rel="nofollow noreferrer">
+              <span class="material-icons-outlined">download</span>
+            </a>
+            <a href="{{stream}}?download=1" rel="nofollow noreferrer">Download</a>
+          </div>
+        </div>
+      </div>
     </div>
     {{/if}}
 
