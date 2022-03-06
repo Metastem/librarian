@@ -45,47 +45,43 @@
   {{> 'partials/header' }}
 
   <main>
-    {{#if channel.CoverImg}}
-    <img src="{{channel.CoverImg}}&w=1920&h=240" class="coverImg" loading="lazy" />
-    {{/if}}
-
-    <hr>
-
-    <div class="channel">
-      {{#if channel.Thumbnail}}
-      <img src="{{channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
-      {{else}}
-      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+    <div class="channelMeta">
+      {{#if channel.CoverImg}}
+      <img src="{{channel.CoverImg}}&w=1920&h=240" class="coverImg" loading="lazy" />
       {{/if}}
-      <p>
-        {{#if channel.Title}}
-        <b>{{channel.Title}}</b>
-        <br>
-        {{channel.Name}}
-        {{else}}
-        <b>{{channel.Name}}</b>
-        {{/if}}
-      </p>
+
+      <div class="videoDesc__data">
+        {{> 'partials/channel' }}
+        <div class="videoDesc__meta">
+          <div class="videoDesc__meta__item videoDesc__meta__item-btn">
+            <div>
+              <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
+                <span class="material-icons-outlined">open_in_new</span>
+              </a>
+              <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">Odysee</a>
+            </div>
+          </div>
+          <div class="videoDesc__meta__item videoDesc__meta__item-btn">
+            <div>
+              <a href="{{channel.Url}}/rss" rel="nofollow noreferrer">
+                <span class="material-icons-outlined">rss_feed</span>
+              </a>
+              <a href="{{channel.Url}}/rss" rel="nofollow noreferrer">Subscribe | {{channel.Followers}} followers</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{#if channel.Description}}
+      <div>
+        <input id="expandBtn" type="checkbox">
+        <div class="description">{{{channel.Description}}}</div>
+        <label for="expandBtn">
+          <a></a>
+        </label>
+      </div>
+      {{/if}}
     </div>
-
-    <div>
-      <input id="expandBtn" type="checkbox">
-      <div class="description">{{{channel.Description}}}</div>
-      <label for="expandBtn">
-        <a></a>
-      </label>
-    </div>
-    <br>
-
-    <a href="{{channel.Url}}/rss">
-      <button class="subscribeBtn">
-        <span class="material-icons-outlined">rss_feed</span> Subscribe | {{channel.Followers}} followers
-      </button>
-    </a>
-    <br><br>
-    <a href="{{channel.OdyseeUrl}}" rel="nofollow noreferrer">View on Odysee</a><br>
-
-    <hr>
 
     <div class="claimsGrid">
       {{#each claims}}

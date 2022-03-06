@@ -1,55 +1,16 @@
-<div class="videoDesc__data">
-  <div class="videoDesc__channel">
-    <a href="{{claim.Channel.RelUrl}}">
-      {{#if claim.Channel.Thumbnail}}
-      <img src="{{claim.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
-      {{else}}
-      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
-      {{/if}}
-    </a>
-    <a href="{{claim.Channel.RelUrl}}">
-      <p>
-        {{#if claim.Channel.Title}}
-        <b>{{claim.Channel.Title}}</b>
-        <br>
-        {{claim.Channel.Name}}
-        {{else}}
-        <b>{{claim.Channel.Name}}</b>
-        {{/if}}
-      </p>
-    </a>
-  </div>
-  <div class="videoDesc__meta">
-    <div class="videoDesc__meta__item">
-      <span class="material-icons-outlined" title="Views">visibility</span>
-      <p>{{claim.Views}}</p>
-    </div>
-    <div class="videoDesc__meta__item">
-      <span class="material-icons-outlined" title="Likes">thumb_up</span>
-      <p>{{claim.Likes}}</p>
-    </div>
-    <div class="videoDesc__meta__item">
-      <span class="material-icons-outlined" title="Dislilkes">thumb_down</span>
-      <p>{{claim.Dislikes}}</p>
-    </div>
-    <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-      <div>
-        <a href="{{claim.OdyseeUrl}}">Odysee</a>
-      </div>
-    </div>
-    {{#unless download}}
-    {{#unless live}}
-    <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-      <div>
-        <a href="{{stream}}?download=1" rel="nofollow noreferrer">
-          <span class="material-icons-outlined">download</span>
-        </a>
-        <a href="{{stream}}?download=1" rel="nofollow noreferrer">
-          Download
-        </a>
-      </div>
-    </div>
-    {{/unless}}
-    {{/unless}}
-  </div>
+<div class="videoDesc__channel">
+  {{#if channel.Thumbnail}}
+  <img src="{{channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy" />
+  {{else}}
+  <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy" />
+  {{/if}}
+  <p>
+    {{#if channel.Title}}
+    <b>{{channel.Title}}</b>
+    <br>
+    {{channel.Name}}
+    {{else}}
+    <b>{{channel.Name}}</b>
+    {{/if}}
+  </p>
 </div>

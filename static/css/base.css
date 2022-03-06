@@ -1,3 +1,11 @@
+:root {
+  --bg-100: #f1f1f1;
+  --bg-200: #e1e1e1;
+  --accent: #1e88e5;
+  --warning: #ffe9b4;
+  --purple: #290164;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
 }
@@ -8,7 +16,7 @@ body {
 }
 
 a {
-  color: #1e88e5;
+  color: var(--accent);
   text-decoration: none;
   word-break: break-word
 }
@@ -29,7 +37,7 @@ header {
   font-size: 14px;
   padding: 0.5em;
   border: none;
-  border-bottom: 1px solid #d2d2d2;
+  border-bottom: 1px solid var(--bg-200);
   outline: none;
 }
 
@@ -65,7 +73,7 @@ main {
 }
 
 .pfp--default {
-  background-color: lightskyblue;
+  background-color: var(--accent);
 }
 
 .thumbnailWrapper {
@@ -79,6 +87,50 @@ main {
   max-height: 8.5em;
 }
 
+.description br:last-of-type {
+  display: none;
+}
+
+.videoDesc__meta {
+  display: flex;
+  gap: 10px;
+}
+
+.videoDesc__meta__item-btn div,
+.videoDesc__meta__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+}
+
+.videoDesc__meta__item .material-icons-outlined {
+  font-size: 1em;
+}
+
+.videoDesc__meta__item-btn a {
+  color: #000;
+  display: flex;
+  align-items: center;
+}
+
+.videoDesc__meta__item-btn div {
+  background-color: var(--bg-100);
+  padding: 0.5em;
+}
+
+.videoDesc__meta__item-btn div:hover {
+  background-color: var(--bg-200);
+}
+
+.videoDesc__data,
+.videoDesc__channel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
 #expandBtn {
   display: none;
 }
@@ -88,7 +140,7 @@ main {
 }
 
 label {
-  color: #0066cc;
+  color: var(--accent);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -178,8 +230,12 @@ footer {
 }
 
 @media (prefers-color-scheme: dark) {
+  :root {
+    --bg-100: #212121;
+    --bg-200: #313131;
+  }
   body {
-    background-color: black;
+    background-color: #000;
     color: white;
   }
   .claimLink {
@@ -189,7 +245,6 @@ footer {
     filter: invert(1) hue-rotate(180deg);
   }
   .searchBar {
-    background-color: black;
-    color: #d2d2d2;
+    background-color: #000;
   }
 }

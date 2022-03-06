@@ -11,7 +11,7 @@ ul {
 
 .largeIcon {
   font-size: 36px;
-  color: #1e88e5;
+  color: var(--accent);
 }
 
 .badgeWrapper {
@@ -19,7 +19,7 @@ ul {
 }
 
 .badge {
-  background-color: #f8f8f8;
+  background-color: var(--bg-100);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@ ul {
 .privacyDetails summary {
   cursor: pointer;
   user-select: none;
-  color: #1e88e5;
+  color: var(--accent);
   font-weight: 700;
 }
 
@@ -51,6 +51,6 @@ ul {
 
 @media (prefers-color-scheme: dark) {
   .badge {
-    background-color: #212121;
+    background-color: var(--bg-100);
   }
 }

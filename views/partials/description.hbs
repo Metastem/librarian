@@ -1,12 +1,14 @@
 <div class="videoDesc">
-  {{> 'partials/channel' }}
+  {{> 'partials/claimMeta' }}
   <p><b>Shared {{claim.Date}}</b></p>
   <div>
+    {{#if claim.Description}}
     <input id="expandBtn" type="checkbox">
     <div class="description">{{{claim.Description}}}</div>
     <label for="expandBtn">
       <a></a>
     </label>
+    {{/if}}
   </div>
   <p class="videoDesc__claimId">Claim ID: {{claim.ClaimId}}</p>
 </div>
