@@ -15,13 +15,6 @@
   height: 240px;
 }
 
-.videoDesc__data--channel {
-  flex-direction: column;
-  gap: 0;
-  align-items: flex-start;
-  padding-bottom: 0.75em;
-}
-
 .description {
   margin-top: -1em;
 }
@@ -42,5 +35,11 @@
 @media only screen and (max-width: 812px) {
   .coverImg {
     max-height: 72px;
+  }
+  .videoDesc__data--channel {
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    padding-bottom: 0.75em;
   }
 }
