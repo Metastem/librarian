@@ -1,4 +1,5 @@
 <img src="https://codeberg.org/librarian/librarian/raw/branch/main/static/img/librarian.svg" width="96" height="96" />
+
 # librarian
 An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.com/iv-org/invidious) and [Libreddit](https://github.com/spikecodes/libreddit).
 
@@ -14,17 +15,11 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
 
 ## Features
 
-### User features
 - Lightweight
 - JavaScript not required*
 - No ads
 - No tracking
 - No crypto garbage
-
-### Technical features
-- Copylefted libre software under the AGPL
-- No Code of Conduct
-- No Contributor License Agreement or Developer Certificate of Origin
 
 \* JavaScript is required to play livestreams except on Apple devices.
 
