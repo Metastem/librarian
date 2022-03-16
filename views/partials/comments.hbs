@@ -16,25 +16,10 @@
     {{else}}
     {{#each comments}}
     <div class="comment">
-      {{#if this.Channel.Thumbnail}}
-      <img src="{{this.Channel.Thumbnail}}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">
-      {{else}}
-      <img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">
-      {{/if}}
+      {{#with this.Channel}}
+        <a href="{{this.Channel.RelUrl}}">{{> 'partials/channel'}}</a>
+      {{/with}}
       <div>
-        {{#if this.Channel.Name}}
-        <a href="{{this.Channel.Url}}">
-          <p>
-            {{#if this.Channel.Title}}
-            <b>{{this.Channel.Title}}</b><br>{{this.Channel.Name}}
-            {{else}}
-            <b>{{this.Channel.Name}}</b>
-            {{/if}}
-          </p>
-        </a>
-        {{else}}
-        <p><b>[deleted]</b></p>
-        {{/if}}
         {{{this.Comment}}}
         <p title="{{this.Time}}">
           {{this.RelTime}} |

@@ -40,13 +40,6 @@ async function comments(claimId, channelId, channelName, page) {
   data.comments.forEach(comment => {
     commentsArr.push(comment)
   });
-  if (window.location.hash == "#filter") {
-    filterKeywords.forEach(keyword => {
-      commentsArr = commentsArr.filter(comment => !comment.Comment.toLowerCase().includes(keyword))
-    })
-    // Slur filter regex from https://github.com/LemmyNet/lemmy/blob/main/config/config.hjson, licensed under AGPL 3.0
-    commentsArr.filter(comment => !comment.Comment.match(/(fag(g|got|tard)?\b|cock\s?sucker(s|ing)?|ni((g{2,}|q)+|[gq]{2,})[e3r]+(s|z)?|mudslime?s?|kikes?|\bspi(c|k)s?\b|\bchinks?|gooks?|bitch(es|ing|y)?|whor(es?|ing)|\btr(a|@)nn?(y|ies?)|\b(b|re|r)tard(ed)?s?)/gm))
-  }
 
   renderComments()
 
@@ -61,24 +54,30 @@ function renderComments() {
   let commentsHTML = "";
   for(let i = 0; i < commentsArr.length; i++) {
     let comment = commentsArr[i];
+
+    if(!comment.Channel.Thumbnail) {
+      comment.Channel.Thumbnail = "/static/img/spaceman.png"
+    }
     
     let commentHTML = `
     <div class="comment">
-      ${comment.Channel.Thumbnail ? 
-        `<img src="${comment.Channel.Thumbnail}&w=56&h=56" class="pfp" width="56" height="56" loading="lazy">`
-        : `<img src="/static/img/spaceman.png" class="pfp pfp--default" width="56" height="56" loading="lazy">`
-      }
-      <div>
-        ${comment.Channel.Name !== "" ? `<a href="${comment.Channel.Url}">` : ""}
+      ${comment.Channel.Name !== "" ? `<a href="${comment.Channel.Url}">` : ""}
+        <div class="videoDesc__channel">
+          <img src="${comment.Channel.Thumbnail}&w=48&h=48" class="pfp" width="48" height="48" loading="lazy">   
           <p>
-            ${comment.Channel.Title ?
+            ${
+              comment.Channel.Title ?
               `<b>${comment.Channel.Title}</b><br>${comment.Channel.Name}`
-              : comment.Channel.Name ? 
+              :
+              comment.Channel.Name ? 
               `<b>${comment.Channel.Name}</b>`
-              : "<b>[deleted]</b>"
+              :
+              "<b>[deleted]</b>"
             }
           </p>
-          ${comment.Channel.Name !== "" ? `</a>` : ""}
+        </div>
+      ${comment.Channel.Name !== "" ? `</a>` : ""}
+      <div>
         ${comment.Comment}
         ${comment.RelTime == "a long while ago" ? 
             `<p>
@@ -86,8 +85,8 @@ function renderComments() {
               <span class="material-icons-outlined">thumb_up</span> ${comment.Likes}
               <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}
             </p>`
-          : `<p title="${comment.Time}">
-              ${comment.RelTime} |
+          : `<p>
+              <span title="${comment.Time}">${comment.RelTime}</span> |
               <span class="material-icons-outlined">thumb_up</span> ${comment.Likes}
               <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}
             </p>`

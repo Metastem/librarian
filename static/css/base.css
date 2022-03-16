@@ -125,9 +125,12 @@ main {
 .videoDesc__data,
 .videoDesc__channel {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 10px;
+}
+
+.videoDesc__data {
+  justify-content: space-between;
 }
 
 #expandBtn {

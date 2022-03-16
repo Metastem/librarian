@@ -51,7 +51,9 @@
       {{/if}}
 
       <div class="videoDesc__data videoDesc__data--channel">
+        {{#with channel}}
         {{> 'partials/channel' }}
+        {{/with}}
         <div class="videoDesc__meta">
           <div class="videoDesc__meta__item videoDesc__meta__item-btn">
             <div>

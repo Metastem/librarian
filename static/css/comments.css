@@ -1,7 +1,11 @@
 .comment {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
+  flex-direction: column;
+}
+
+.comment .pfp {
+  width: 48px;
+  height: 48px;
 }
 
 #comments__expandBtn {
