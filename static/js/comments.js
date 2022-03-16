@@ -55,8 +55,10 @@ function renderComments() {
   for(let i = 0; i < commentsArr.length; i++) {
     let comment = commentsArr[i];
 
+    let pfpClass = "pfp"
     if(!comment.Channel.Thumbnail) {
       comment.Channel.Thumbnail = "/static/img/spaceman.png"
+      pfpClass = "pfp pfp--default"
     } else {
       comment.Channel.Thumbnail = comment.Channel.Thumbnail + "&w=48&h=48"
     }
@@ -65,7 +67,7 @@ function renderComments() {
     <div class="comment">
       ${comment.Channel.Name !== "" ? `<a href="${comment.Channel.Url}">` : ""}
         <div class="videoDesc__channel">
-          <img src="${comment.Channel.Thumbnail}" class="pfp" width="48" height="48" loading="lazy">   
+          <img src="${comment.Channel.Thumbnail}" class="${pfpClass}" width="48" height="48" loading="lazy">   
           <p>
             ${
               comment.Channel.Title ?
