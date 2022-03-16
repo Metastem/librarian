@@ -31,7 +31,10 @@ func SearchHandler(c *fiber.Ctx) error {
 		nsfw = true
 	}
 
-	query := c.Query("q")
+	query := c.FormValue("q")
+	if query == "" && c.Query("q") != "" {
+		query = c.Query("q")
+	}
 
 	results, err := api.Search(query, page, "file,channel", nsfw, "", 12)
 	if err != nil {

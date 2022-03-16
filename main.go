@@ -82,6 +82,7 @@ func main() {
 		app.Get("/live/:type/:claimId/:path", proxy.ProxyLive)
 	}
 	app.Get("/search", pages.SearchHandler)
+	app.Post("/search", pages.SearchHandler)
 	app.Get("/privacy", pages.PrivacyHandler)
 
 	app.Get("/robots.txt", func(c *fiber.Ctx) error {
