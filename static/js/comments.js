@@ -57,13 +57,15 @@ function renderComments() {
 
     if(!comment.Channel.Thumbnail) {
       comment.Channel.Thumbnail = "/static/img/spaceman.png"
+    } else {
+      comment.Channel.Thumbnail = comment.Channel.Thumbnail + "&w=48&h=48"
     }
     
     let commentHTML = `
     <div class="comment">
       ${comment.Channel.Name !== "" ? `<a href="${comment.Channel.Url}">` : ""}
         <div class="videoDesc__channel">
-          <img src="${comment.Channel.Thumbnail}&w=48&h=48" class="pfp" width="48" height="48" loading="lazy">   
+          <img src="${comment.Channel.Thumbnail}" class="pfp" width="48" height="48" loading="lazy">   
           <p>
             ${
               comment.Channel.Title ?
