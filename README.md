@@ -87,6 +87,11 @@ Open an issue to have your instance listed here!
 | [ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion](http://ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion/) |  | |
 | [vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion](http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion/) |  | |
 
+Use [LibRedirect](https://github.com/libredirect/libredirect) to automatically redirect links to Librarian!
+- [Firefox](https://addons.mozilla.org/firefox/addon/libredirect/)
+- [Chromium-based browsers (Brave, Google Chrome)](https://github.com/libredirect/libredirect#install-in-chromium-brave-and-chrome)
+- [Edge](https://microsoftedge.microsoft.com/addons/detail/libredirect/aodffkeankebfonljgbcfbbaljopcpdb)
+
 ## Install
 Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
 
