@@ -14,14 +14,12 @@ bin:
     - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
     - cd $GOPATH/src/$REPO_NAME
-    - go build -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/librarian-linux-amd64
-    - GOARCH=arm64 GOOS=linux go build -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/librarian-linux-arm64
-    - GOARCH=amd64 GOOS=openbsd go build -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/librarian-openbsd-amd64
+    - CGO_ENABLED=0 go build -o $CI_PROJECT_DIR/librarian-linux-amd64
+    - CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -o $CI_PROJECT_DIR/librarian-linux-arm64
   artifacts:
     paths:
         - librarian-linux-amd64
         - librarian-linux-arm64
-        - librarian-openbsd-amd64
 
 deploy:
   image: docker:20
