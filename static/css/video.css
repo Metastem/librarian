@@ -48,6 +48,22 @@ video {
   margin: 0;
 }
 
+ul {
+  margin: 0;
+}
+
+ul br:first-child {
+  display: none;
+}
+
+ul br:last-child {
+  display: none;
+}
+
+li br {
+  display: block !important;
+}
+
 .relVids {
   display: flex;
   flex-direction: column;
