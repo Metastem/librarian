@@ -27,6 +27,7 @@
     </div>
     {{#unless download}}
     {{#unless live}}
+    {{#unless document}}
     <div class="videoDesc__meta__item videoDesc__meta__item-btn">
       <div>
         <a href="{{stream}}?download=1" rel="nofollow noreferrer">
@@ -37,6 +38,7 @@
         </a>
       </div>
     </div>
+    {{/unless}}
     {{/unless}}
     {{/unless}}
   </div>
