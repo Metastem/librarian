@@ -1,19 +1,28 @@
 package utils
 
 import (
+	"bytes"
 	"html"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"codeberg.org/librarian/librarian/data"
-	"github.com/gomarkdown/markdown"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/spf13/viper"
+	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
 )
 
 func ProcessText(text string, newline bool) string {
-	text = string(markdown.ToHTML([]byte(text), nil, nil))
+	md := goldmark.New(
+		goldmark.WithExtensions(extension.GFM),
+	)
+	var buf bytes.Buffer
+	if err := md.Convert([]byte(text), &buf); err != nil {
+		panic(err)
+	}
+	text = buf.String()
 	if newline {
 		text = strings.ReplaceAll(text, "\n\n", "")
 		text = strings.ReplaceAll(text, "\n", "<br>")
@@ -28,7 +37,7 @@ func ProcessText(text string, newline bool) string {
 	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
 	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
 	text = html.UnescapeString(text)
-	text = bluemonday.UGCPolicy().RequireNoReferrerOnLinks(true).Sanitize(text)
+	text = bluemonday.UGCPolicy().RequireNoReferrerOnLinks(true).RequireNoFollowOnLinks(true).RequireCrossOriginAnonymous(true).Sanitize(text)
 	text = ReplaceStickersAndEmotes(text)
 
 	return text
@@ -36,7 +45,14 @@ func ProcessText(text string, newline bool) string {
 
 func ProcessDocument(text string, isMd bool) string {
 	if isMd {
-		text = string(markdown.ToHTML([]byte(text), nil, nil))
+		md := goldmark.New(
+			goldmark.WithExtensions(extension.GFM),
+		)
+		var buf bytes.Buffer
+		if err := md.Convert([]byte(text), &buf); err != nil {
+			panic(err)
+		}
+		text = buf.String()
 	}
 
 	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
@@ -44,6 +60,7 @@ func ProcessDocument(text string, isMd bool) string {
 	for i := 0; i < len(imgs); i++ {
 		imgUrlRe := regexp.MustCompile(`https?:\/\/[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_:%&;\?\#\/.=]+`)
 		imgUrl := imgUrlRe.FindString(imgs[i])
+		imgUrl = url.QueryEscape(imgUrl)
 		hmac := EncodeHMAC(imgUrl)
 		text = strings.ReplaceAll(text, imgs[i], `img src="/image?`+`hash=`+hmac+`&url=`+imgUrl+`"`)
 	}
@@ -69,6 +86,9 @@ func ProcessDocument(text string, isMd bool) string {
 	p.AllowAttrs("width").Matching(bluemonday.Number).OnElements("iframe")
 	p.AllowAttrs("height").Matching(bluemonday.Number).OnElements("iframe")
 	p.AllowAttrs("src").OnElements("iframe")
+	p.RequireNoReferrerOnLinks(true)
+	p.RequireNoFollowOnLinks(true)
+	p.RequireCrossOriginAnonymous(true)
 	text = p.Sanitize(text)
 
 	return text
@@ -93,8 +113,8 @@ func LbryTo(link string) (map[string]string, error) {
 	link = strings.ReplaceAll(link, "+", "%2B")
 
 	return map[string]string{
-		"rel": strings.ReplaceAll(link, "http://domain.tld/", "/"),
-		"http": strings.ReplaceAll(link, "http://domain.tld/", viper.GetString("DOMAIN")+"/"),
+		"rel":    strings.ReplaceAll(link, "http://domain.tld/", "/"),
+		"http":   strings.ReplaceAll(link, "http://domain.tld/", viper.GetString("DOMAIN")+"/"),
 		"odysee": strings.ReplaceAll(link, "http://domain.tld/", "https://odysee.com/"),
 	}, nil
 }
