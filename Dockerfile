@@ -1,15 +1,16 @@
 FROM golang:alpine AS build
 
 WORKDIR /src
-RUN apk --no-cache add git
+RUN apk --no-cache add git ca-certificates
 RUN git clone https://codeberg.org/librarian/librarian .
 
 RUN go mod download
-RUN go build
+RUN CGO_ENABLED=0 go build -o /src/librarian
 
-FROM alpine:latest as bin
+FROM scratch as bin
 
 WORKDIR /app
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /src/librarian .
 
 EXPOSE 3000
