@@ -36,18 +36,12 @@ video {
   width: 20%;
 }
 
-.description p {
-  margin: 0
-}
-
 .videoDesc__claimId {
   font-size: 12px;
 }
 
-.videoDesc__channel p {
-  margin: 0;
-}
-
+.description p,
+.videoDesc__channel p,
 ul {
   margin: 0;
 }
