@@ -1,36 +1,4 @@
 let commentsArr = [];
-const filterKeywords = [
-  "nigger",
-	"racist",
-	"leftist",
-	"immigration",
-	"immigrate",
-	"liberal",
-	"communist",
-	"commie",
-	"fuck",
-	"cunt",
-  "fag",
-	"faggot",
-	"retard",
-	"woke",
-	"bitch",
-	"arab",
-  "jew",
-	"pussies",
-	"pussy",
-  "thug",
-	"asshole",
-	"entitled",
-	"virtue",
-	"signaling",
-	"covid-19",
-	"coronavirus",
-	"vaccine",
-	"soy",
-	"suck",
-	"hypocrite"
-];
 
 async function comments(claimId, channelId, channelName, page) {
   document.getElementById("spinner").style.display = "flex"
