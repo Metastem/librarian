@@ -104,3 +104,17 @@ function renderComments() {
   document.getElementById("comments").innerHTML = commentsHTML
   document.getElementById("spinner").style.display = "none"
 }
+
+document.getElementById("nojs").remove();
+
+let commentData = JSON.parse(document.getElementById("commentData").innerText)
+
+comments(commentData.claimId, commentData.channelId, commentData.channelName, 1)
+
+function loadMoreBtn(page) {
+  let loadMore = document.getElementById("loadMore");
+  loadMore.addEventListener('click', () => {
+    loadMore.remove()
+    comments(commentData.claimId, commentData.channelId, commentData.channelName, page + 1)
+  })
+}

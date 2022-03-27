@@ -26,6 +26,10 @@ p {
   word-break: break-word
 }
 
+.jsonData {
+  display: none;
+}
+
 header {
   display: flex;
   flex-direction: row;
