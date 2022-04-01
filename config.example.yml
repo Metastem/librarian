@@ -1,5 +1,7 @@
 DOMAIN: 'https://domain.tld'
 PORT: '3000'
+# Optional: Set address to bind to, example: 127.0.0.1
+ADDRESS: ''
 # Running a custom API server is not recommended and is not suitable for a public instance
 API_URL: 'https://api.na-backend.odysee.com/api/v1/proxy'
 # Use a custom video streaming endpoint (if using custom API server or proxying videos)

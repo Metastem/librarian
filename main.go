@@ -106,5 +106,5 @@ func main() {
 	app.Get("/embed/:channel/:claim", pages.EmbedHandler)
 	app.Get("/:channel/:claim", pages.ClaimHandler)
 
-	app.Listen(":" + viper.GetString("PORT"))
+	app.Listen(viper.GetString("ADDRESS") + ":" + viper.GetString("PORT"))
 }
