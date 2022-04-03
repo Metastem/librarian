@@ -1,0 +1,60 @@
+{
+  "instances": [
+    {
+      "name": "lbry.bcow.xyz",
+      "url": "https://lbry.bcow.xyz",
+      "country": "🇨🇦 CA",
+      "cloudflare": false,
+      "live": true
+    },
+    {
+      "name": "odysee.076.ne.jp",
+      "url": "https://odysee.076.ne.jp",
+      "country": "🇯🇵 JP",
+      "cloudflare": false,
+      "live": true
+    },
+    {
+      "name": "lbry.ix.tc",
+      "url": "https://lbry.ix.tc",
+      "country": "🇬🇧 UK",
+      "cloudflare": false,
+      "live": false
+    },
+    {
+      "name": "librarian.pussthecat.org",
+      "url": "https://librarian.pussthecat.org",
+      "country": "🇩🇪 DE",
+      "cloudflare": false,
+      "live": false
+    },
+    {
+      "name": "lbry.mutahar.rocks",
+      "url": "https://lbry.mutahar.rocks",
+      "country": "🇫🇷 FR",
+      "cloudflare": false,
+      "live": false
+    },
+    {
+      "name": "librarian.esmailelbob.xyz",
+      "url": "https://librarian.esmailelbob.xyz",
+      "country": "🇨🇦 CA",
+      "cloudflare": false,
+      "live": false
+    },
+    {
+      "name": "vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion",
+      "url": "https://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion",
+      "country": "",
+      "cloudflare": false,
+      "live": false
+    },
+    {
+      "name": "ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion",
+      "url": "https://ecc5mi5ncdw6mxhjz6re6g2uevtpbzxjvxgrxia2gyvrlnil3srbnhyd.onion",
+      "country": "",
+      "cloudflare": false,
+      "live": false
+    }
+  ]
+}
