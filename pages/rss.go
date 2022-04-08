@@ -54,6 +54,10 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 			Enclosure: 	 &feeds.Enclosure{},
 		}
 
+		if c.Query("odyseeLink") == "true" {
+			item.Link.Href = claims[i].OdyseeUrl
+		}
+
 		if c.Query("enclosure") == "true" {
 			stream, err := api.GetVideoStream(claims[i].LbryUrl)
 			if err != nil {
