@@ -1,5 +1,31 @@
 <div class="videoDesc">
   {{> 'partials/claimMeta' }}
+  <div class="actionBar">
+    <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
+      <button class="btn">
+        <span class="material-icons-outlined">open_in_new</span>
+        Odysee
+      </button>
+    </a>
+    <a href="https://librarian.codeberg.page/#{{claim.RelUrl}}" rel="nofollow noreferrer">
+      <button class="btn">
+        <span class="material-icons-outlined">switch_right</span>
+        Switch instance
+      </button>
+    </a>
+    {{#unless download}}
+    {{#unless live}}
+    {{#unless document}}
+    <a href="{{stream}}?download=1" rel="nofollow noreferrer">
+      <button class="btn">
+        <span class="material-icons-outlined">download</span>
+        Download
+      </button>
+    </a>
+    {{/unless}}
+    {{/unless}}
+    {{/unless}}
+  </div>
   <p><b>Shared {{claim.Date}}</b></p>
   <div>
     {{#if claim.Description}}

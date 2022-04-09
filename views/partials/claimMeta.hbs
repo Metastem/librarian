@@ -19,23 +19,3 @@
     </div>
   </div>
 </div>
-<div class="actionBar">
-  <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
-    <button class="btn">
-      <span class="material-icons-outlined">open_in_new</span>
-      Odysee
-    </button>
-  </a>
-  {{#unless download}}
-  {{#unless live}}
-  {{#unless document}}
-  <a href="{{stream}}?download=1" rel="nofollow noreferrer">
-    <button class="btn">
-      <span class="material-icons-outlined">download</span>
-      Download
-    </button>
-  </a>
-  {{/unless}}
-  {{/unless}}
-  {{/unless}}
-</div>
