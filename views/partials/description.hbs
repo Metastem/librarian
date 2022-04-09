@@ -26,7 +26,16 @@
     {{/unless}}
     {{/unless}}
   </div>
+  {{#if live.Live}}
+  <p>
+    <b>
+      Started streaming 
+      <span title="{{live.Time}}">{{live.RelTime}}</span>
+    </b>
+  </p>
+  {{else}}
   <p><b>Shared {{claim.Date}}</b></p>
+  {{/if}}
   <div>
     {{#if claim.Description}}
     <input id="expandBtn" type="checkbox">
