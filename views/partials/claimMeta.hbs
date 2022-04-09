@@ -17,29 +17,25 @@
       <span class="material-icons-outlined" title="Dislilkes">thumb_down</span>
       <p>{{claim.Dislikes}}</p>
     </div>
-    <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-      <div>
-        <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
-          <span class="material-icons-outlined">open_in_new</span>
-        </a>
-        <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">Odysee</a>
-      </div>
-    </div>
-    {{#unless download}}
-    {{#unless live}}
-    {{#unless document}}
-    <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-      <div>
-        <a href="{{stream}}?download=1" rel="nofollow noreferrer">
-          <span class="material-icons-outlined">download</span>
-        </a>
-        <a href="{{stream}}?download=1" rel="nofollow noreferrer">
-          Download
-        </a>
-      </div>
-    </div>
-    {{/unless}}
-    {{/unless}}
-    {{/unless}}
   </div>
+</div>
+<div class="actionBar">
+  <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
+    <button class="btn">
+      <span class="material-icons-outlined">open_in_new</span>
+      Odysee
+    </button>
+  </a>
+  {{#unless download}}
+  {{#unless live}}
+  {{#unless document}}
+  <a href="{{stream}}?download=1" rel="nofollow noreferrer">
+    <button class="btn">
+      <span class="material-icons-outlined">download</span>
+      Download
+    </button>
+  </a>
+  {{/unless}}
+  {{/unless}}
+  {{/unless}}
 </div>

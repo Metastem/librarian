@@ -28,6 +28,10 @@ video {
   gap: 24px
 }
 
+.actionBar {
+  margin-top: 1em;
+}
+
 .videoData__left {
   width: 80%;
 }
@@ -94,14 +98,17 @@ li br {
   main {
     margin: 0;
   }
+  .actionBar {
+    margin-top: 0;
+  }
   .videoDesc__data,
   .videoData {
     flex-direction: column;
     align-items: start;
+    gap: 0px;
   }
   .videoDesc__meta {
     align-self: auto;
-    flex-direction: row-reverse;
   }
   .videoData__left,
   .videoData__right {

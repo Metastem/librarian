@@ -54,35 +54,33 @@
         {{#with channel}}
         {{> 'partials/channel' }}
         {{/with}}
-        <div class="videoDesc__meta">
-          <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-            <div>
-              <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
+        <div class="actionBar">
+          <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">
+            <div class="actionBar">
+              <button class="btn">
                 <span class="material-icons-outlined">open_in_new</span>
-              </a>
-              <a href="{{claim.OdyseeUrl}}" rel="nofollow noreferrer">Odysee</a>
+                Odysee
             </div>
-          </div>
-          <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-            <div>
-              <a href="{{channel.Url}}/rss" rel="nofollow noreferrer">
-                <span class="material-icons-outlined">rss_feed</span>
-              </a>
-              <a href="{{channel.Url}}/rss" rel="nofollow noreferrer">Subscribe | {{channel.Followers}} followers</a>
-            </div>
-          </div>
+          </a>
+          <a href="{{channel.Url}}/rss" rel="nofollow noreferrer">
+            <button class="btn">
+              <span class="material-icons-outlined">rss_feed</span>
+              Subscribe | {{channel.Followers}} followers
+            </button>
+          </a>
         </div>
       </div>
+    </div>
 
-      {{#if channel.Description}}
-      <div>
-        <input id="expandBtn" type="checkbox">
-        <div class="description">{{{channel.Description}}}</div>
-        <label for="expandBtn">
-          <a></a>
-        </label>
-      </div>
-      {{/if}}
+    {{#if channel.Description}}
+    <div>
+      <input id="expandBtn" type="checkbox">
+      <div class="description">{{{channel.Description}}}</div>
+      <label for="expandBtn">
+        <a></a>
+      </label>
+    </div>
+    {{/if}}
     </div>
 
     <div class="claimsGrid">

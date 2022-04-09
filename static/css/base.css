@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif; 
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
 }
 
 .center {
@@ -55,6 +55,27 @@ header {
 
 main {
   margin: 0 12vw;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  background-color: var(--bg-100);
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: var(--bg-200);
+}
+
+.actionBar {
+  display: flex;
+  gap: 4px;
 }
 
 .claimsGrid {
@@ -112,21 +133,6 @@ main {
   font-size: 1em;
 }
 
-.videoDesc__meta__item-btn a {
-  color: var(--text);
-  display: flex;
-  align-items: center;
-}
-
-.videoDesc__meta__item-btn div {
-  background-color: var(--bg-100);
-  padding: 0.5em;
-}
-
-.videoDesc__meta__item-btn div:hover {
-  background-color: var(--bg-200);
-}
-
 .videoDesc__data,
 .videoDesc__channel {
   display: flex;
@@ -142,7 +148,7 @@ main {
   display: none;
 }
 
-#expandBtn ~ label > a::after {
+#expandBtn~label>a::after {
   content: "Show more";
 }
 
@@ -152,11 +158,11 @@ label {
   cursor: pointer;
 }
 
-#expandBtn:checked ~ label > a::after {
+#expandBtn:checked~label>a::after {
   content: "Show less";
 }
 
-#expandBtn:checked ~ div {
+#expandBtn:checked~div {
   overflow: unset;
   max-height: none;
   height: 100%;
@@ -208,18 +214,23 @@ footer {
   main {
     margin: 0;
   }
+
   .videoData {
     flex-direction: column;
   }
+
   .videoData__side {
     width: 100%;
   }
+
   .videoMeta {
     width: 100%;
   }
+
   .videoMeta__wrapper {
     flex-direction: column;
   }
+
   .videoMeta__thumbs {
     display: flex;
     flex-direction: row;
@@ -227,12 +238,15 @@ footer {
     margin-top: -1.75em;
     height: 1.5em;
   }
+
   .videoDesc {
     width: 100%;
   }
+
   .videoDesc__meta__item-btn div {
     padding: 0.35em;
   }
+
   footer {
     flex-direction: column;
     text-align: center;
@@ -245,10 +259,12 @@ footer {
     --bg-100: #414141;
     --bg-200: #515151;
   }
+
   body {
     background-color: #000;
     color: #fff;
   }
+
   .logo {
     filter: invert(1) hue-rotate(180deg);
   }
