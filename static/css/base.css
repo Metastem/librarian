@@ -64,6 +64,7 @@ main {
   border: none;
   border-radius: 6px;
   font-size: 1em;
+  color: var(--text);
   background-color: var(--bg-100);
   padding: 0.5em;
   cursor: pointer;
@@ -75,6 +76,7 @@ main {
 
 .actionBar {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
 }
 
