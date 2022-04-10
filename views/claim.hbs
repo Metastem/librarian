@@ -4,22 +4,25 @@
 <head>
   {{> 'partials/head' }}
 
-  <meta name="thumbnail" content="{{config.DOMAIN}}{{claim.ThumbnailUrl}}">
+  <meta name="thumbnail" content="{{config.domain}}{{claim.ThumbnailUrl}}">
   <meta name="description" content={{claim.DescriptionTxt}}>
 
   <meta property="og:site_name" content="Librarian">
-  <meta property="og:url" content={{claim.Url}}>
-  <meta property="og:title" content={{claim.Title}}>
-  <meta property="og:image" content="{{config.DOMAIN}}{{claim.ThumbnailUrl}}">
-  <meta property="og:description" content={{claim.DescriptionTxt}}>
+  <meta property="og:url" content="{{claim.Url}}">
+  <meta property="og:title" content="{{claim.Title}}">
+  <meta property="og:image" content="{{config.domain}}{{claim.ThumbnailUrl}}">
+  <meta property="og:description" content="{{claim.DescriptionTxt}}">
+  {{#if document}}
+  <meta property="og:type" content="article">
+  {{else}}
   <meta property="og:type" content="video.other">
+  {{/if}}
 
-  <meta name="twitter:card" content="player">
-  <meta name="twitter:url" content={{claim.Url}}>
-  <meta name="twitter:title" content={{claim.Title}}>
-  <meta name="twitter:description" content="">
-  <meta name="twitter:image" content="{{config.DOMAIN}}{{claim.ThumbnailUrl}}">
-
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:url" content="{{claim.Url}}">
+  <meta name="twitter:title" content="{{claim.Title}}">
+  <meta name="twitter:description" content="{{claim.DescriptionTxt}}">
+  <meta name="twitter:image" content="{{config.domain}}{{claim.ThumbnailUrl}}">
 
   {{#if document}}
   <link rel="stylesheet" href="/static/css/video.css" />
