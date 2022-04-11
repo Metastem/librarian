@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -22,7 +21,6 @@ func GetVideoStream(video string) (string, error) {
 		return cacheData.(string), nil
 	}
 
-	Client := utils.NewClient()
 	getDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "get",
@@ -33,7 +31,7 @@ func GetVideoStream(video string) (string, error) {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamRes, err := Client.Post(viper.GetString("STREAMING_API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
+	videoStreamRes, err := http.Post(viper.GetString("STREAMING_API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
 	if err != nil {
 		return "", err
 	}

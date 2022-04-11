@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"sync"
 	"time"
@@ -33,7 +34,6 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		return cacheData.(types.Claim), nil
 	}
 
-	Client := utils.NewClient()
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -45,7 +45,7 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	claimDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	claimDataRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
 		return types.Claim{}, err
 	}

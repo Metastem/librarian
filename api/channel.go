@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -28,7 +29,6 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		return cacheData.(types.Channel), nil
 	}
 
-	Client := utils.NewClient()
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -40,7 +40,7 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	channelRes, err := Client.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+	channelRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
 	if err != nil {
 		return types.Channel{}, err
 	}
@@ -142,7 +142,6 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 		return cacheData.([]types.Claim), nil
 	}
 
-	Client := utils.NewClient()
 	channelDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -160,7 +159,7 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 		},
 	}
 	channelData, _ := json.Marshal(channelDataMap)
-	channelDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
+	channelDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
 	if err != nil {
 		return []types.Claim{}, nil
 	}

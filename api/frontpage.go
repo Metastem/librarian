@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/data"
 	"codeberg.org/librarian/librarian/types"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -24,7 +24,6 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 		return cacheData.([]types.Claim), nil
 	}
 
-	Client := utils.NewClient()
 	claimSearchData := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -48,7 +47,7 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 		},
 	}
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
-	frontpageDataRes, err := Client.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
+	frontpageDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
 	if err != nil {
 		return []types.Claim{}, err
 	}
