@@ -76,8 +76,9 @@ main {
 
 .actionBar {
   display: flex;
-  flex-wrap: wrap;
   gap: 4px;
+  width: 100%;
+  justify-content: flex-end;
 }
 
 .claimsGrid {
@@ -216,6 +217,11 @@ footer {
 @media only screen and (max-width: 812px) {
   main {
     margin: 0;
+  }
+
+  .actionBar {
+    flex-wrap: wrap;
+    justify-content: normal;
   }
 
   .videoData {
