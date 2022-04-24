@@ -34,7 +34,7 @@
   <main>
     {{#if live.Live}}
     <div class="videoWrapper">
-      <video id="player" class="videoPlayer" poster="{{live.ThumbnailUrl}}&w=1280&h=720" controls=true>
+      <video id="player" class="videoPlayer" poster="{{claim.ThumbnailUrl}}&w=1280&h=720" controls=true>
         <source type="application/x-mpegurl" src="{{live.StreamUrl}}">
       </video>
     </div>

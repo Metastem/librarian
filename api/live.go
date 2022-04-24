@@ -16,7 +16,7 @@ import (
 )
 
 func GetLive(claimId string) (types.Live, error) {
-	liveRes, err := http.Get("https://api.live.odysee.com/v1/odysee/live/" + claimId)
+	liveRes, err := http.Get("https://api.odysee.live/livestream/is_live?channel_claim_id=" + claimId)
 	if err != nil {
 		return types.Live{}, err
 	}
@@ -28,29 +28,28 @@ func GetLive(claimId string) (types.Live, error) {
 
 	data := gjson.Parse(string(liveBody))
 	if !data.Get("success").Bool() {
-		return types.Live{}, fmt.Errorf(data.Get("message").String())
+		return types.Live{}, fmt.Errorf(data.Get("error").String())
 	}
 
-	timestamp, err := time.Parse("2006-01-02T15:04:05.999Z", data.Get("data.timestamp").String())
+	timestamp, err := time.Parse("2006-01-02T15:04:05.999Z", data.Get("data.Start").String())
 	if err != nil {
 		return types.Live{}, err
 	}
 
-	thumbnail := data.Get("data.thumbnail").String()
+	thumbnail := data.Get("data.ThumbnailURL").String()
 	thumbnail = url.QueryEscape(thumbnail)
 	thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
 
-	streamUrl := strings.ReplaceAll(data.Get("data.url").String(), "https://cdn.odysee.live", "/live")
+	streamUrl := strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", "/live")
 	if viper.GetString("LIVE_STREAMING_URL") != "" {
-		streamUrl = strings.ReplaceAll(data.Get("data.url").String(), "https://cdn.odysee.live", viper.GetString("LIVE_STREAMING_URL"))	
+		streamUrl = strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", viper.GetString("LIVE_STREAMING_URL"))	
 	}
 
 	return types.Live{
-		ClaimId: data.Get("data.claimId").String(),
 		RelTime: humanize.Time(timestamp),
 		Time: timestamp.Format("Jan 2, 2006 03:04 PM"),
 		ThumbnailUrl: thumbnail,
 		StreamUrl: streamUrl,
-		Live: data.Get("data.live").Bool(),
+		Live: data.Get("data.Live").Bool(),
 	}, nil
 }

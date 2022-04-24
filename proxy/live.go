@@ -1,10 +1,14 @@
 package proxy
 
 import (
+	"io/ioutil"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/spf13/viper"
 )
 
 func ProxyLive(c *fiber.Ctx) error {
@@ -12,11 +16,8 @@ func ProxyLive(c *fiber.Ctx) error {
 	client.Logger = nil
 	client.Backoff = retryablehttp.LinearJitterBackoff
 
-	url := "https://cdn.odysee.live/" + c.Params("type") + "/" + c.Params("claimId") + "/" + c.Params("path")
-	if c.Params("claimId") == "" {
-		url = "https://cdn.odysee.live/" + c.Params("type") + "/" + c.Params("path")
-	}
-	
+	url := "https://cloud.odysee.live/" + c.Params("+")
+
 	req, err := retryablehttp.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -40,6 +41,21 @@ func ProxyLive(c *fiber.Ctx) error {
 	c.Set("Content-Type", res.Header.Get("Content-Type"))
 
 	contentLen, _ := strconv.Atoi(res.Header.Get("Content-Length"))
+
+	if strings.Contains(res.Header.Get("Content-Type"), "text/plain") {
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		newBody := strings.ReplaceAll(string(body), "https://cloud.odysee.live", "/live")
+		re := regexp.MustCompile(`(?m)^/[0-9]{3}`)
+		newBody = re.ReplaceAllString(newBody, "/live$0")
+		if viper.GetString("LIVE_STREAMING_URL") != "" {
+			newBody = strings.ReplaceAll(string(body), "https://cloud.odysee.live", viper.GetString("LIVE_STREAMING_URL"))
+			newBody = re.ReplaceAllString(newBody, viper.GetString("LIVE_STREAMING_URL") + "$0")
+		}
+		return c.Send([]byte(newBody))
+	}
 
 	return c.SendStream(res.Body, contentLen)
 }
