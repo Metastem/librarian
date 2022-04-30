@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -55,6 +56,9 @@ func GetVideoStreamType(url string) (string, error) {
 	res, err := http.Head(url)
 	if err != nil {
 		return "", err
+	}
+	if res.StatusCode == 403 {
+		return "", fmt.Errorf("this content cannot be accessed due to a DMCA request")
 	}
 	return res.Header.Get("Content-Type"), nil
 }
