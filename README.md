@@ -82,7 +82,6 @@ Open an issue to have your instance listed here!
 | :-------------------------------------------------------------- | :------ | :--------- | :----------- |
 | [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇨🇦 CA   |            | ✅️ |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |  | ✅️ |
-| [lbry.ix.tc](https://lbry.ix.tc/)                               | 🇬🇧 UK   |            | ❌️ |
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE   |            | ✅️ |
 | [lbry.mutahar.rocks](https://lbry.mutahar.rocks/)               | 🇫🇷 FR   |            | ❌️ |
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA   |            | ❌️ |

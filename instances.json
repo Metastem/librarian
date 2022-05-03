@@ -15,13 +15,6 @@
       "live": true
     },
     {
-      "name": "lbry.ix.tc",
-      "url": "https://lbry.ix.tc",
-      "country": "🇬🇧 UK",
-      "cloudflare": false,
-      "live": false
-    },
-    {
       "name": "librarian.pussthecat.org",
       "url": "https://librarian.pussthecat.org",
       "country": "🇩🇪 DE",
