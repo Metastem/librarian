@@ -20,10 +20,9 @@ IMAGE_CACHE_DIR: '/var/cache/librarian'
 # Live streams are proxied through the instance (unless LIVE_STREAMING_URL is set) 
 # and may cause increased bandwidth usage.
 ENABLE_LIVE_STREAM: false
-# Using an external proxy for livestreams is recommended. 
-# Due to limitations with Go's HTTP library, resolution with the built-in proxy 
-# is limited to 480p. This can be set to https://dsu29qpg4kx88.cloudfront.net,
-# used by lbry.bcow.xyz but this URL may change.
+# Using an external proxy (such as https://codeberg.org/librarian/stream-proxy) 
+# for livestreams is recommended. Due to limitations with Go's HTTP library,
+# resolution with the built-in proxy is limited to 480p.
 LIVE_STREAMING_URL: ''
 # Instance privacy: This is required to get your instance listed. For more info,
 # See: https://codeberg.org/librarian/librarian/wiki/Instance-privacy
