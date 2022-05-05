@@ -50,4 +50,4 @@ deploy:
     - wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/fly.toml
     - rm Dockerfile && wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/Dockerfile
   script:
-    - /root/.fly/bin/flyctl deploy
+    - /root/.fly/bin/flyctl deploy --detach
