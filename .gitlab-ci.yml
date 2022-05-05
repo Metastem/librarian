@@ -21,9 +21,9 @@ bin:
         - librarian-linux-amd64
         - librarian-linux-arm64
 
-deploy:
+docker:
   image: docker:20
-  stage: deploy
+  stage: build
   services:
     - name: docker:20-dind
       command: ["--experimental"]
@@ -38,3 +38,15 @@ deploy:
     - docker context create mybuilder
     - docker buildx create --use --name mybuilder mybuilder
     - docker buildx build --platform linux/amd64,linux/arm64 --push -t nineteengladespool/librarian:latest .
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  needs: []
+  before_script:
+    - wget -O - https://fly.io/install.sh | sh
+    - wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/config.yml
+    - wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/fly.toml
+    - rm Dockerfile && wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/Dockerfile
+  script:
+    - flyctl deploy
