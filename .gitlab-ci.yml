@@ -44,10 +44,9 @@ deploy:
   stage: deploy
   needs: []
   before_script:
-    - apk update && apk --no-cache add curl
+    - apk update && apk --no-cache add curl git
     - wget -O - https://fly.io/install.sh | sh
-    - wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/config.yml
-    - wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/fly.toml
-    - rm Dockerfile && wget https://codeberg.org/video-prize-ranch/fly-cfg/raw/branch/main/librarian/Dockerfile
+    - git clone https://codeberg.org/video-prize-ranch/fly-cfg
+    - cd fly-cfg/librarian
   script:
-    - /root/.fly/bin/flyctl deploy --detach
+    - /root/.fly/bin/flyctl deploy --no-cache --detach
