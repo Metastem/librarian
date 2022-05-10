@@ -85,6 +85,7 @@ Open an issue to have your instance listed here!
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE   |            | ✅️ |
 | [lbry.mutahar.rocks](https://lbry.mutahar.rocks/)               | 🇫🇷 FR   |            | ❌️ |
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA   |            | ❌️ |
+| [lbry.vern.cc](https://lbry.vern.cc/)                           | 🇵🇱 PL   |            | ❌️ |
 
 ### Tor
 
