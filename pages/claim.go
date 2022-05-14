@@ -85,13 +85,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	case "video":
-		videoStreamType, err := api.GetVideoStreamType(stream)
+		hls, err := api.CheckHLS(stream)
 		if err != nil {
 			return err
 		}
 		isHls := false
-		if videoStreamType == "application/x-mpegurl" {
+		if hls != "" {
 			isHls = true
+			stream = hls
 		}
 
 		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId, 9)
@@ -114,7 +115,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		} else {
 			return c.Render("claim", fiber.Map{
 				"stream":      stream,
-				"streamType":  videoStreamType,
+				"streamType":  hls,
 				"isHls":       isHls,
 				"claim":       claimData,
 				"relatedVids": relatedVids,
