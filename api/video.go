@@ -52,16 +52,16 @@ func GetVideoStream(video string) (string, error) {
 	return returnData, nil
 }
 
-func CheckHLS(url string) (string, error) {
+func CheckHLS(url string) (string, bool, error) {
 	res, err := http.Head(url)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 	if res.StatusCode == 403 {
-		return "", fmt.Errorf("this content cannot be accessed due to a DMCA request")
+		return "", false, fmt.Errorf("this content cannot be accessed due to a DMCA request")
 	}
 	if res.Header.Get("Content-Type") == "application/x-mpegurl" {
-		return res.Request.URL.String(), nil
+		return res.Request.URL.String(), true, nil
 	}
-	return res.Header.Get("Content-Type"), nil
+	return res.Header.Get("Content-Type"), false, nil
 }

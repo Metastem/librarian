@@ -85,13 +85,11 @@ func ClaimHandler(c *fiber.Ctx) error {
 			})
 		}
 	case "video":
-		hls, err := api.CheckHLS(stream)
+		hls, isHls, err := api.CheckHLS(stream)
 		if err != nil {
 			return err
 		}
-		isHls := false
-		if hls != "" {
-			isHls = true
+		if isHls {
 			stream = hls
 		}
 
