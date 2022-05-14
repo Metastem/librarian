@@ -108,7 +108,9 @@ There is a script to redirect Odysee links to Librarian.
 ## Install
 Librarian can run on any platform Go compiles on, memory usage varies on instance usage due to caching.
 
-### Docker (recommeded)
+> Make sure to join our [Matrix chat](https://matrix.to/#/#librarian:nitro.chat) to get notified on updates for Odysee API changes.
+
+### Docker (recommended)
 Install Docker and docker-compose, then clone this repository.
 ```
 git clone https://codeberg.org/librarian/librarian
