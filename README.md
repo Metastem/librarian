@@ -102,7 +102,7 @@ Use [LibRedirect](https://github.com/libredirect/libredirect) to automatically r
 - [Edge](https://microsoftedge.microsoft.com/addons/detail/libredirect/aodffkeankebfonljgbcfbbaljopcpdb)
 
 #### GreaseMonkey script
-There is a script to redirect Odysee links to Librarian links.
+There is a script to redirect Odysee links to Librarian.
 [https://codeberg.org/zortazert/GreaseMonkey-Redirect/src/branch/main/odysee-to-librarian.user.js](https://codeberg.org/zortazert/GreaseMonkey-Redirect/src/branch/main/odysee-to-librarian.user.js)
 
 ## Install
