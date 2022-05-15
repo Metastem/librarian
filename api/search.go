@@ -18,10 +18,6 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 		from = page * size
 	}
 
-	if len(query) <= 3 {
-		return nil, fmt.Errorf("search: the query length must be between 3 and 99999")
-	}
-
 	query = strings.ReplaceAll(query, " ", "+")
 	url := "https://lighthouse.odysee.tv/search?s=" + query + "&size=" + fmt.Sprint(size) + "&free_only=true&from=" + fmt.Sprint(from) + "&nsfw=" + strconv.FormatBool(nsfw) + "&claimType=" + claimType
 	if relatedTo != "" {

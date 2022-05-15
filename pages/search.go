@@ -36,6 +36,16 @@ func SearchHandler(c *fiber.Ctx) error {
 		query = c.Query("q")
 	}
 
+	if len(query) <= 2 {
+		return c.Render("search", fiber.Map{
+			"results":   nil,
+			"lenUnder3": true,
+			"query": map[string]interface{}{
+				"query": query,
+			},
+		})
+	}
+
 	results, err := api.Search(query, page, "file,channel", nsfw, "", 12)
 	if err != nil {
 		return err
@@ -48,14 +58,15 @@ func SearchHandler(c *fiber.Ctx) error {
 			return false
 		}
 	})
-	
+
 	return c.Render("search", fiber.Map{
-		"results":   results,
+		"results": results,
 		"query": map[string]interface{}{
-			"query":    query,
-			"page":     fmt.Sprint(page),
-			"nextPage": fmt.Sprint(page + 1),
-			"prevPage": fmt.Sprint(page - 1),
+			"query":       query,
+			"page":        fmt.Sprint(page),
+			"prevPageIs0": (page - 1) == 0,
+			"nextPage":    fmt.Sprint(page + 1),
+			"prevPage":    fmt.Sprint(page - 1),
 		},
 	})
 }

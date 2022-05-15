@@ -4,13 +4,8 @@
 <head>
   {{> 'partials/head' }}
 
-  <style>
-    .channelThumbnail {
-      object-fit: scale-down;
-    }
-  </style>
-
   <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+  <link rel="stylesheet" href="/static/css/search.css" />
 
   <title>{{query.query}} - Librarian</title>
 </head>
@@ -19,6 +14,15 @@
   {{> 'partials/header' }}
 
   <main>
+    <div class="noResults">
+      {{#unless results}}
+      <h2>No results</h2>
+      {{#if lenUnder3}}
+      <p>Try again with a longer search.</p>
+      {{/if}}
+      {{/unless}}
+    </div>
+
     <div class="claimsGrid">
       {{#each results}}
       {{> 'partials/claim' }}
@@ -27,13 +31,14 @@
 
     <br><br>
 
+    {{#if results}}
     <div class="pageSelector">
-      {{#equal query.prevPage "0" }}
-      {{else}}
+      {{#unless query.prevPageIs0 }}
       <a class="claimLink" href="/search?q={{query.query}}&page={{query.prevPage}}">Previous page</a>
-      {{/equal}}
+      {{/unless}}
       <a class="claimLink" href="/search?q={{query.query}}&page={{query.nextPage}}">Next page</a>
     </div>
+    {{/if}}
   </main>
 
   {{> 'partials/footer' }}
