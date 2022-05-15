@@ -36,6 +36,13 @@
       "live": false
     },
     {
+      "name": "lbry.vern.cc",
+      "url": "https://lbry.vern.cc",
+      "country": "🇵🇱 PL",
+      "cloudflare": false,
+      "live": false
+    },
+    {
       "name": "vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion",
       "url": "http://vrmbc4brkgkaysmi3fenbzkayobxjh24slmhtocambn3ewe62iuqt3yd.onion",
       "country": "",
