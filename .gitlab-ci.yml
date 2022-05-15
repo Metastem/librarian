@@ -42,7 +42,7 @@ docker:
 deploy:
   image: alpine:latest
   stage: deploy
-  needs: []
+  needs: [ "bin" ]
   before_script:
     - apk update && apk --no-cache add curl git
     - wget -O - https://fly.io/install.sh | sh
