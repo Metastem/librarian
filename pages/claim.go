@@ -36,6 +36,12 @@ func ClaimHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	if claimData.HasFee {
+		return c.Render("errors/hasFee", fiber.Map{
+			"claim": claimData,
+		})
+	}
+
 	stream, err := api.GetVideoStream(claimData.LbryUrl)
 	if err != nil {
 		return err

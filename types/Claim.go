@@ -26,4 +26,5 @@ type Claim struct {
 	ValueType		 string
 	SrcSize			 string
 	StreamType	 string
+	HasFee			 bool
 }
