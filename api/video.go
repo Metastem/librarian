@@ -43,6 +43,7 @@ func GetVideoStream(video string) (string, error) {
 	}
 
 	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
+	returnData = strings.ReplaceAll(returnData, "https://source.odycdn.com", "https://player.odycdn.com")
 	if viper.GetString("VIDEO_STREAMING_URL") != "" {
 		returnData = strings.ReplaceAll(returnData, "http://localhost:5280", viper.GetString("VIDEO_STREAMING_URL"))
 		returnData = strings.ReplaceAll(returnData, "https://player.odycdn.com", viper.GetString("VIDEO_STREAMING_URL"))
