@@ -24,7 +24,7 @@ function renderComments() {
     let comment = commentsArr[i];
 
     let pfpClass = "pfp"
-    if(!comment.Channel.Thumbnail) {
+    if(!comment.Channel.Thumbnail || comment.Channel.Thumbnail == "/static/img/spaceman.png") {
       comment.Channel.Thumbnail = "/static/img/spaceman.png"
       pfpClass = "pfp pfp--default"
     } else {
