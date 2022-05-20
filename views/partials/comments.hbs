@@ -1,23 +1,16 @@
 <div>
   <hr>
-  <input id="comments__expandBtn" type="checkbox">
+  <input id="comments__expandBtn" type="checkbox" checked>
   <label class="comments__expandBtn__label" for="comments__expandBtn">
     <h3 class="claimLink">Comments</h3>
     <span class="comments__expandBtn__icon material-icons-outlined"></span>
   </label>
   <div id="comments" class="comments">
-    {{#unless nojs}}
-    <p id="nojs">
-      <a href="{{claim.RelUrl}}?nojs=1">
-        Hi! Looks like you have JavaScript turned off. Click here to view comments, keep in mind they may take a bit
-        longer to load.
-      </a>
-    </p>
-    {{else}}
+    {{#if nojs}}
     {{#each comments}}
     <div class="comment">
       {{#with this.Channel}}
-        <a href="{{this.Channel.RelUrl}}">{{> 'partials/channel'}}</a>
+      <a href="{{this.Channel.RelUrl}}">{{> 'partials/channel'}}</a>
       {{/with}}
       <div>
         {{{this.Comment}}}
@@ -29,10 +22,18 @@
       </div>
     </div>
     {{/each}}
-    {{/unless}}
+    {{/if}}
+    <div id="spinner" class="center">
+      <div class="spinner"></div>
+    </div>
   </div>
-  <div id="spinner" class="center">
-    <div class="spinner"></div>
-  </div>
+  {{#unless nojs}}
+  <p id="nojs">
+    <a href="{{claim.RelUrl}}?nojs=1">
+      Hi! Looks like you have JavaScript turned off. Click here to view comments, keep in mind they may take a bit
+      longer to load.
+    </a>
+  </p>
+  {{/unless}}
 </div>
 <hr>
