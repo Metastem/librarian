@@ -30,8 +30,14 @@ func ProxyImage(c *fiber.Ctx) error {
 		return err
 	}
 
-	width := c.Query("w")
-	height := c.Query("h")
+	width := "0"
+	if c.Query("w") != "" {
+		width = c.Query("w")
+	}
+	height := "0"
+	if c.Query("h") != "" {
+		height = c.Query("h")
+	}
 
 	optionsHash := ""
 	if viper.GetString("IMAGE_CACHE") == "true" {
