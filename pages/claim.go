@@ -117,6 +117,9 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"nojs":           true,
 			})
 		} else {
+			if isHls {
+				c.Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src blob: 'self'; img-src *; font-src 'self'; connect-src *; media-src * blob:; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
+			}
 			return c.Render("claim", fiber.Map{
 				"stream":      stream,
 				"streamType":  hls,

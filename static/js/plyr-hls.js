@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const availableQualities = hls.levels.map((l) => l.height)
       availableQualities.unshift(0) //prepend 0 to quality array
 
+      // Preview thumbnails
+      const vttUrl = source.replace("master.m3u8", "stream_sprite.vtt")
+      defaultOptions.previewThumbnails = {
+        enabled: true,
+        src: vttUrl
+      }
+
       // Add new qualities to option
       defaultOptions.quality = {
         default: 0, //Default - AUTO
