@@ -92,6 +92,10 @@ func ClaimHandler(c *fiber.Ctx) error {
 		}
 	case "video":
 		hls, isHls, err := api.CheckHLS(stream)
+		if err.Error() == "this content cannot be accessed due to a DMCA request" {
+			c.Status(451)
+			return c.Render("errors/dmca", nil)
+		}
 		if err != nil {
 			return err
 		}
