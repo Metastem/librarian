@@ -4,13 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/data"
 	"codeberg.org/librarian/librarian/types"
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -47,21 +46,15 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 		},
 	}
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
-	frontpageDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(claimSearchReqData))
-	if err != nil {
-		return []types.Claim{}, err
-	}
 
-	frontpageDataBody, err := ioutil.ReadAll(frontpageDataRes.Body)
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(claimSearchReqData), true)
 	if err != nil {
 		return []types.Claim{}, err
 	}
 
 	claims := make([]types.Claim, 0)
-	claimsData := gjson.Parse(string(frontpageDataBody))
-
 	wg := sync.WaitGroup{}
-	claimsData.Get("result.items").ForEach(
+	data.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			wg.Add(1)
 			go func() {

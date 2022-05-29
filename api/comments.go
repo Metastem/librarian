@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
-	"net/http"
 	"sort"
 	"strconv"
 	"strings"
@@ -57,7 +55,6 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 		return cacheData.([]types.Comment)
 	}
 
-	Client := utils.NewClient()
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
@@ -71,18 +68,14 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := Client.Post("https://comments.odysee.tv/api/v2?m=comment.List", "application/json", bytes.NewBuffer(commentsData))
+
+	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=comment.List", bytes.NewBuffer(commentsData), true)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	commentsDataBody, err2 := ioutil.ReadAll(commentsDataRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
-
 	commentIds := make([]string, 0)
-	gjson.Get(string(commentsDataBody), "result.items.#.comment_id").ForEach(
+	data.Get("result.items.#.comment_id").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			commentIds = append(commentIds, value.String())
 
@@ -95,7 +88,7 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 	comments := make([]types.Comment, 0)
 
 	wg := sync.WaitGroup{}
-	gjson.Get(string(commentsDataBody), "result.items").ForEach(
+	data.Get("result.items").ForEach(
 		func(key, value gjson.Result) bool {
 			wg.Add(1)
 
@@ -154,18 +147,14 @@ func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
-	commentsDataRes, err := http.Post("https://api.na-backend.odysee.com/api/v1/proxy?m=comment_react_list", "application/json", bytes.NewBuffer(commentsData))
+
+	data, err := utils.RequestJSON("https://api.na-backend.odysee.com/api/v1/proxy?m=comment_react_list", bytes.NewBuffer(commentsData), true)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	commentsDataBody, err2 := ioutil.ReadAll(commentsDataRes.Body)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
-
 	likesDislikes := make(map[string][]int64)
-	gjson.Get(string(commentsDataBody), "result.others_reactions").ForEach(
+	data.Get("result.others_reactions").ForEach(
 		func(key, value gjson.Result) bool {
 			likesDislikes[key.String()] = []int64{
 				value.Get("like").Int(),

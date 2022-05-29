@@ -61,7 +61,7 @@ func ProxyImage(c *fiber.Ctx) error {
 	requestUrl := "https://thumbnails.odycdn.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
 	if strings.Contains(url, "static.odycdn.com/emoticons") {
 		requestUrl = url
-		client = utils.NewClient()
+		client = utils.NewClient(true)
 	}
 	
 	res, err := client.Get(requestUrl)

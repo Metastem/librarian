@@ -10,7 +10,7 @@ import (
 )
 
 func NewUser() string {
-	Client := utils.NewClient()
+	Client := utils.NewClient(true)
 	response, err := Client.PostForm("https://api.odysee.com/user/new", url.Values{
 		"auth_token": []string{},
 		"language": []string{"en"},

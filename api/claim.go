@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net/http"
 	"net/url"
 	"sync"
 	"time"
@@ -45,22 +44,18 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	claimDataRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData), true)
 	if err != nil {
 		return types.Claim{}, err
 	}
-
-	claimDataBody, err := ioutil.ReadAll(claimDataRes.Body)
-	if err != nil {
-		return types.Claim{}, err
+	data = data.Get("result.lbry*")
+	
+	if data.Get("error.name").String() != "" {
+		return types.Claim{}, fmt.Errorf("API Error: " + data.Get("error.name").String() + data.Get("error.text").String())
 	}
 
-	claimData := gjson.Get(string(claimDataBody), "result.lbry*")
-	if claimData.Get("error.name").String() != "" {
-		return types.Claim{}, fmt.Errorf("API Error: " + claimData.Get("error.name").String() + claimData.Get("error.text").String())
-	}
-
-	returnData, err := ProcessClaim(claimData, true, true)
+	returnData, err := ProcessClaim(data, true, true)
 	if err != nil {
 		return types.Claim{}, err
 	}
@@ -183,18 +178,12 @@ func GetViews(claimId string) (int64, error) {
 		return cacheData.(int64), nil
 	}
 
-	Client := utils.NewClient()
-	viewCountRes, err := Client.Get("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	data, err := utils.RequestJSON("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId, nil, true)
 	if err != nil {
 		return 0, err
 	}
 
-	viewCountBody, err := ioutil.ReadAll(viewCountRes.Body)
-	if err != nil {
-		return 0, err
-	}
-
-	returnData := gjson.Get(string(viewCountBody), "data.0").Int()
+	returnData := data.Get("data.0").Int()
 	claimCache.Set(claimId+"-views", returnData, cache.DefaultExpiration)
 	return returnData, nil
 }
@@ -205,7 +194,7 @@ func GetLikeDislike(claimId string) ([]int64, error) {
 		return cacheData.([]int64), nil
 	}
 
-	Client := utils.NewClient()
+	Client := utils.NewClient(true)
 	likeDislikeRes, err := Client.PostForm("https://api.odysee.com/reaction/list", url.Values{
 		"claim_ids": []string{claimId},
 	})

@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"strings"
 	"sync"
@@ -40,17 +38,13 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 		"id": time.Now().Unix(),
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
-	channelRes, err := http.Post(viper.GetString("API_URL")+"?m=resolve", "application/json", bytes.NewBuffer(resolveData))
+
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData), true)
 	if err != nil {
 		return types.Channel{}, err
 	}
+	data = data.Get("result." + strings.ReplaceAll(channel, ".", "\\."))
 
-	channelBody, err := ioutil.ReadAll(channelRes.Body)
-	if err != nil {
-		return types.Channel{}, err
-	}
-
-	data := gjson.Get(string(channelBody), "result."+strings.ReplaceAll(channel, ".", "\\."))
 	channelData, err := ProcessChannel(data, getFollowers)
 	if err != nil {
 		return types.Channel{}, err
@@ -123,15 +117,12 @@ func GetChannelFollowers(claimId string) (int64, error) {
 		return cacheData.(int64), nil
 	}
 
-	Client := utils.NewClient()
-	res, err := Client.Get("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId)
+	data, err := utils.RequestJSON("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId, nil, true)
 	if err != nil {
 		return 0, err
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
-
-	returnData := gjson.Get(string(body), "data.0").Int()
+	returnData := data.Get("data.0").Int()
 	channelCache.Set(claimId+"-followers", returnData, cache.DefaultExpiration)
 	return returnData, err
 }
@@ -159,21 +150,15 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 		},
 	}
 	channelData, _ := json.Marshal(channelDataMap)
-	channelDataRes, err := http.Post(viper.GetString("API_URL")+"?m=claim_search", "application/json", bytes.NewBuffer(channelData))
-	if err != nil {
-		return []types.Claim{}, nil
-	}
 
-	channelDataBody, err := ioutil.ReadAll(channelDataRes.Body)
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(channelData), true)
 	if err != nil {
 		return []types.Claim{}, nil
 	}
 
 	claims := make([]types.Claim, 0)
-	claimsData := gjson.Parse(string(channelDataBody))
-
 	wg := sync.WaitGroup{}
-	claimsData.Get("result.items").ForEach(
+	data.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			wg.Add(1)
 

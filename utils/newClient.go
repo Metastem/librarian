@@ -8,13 +8,13 @@ import (
 	"github.com/spf13/viper"
 )
 
-func NewClient() *retryablehttp.Client {
+func NewClient(useHttp3 bool) *retryablehttp.Client {
 	Client := retryablehttp.NewClient()
 	Client.Logger = nil
 	Client.RetryMax = 4
 
 	Client.HTTPClient = &http.Client{}
-	if viper.GetBool("USE_HTTP3") {
+	if viper.GetBool("USE_HTTP3") && useHttp3 {
 		Client.HTTPClient = &http.Client{
 			Transport: &http3.RoundTripper{},
 		}

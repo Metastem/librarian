@@ -2,8 +2,6 @@ package api
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -12,21 +10,14 @@ import (
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/spf13/viper"
-	"github.com/tidwall/gjson"
 )
 
 func GetLive(claimId string) (types.Live, error) {
-	liveRes, err := http.Get("https://api.odysee.live/livestream/is_live?channel_claim_id=" + claimId)
+	data, err := utils.RequestJSON("https://api.odysee.live/livestream/is_live?channel_claim_id=" + claimId, nil, false)
 	if err != nil {
 		return types.Live{}, err
 	}
 
-	liveBody, err := ioutil.ReadAll(liveRes.Body)
-	if err != nil {
-		return types.Live{}, err
-	}
-
-	data := gjson.Parse(string(liveBody))
 	if !data.Get("success").Bool() {
 		return types.Live{}, fmt.Errorf(data.Get("error").String())
 	}

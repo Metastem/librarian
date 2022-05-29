@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
 
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
-	"github.com/tidwall/gjson"
 )
 
 var videoCache = cache.New(30*time.Minute, 15*time.Minute)
@@ -32,17 +31,13 @@ func GetVideoStream(video string) (string, error) {
 		"id": time.Now().Unix(),
 	}
 	getData, _ := json.Marshal(getDataMap)
-	videoStreamRes, err := http.Post(viper.GetString("STREAMING_API_URL")+"?m=get", "application/json", bytes.NewBuffer(getData))
+
+	data, err := utils.RequestJSON(viper.GetString("STREAMING_API_URL")+"?m=get", bytes.NewBuffer(getData), true)
 	if err != nil {
 		return "", err
 	}
 
-	videoStreamBody, err := ioutil.ReadAll(videoStreamRes.Body)
-	if err != nil {
-		return "", err
-	}
-
-	returnData := gjson.Get(string(videoStreamBody), "result.streaming_url").String()
+	returnData := data.Get("result.streaming_url").String()
 	returnData = strings.ReplaceAll(returnData, "https://source.odycdn.com", "https://player.odycdn.com")
 	if viper.GetString("VIDEO_STREAMING_URL") != "" {
 		returnData = strings.ReplaceAll(returnData, "http://localhost:5280", viper.GetString("VIDEO_STREAMING_URL"))
