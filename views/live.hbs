@@ -32,6 +32,7 @@
   {{> 'partials/header' }}
 
   <main>
+    <p class="jsonData" id="isLive">true</p>
     {{#if live.Live}}
     <div class="videoWrapper">
       <video id="player" class="videoPlayer" poster="{{claim.ThumbnailUrl}}&w=1280&h=720" controls=true>

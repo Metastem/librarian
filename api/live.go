@@ -32,8 +32,10 @@ func GetLive(claimId string) (types.Live, error) {
 	thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
 
 	streamUrl := strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", "/live")
+	streamUrl = strings.ReplaceAll(streamUrl, "https://cdn.odysee.live", "/live")
 	if viper.GetString("LIVE_STREAMING_URL") != "" {
 		streamUrl = strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", viper.GetString("LIVE_STREAMING_URL"))	
+		streamUrl = strings.ReplaceAll(streamUrl, "https://cdn.odysee.live", viper.GetString("LIVE_STREAMING_URL"))	
 	}
 
 	return types.Live{

@@ -48,10 +48,12 @@ func ProxyLive(c *fiber.Ctx) error {
 			return err
 		}
 		newBody := strings.ReplaceAll(string(body), "https://cloud.odysee.live", "/live")
+		newBody = strings.ReplaceAll(newBody, "https://cdn.odysee.live", "/live")
 		re := regexp.MustCompile(`(?m)^/[0-9]{3}`)
 		newBody = re.ReplaceAllString(newBody, "/live$0")
 		if viper.GetString("LIVE_STREAMING_URL") != "" {
 			newBody = strings.ReplaceAll(string(body), "https://cloud.odysee.live", viper.GetString("LIVE_STREAMING_URL"))
+			newBody = strings.ReplaceAll(newBody, "https://cdn.odysee.live", viper.GetString("LIVE_STREAMING_URL"))
 			newBody = re.ReplaceAllString(newBody, viper.GetString("LIVE_STREAMING_URL") + "$0")
 		}
 		return c.Send([]byte(newBody))
