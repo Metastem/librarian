@@ -40,7 +40,7 @@ func ProxyImage(c *fiber.Ctx) error {
 	}
 
 	optionsHash := ""
-	if viper.GetString("IMAGE_CACHE") == "true" {
+	if viper.GetBool("IMAGE_CACHE") {
 		hasher := sha256.New()
 		hasher.Write([]byte(url + hash + width + height))
 		optionsHash = base64.URLEncoding.EncodeToString(hasher.Sum(nil))

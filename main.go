@@ -3,7 +3,11 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"time"
 
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/pages"
@@ -42,6 +46,19 @@ func main() {
 		rand.Read(b)
 		viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
 		viper.WriteConfig()
+	}
+
+	if viper.GetBool("IMAGE_CACHE") {
+		viper.SetDefault("IMAGE_CACHE_CLEANUP_INTERVAL", time.Hour * 24)
+		go func() {
+			for range time.Tick(viper.GetDuration("IMAGE_CACHE_CLEANUP_INTERVAL")) {
+				log.Println("Cache cleaned")
+				files, _ := filepath.Glob(filepath.Join(viper.GetString("IMAGE_CACHE_DIR"), "*"))
+				for _, file := range files {
+					os.RemoveAll(file)
+				}
+			}
+		}()
 	}
 
 	engine := handlebars.NewFileSystem(http.FS(views.GetFiles()), ".hbs")
