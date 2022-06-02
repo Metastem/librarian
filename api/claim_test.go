@@ -16,10 +16,10 @@ func TestGetClaim(t *testing.T) {
 		t.Error(err)
 	}
 	if claim.Title != "Reddit Mod Gets Destroyed on National Television..." {
-		t.Errorf("channel.Title was incorrect, got: %s, want: Reddit Mod Gets Destroyed on National Television...", claim.Title)
+		t.Errorf("claim.Title was incorrect, got: %s, want: Reddit Mod Gets Destroyed on National Television...", claim.Title)
 	}
 	if claim.ClaimId != "bc3dcabb350ed498804f746c6125e1eb0127c92d" {
-		t.Errorf("channel.ClaimId was incorrect, got: %s, want: bc3dcabb350ed498804f746c6125e1eb0127c92d", claim.ClaimId)
+		t.Errorf("claim.ClaimId was incorrect, got: %s, want: bc3dcabb350ed498804f746c6125e1eb0127c92d", claim.ClaimId)
 	}
 	if claim.Description == "" {
 		t.Fail()
