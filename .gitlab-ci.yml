@@ -6,6 +6,16 @@ stages:
   - build
   - deploy
 
+test:
+  stage: test
+  needs: []
+  image: golang:latest
+  script:
+    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
+    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+    - cd $GOPATH/src/$REPO_NAME
+    - go test $(go list ./...)
+
 bin:
   stage: build
   needs: []
