@@ -1,11 +1,13 @@
-FROM golang:alpine AS build
+FROM --platform=$BUILDPLATFORM golang:alpine AS build
+
+ARG TARGETARCH
 
 WORKDIR /src
 RUN apk --no-cache add git ca-certificates
 RUN git clone https://codeberg.org/librarian/librarian .
 
 RUN go mod download
-RUN CGO_ENABLED=0 go build -o /src/librarian
+RUN GOOS=linux GOARCH=$TARGETARCH CGO_ENABLED=0 go build -o /src/librarian
 
 FROM scratch as bin
 
