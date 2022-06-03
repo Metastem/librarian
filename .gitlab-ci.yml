@@ -3,19 +3,8 @@ variables:
   DOCKER_HOST: tcp://docker:2375
 
 stages:
-  - test
   - build
   - deploy
-
-test:
-  stage: test
-  needs: []
-  image: golang:latest
-  script:
-    - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
-    - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
-    - cd $GOPATH/src/$REPO_NAME
-    - go test $(go list ./...)
 
 bin:
   stage: build
@@ -54,10 +43,13 @@ deploy:
   image: alpine:latest
   stage: deploy
   needs: [ "bin" ]
+  dependencies:
+    - bin
   before_script:
     - apk update && apk --no-cache add curl git
     - wget -O - https://fly.io/install.sh | sh
     - git clone https://codeberg.org/video-prize-ranch/fly-cfg
+    - mv librarian-linux-amd64 fly-cfg/librarian/librarian
     - cd fly-cfg/librarian
   script:
     - /root/.fly/bin/flyctl deploy --no-cache --detach
