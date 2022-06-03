@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {{> 'partials/head' }}
+
+  <link rel="stylesheet" href="/static/css/settings.css" />
+
+  <title>Settings - Librarian</title>
+</head>
+
+<body>
+  {{> 'partials/header' }}
+
+  <main>
+    <h2 class="sectionHeader">Settings</h2>
+    <noscript>Settings requires JavaScript.</noscript>
+
+    <div class="selectOpt">
+      <select id="theme">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+      <p>Theme</p>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="showRelated" name="showRelated" checked>
+        <span class="slider"></span>
+      </label>
+      <label for="showRelated">Show related videos</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="collapseComments" name="collapseComments" checked>
+        <span class="slider"></span>
+      </label>
+      <label for="collapseComments">Collapse comments</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="nsfw" name="nsfw">
+        <span class="slider"></span>
+      </label>
+      <label for="nsfw">Show NSFW</label>
+    </div>
+
+    <h3>Player</h3>
+
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="autoplay" name="autoplay">
+        <span class="slider"></span>
+      </label>
+      <label for="autoplay">Autoplay</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="autoplayNextVid" name="autoplayNextVid">
+        <span class="slider"></span>
+      </label>
+      <label for="autoplayNextVid">Autoplay next video</label>
+    </div>
+    <div class="selectOpt">
+      <select id="speed">
+        <option value="0.5">0.5x</option>
+        <option value="0.75">0.75x</option>
+        <option value="1" selected="">1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="1.75">1.75x</option>
+        <option value="2">2x</option>
+        <option value="4">4x</option>
+      </select>
+      <p>Speed</p>
+    </div>
+    <div class="selectOpt">
+      <select id="quality">
+        <option value="0" selected="">Auto</option>
+        <option value="144">144p</option>
+        <option value="360">360p</option>
+        <option value="720">720p</option>
+        <option value="1080">1080p</option>
+      </select>
+      <p>Video quality (some videos only)</p>
+    </div>
+
+    <div class="sbSectionHeader">
+      <h3>SponsorBlock</h3>
+      <p class="betaLabel">BETA</p>
+    </div>
+    <p class="sbSectionText">Uses the <a href="https://sponsor.ajay.app/">SponsorBlock</a> API. Video IDs are kept private. Only works for YouTube synced videos.</p>
+
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="sponsor" name="sponsor">
+        <span class="slider"></span>
+      </label>
+      <label for="sponsor">Sponsor</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="selfpromo" name="selfpromo">
+        <span class="slider"></span>
+      </label>
+      <label for="selfpromo">Unpaid/Self Promotion</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="interaction" name="interaction">
+        <span class="slider"></span>
+      </label>
+      <label for="interaction">Interaction Reminder (Subscribe)</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="intro" name="intro">
+        <span class="slider"></span>
+      </label>
+      <label for="intro">Intro</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="outro" name="outro">
+        <span class="slider"></span>
+      </label>
+      <label for="outro">Outro</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="preview" name="preview">
+        <span class="slider"></span>
+      </label>
+      <label for="preview">Preview/Recap</label>
+    </div>
+    <div class="switchWrapper">
+      <label class="switch">
+        <input type="checkbox" id="filler" name="filler">
+        <span class="slider"></span>
+      </label>
+      <label for="filler">Filler Tangent/Jokes</label>
+    </div>
+  </main>
+
+  {{> 'partials/footer' }}
+
+  <script src="/static/js/settings.js"></script>
+</body>
+
+</html>

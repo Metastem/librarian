@@ -20,6 +20,11 @@ func ChannelHandler(c *fiber.Ctx) error {
 	c.Set("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
 	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
+	theme := "light"
+	if c.Cookies("theme") != "" {
+		theme = c.Cookies("theme")
+	}
+
 	page := 1
 	pageParam, err := strconv.Atoi(c.Query("page"))
 	if err == nil || pageParam != 0 {
@@ -51,6 +56,7 @@ func ChannelHandler(c *fiber.Ctx) error {
 		"channel":   channelData,
 		"config":    viper.AllSettings(),
 		"claims":    claims,
+		"theme":		 theme,
 		"query": map[string]interface{}{
 			"page":      fmt.Sprint(page),
 			"nextPage":  fmt.Sprint(page + 1),

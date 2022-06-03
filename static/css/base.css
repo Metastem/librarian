@@ -49,6 +49,11 @@ header {
   background-color: var(--bg-100);
 }
 
+.settingsIcon {
+  color: var(--text);
+  font-size: 24px;
+}
+
 .sectionHeader {
   margin-top: 0;
 }

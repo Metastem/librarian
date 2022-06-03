@@ -27,8 +27,13 @@ func SearchHandler(c *fiber.Ctx) error {
 	}
 
 	nsfw := false
-	if c.Query("nsfw") == "true" {
+	if c.Query("nsfw") == "true" || c.Cookies("nsfw") == "true" {
 		nsfw = true
+	}
+
+	theme := "light"
+	if c.Cookies("theme") != "" {
+		theme = c.Cookies("theme")
 	}
 
 	query := c.FormValue("q")
@@ -40,6 +45,7 @@ func SearchHandler(c *fiber.Ctx) error {
 		return c.Render("search", fiber.Map{
 			"results":   nil,
 			"lenUnder3": true,
+			"theme":		 theme,
 			"query": map[string]interface{}{
 				"query": query,
 			},
@@ -61,6 +67,7 @@ func SearchHandler(c *fiber.Ctx) error {
 
 	return c.Render("search", fiber.Map{
 		"results": results,
+		"theme":	 theme,
 		"query": map[string]interface{}{
 			"query":       query,
 			"page":        fmt.Sprint(page),

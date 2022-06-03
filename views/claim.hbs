@@ -51,16 +51,18 @@
   {{/if}}
 
   <link rel="stylesheet" href="/static/css/comments.css" />
-  <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+
+  <p class="jsonData" id="commentData">
+    {"claimId": "{{claim.ClaimId}}", "channelId": "{{claim.Channel.Id}}", "channelName": "{{claim.Channel.Name}}"}
+  </p>
+  <p class="jsonData" id="videoData">
+    {"nextVid": "{{relatedVids[0].RelUrl}}"}
+  </p>
 
   <title>{{claim.Title}} - Librarian</title>
 </head>
 
 <body>
-  <p class="jsonData" id="commentData">
-    {"claimId": "{{claim.ClaimId}}", "channelId": "{{claim.Channel.Id}}", "channelName": "{{claim.Channel.Name}}"}
-  </p>
-
   {{> 'partials/header' }}
 
   <main>
@@ -130,6 +132,8 @@
   {{else}}
   <script src="/static/js/player.js"></script>
   {{/if}}
+  <script src="/static/js/sha256.min.js"></script>
+  <script src="/static/js/sponsorblock.js"></script>
   {{/unless}}
   {{/unless}}
 </body>

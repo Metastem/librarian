@@ -74,8 +74,14 @@ func main() {
 				code = e.Code
 			}
 
+			theme := "light"
+			if ctx.Cookies("theme") != "" {
+				theme = ctx.Cookies("theme")
+			}
+
 			err = ctx.Status(code).Render("error", fiber.Map{
 				"err": err,
+				"theme": theme,
 			})
 			if err != nil {
 				return ctx.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
@@ -101,6 +107,7 @@ func main() {
 	app.Post("/search", pages.SearchHandler)
 	app.Get("/privacy", pages.PrivacyHandler)
 	app.Get("/about", pages.AboutHandler)
+	app.Get("/settings", pages.SettingsHandler)
 
 	app.Get("/robots.txt", func(c *fiber.Ctx) error {
 		file, _ := static.GetFiles().ReadFile("robots.txt")
@@ -115,6 +122,7 @@ func main() {
 	})
 
 	app.Get("/api/comments", api.CommentsHandler)
+	app.Get("/api/sponsorblock/:id", proxy.ProxySponsorBlock)
 
 	app.Get("/:channel/", pages.ChannelHandler)
 	app.Get("/$/invite/:channel", pages.ChannelHandler)

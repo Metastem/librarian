@@ -22,23 +22,30 @@ func ClaimHandler(c *fiber.Ctx) error {
 	c.Set("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=*, battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=*, geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=*, publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
 	c.Set("Content-Security-Policy", "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src blob: 'self'; img-src 'self'; font-src 'self'; connect-src *; media-src * blob:; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
+	theme := "light"
+	if c.Cookies("theme") != "" {
+		theme = c.Cookies("theme")
+	}
+
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {
 		return err
 	}
 	if claimData.ClaimId == "" {
-		return c.Status(404).Render("404", fiber.Map{})
+		return c.Status(404).Render("404", fiber.Map{"theme": theme})
 	}
 
 	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
 		return c.Render("blocked", fiber.Map{
 			"claim": claimData,
+			"theme": theme,
 		})
 	}
 
 	if claimData.HasFee {
 		return c.Render("errors/hasFee", fiber.Map{
 			"claim": claimData,
+			"theme": theme,
 		})
 	}
 
@@ -80,6 +87,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"comments":       comments,
 				"commentsLength": len(comments),
 				"nojs":           true,
+				"theme":					theme,
 				"config":         viper.AllSettings(),
 			})
 		} else {
@@ -118,6 +126,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"commentsLength": len(comments),
 				"relatedVids":    relatedVids,
 				"config":         viper.AllSettings(),
+				"theme":					theme,
 				"nojs":           true,
 			})
 		} else {
@@ -131,6 +140,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 				"claim":       claimData,
 				"relatedVids": relatedVids,
 				"config":      viper.AllSettings(),
+				"theme":			 theme,
 				"nojs":        false,
 			})
 		}
@@ -139,6 +149,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			"stream":   stream,
 			"download": true,
 			"claim":    claimData,
+			"theme":		theme,
 			"config":   viper.AllSettings(),
 		})
 	default:
@@ -159,12 +170,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 			if !viper.GetBool("ENABLE_LIVE_STREAM") {
 				return c.Render("errors/liveDisabled", fiber.Map{
 					"switchUrl": c.Path(),
+					"theme": theme,
 				})
 			}
 
 			return c.Render("live", fiber.Map{
 				"live":   live,
 				"claim":  claimData,
+				"theme":	theme,
 				"config": viper.AllSettings(),
 			})
 		}

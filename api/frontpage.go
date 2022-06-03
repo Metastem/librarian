@@ -17,10 +17,15 @@ import (
 
 var fpCache = cache.New(30*time.Minute, 30*time.Minute)
 
-func GetFrontpageVideos() ([]types.Claim, error) {
+func GetFrontpageVideos(nsfw bool) ([]types.Claim, error) {
 	cacheData, found := fpCache.Get("featured")
 	if found {
 		return cacheData.([]types.Claim), nil
+	}
+
+	nsfwTags := []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"}
+	if nsfw {
+		nsfwTags = []string{}
 	}
 
 	claimSearchData := map[string]interface{}{
@@ -33,7 +38,7 @@ func GetFrontpageVideos() ([]types.Claim, error) {
 			"no_totals":                true,
 			"claim_type":               []string{"stream"},
 			"any_tags":                 []string{},
-			"not_tags":                 []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"},
+			"not_tags":                 nsfwTags,
 			"channel_ids":              data.Featured,
 			"not_channel_ids":          []string{},
 			"order_by":                 []string{"trending_group", "trending_mixed"},
