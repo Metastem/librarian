@@ -7,9 +7,19 @@ stages:
   - build
   - deploy
 
+.go-cache:
+  variables:
+    GOPATH: $CI_PROJECT_DIR/.go
+  before_script:
+    - mkdir -p .go
+  cache:
+    paths:
+      - .go/pkg/mod/
+
 test:
   stage: test
   needs: []
+  extends: .go-cache
   image: golang:latest
   script:
     - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
@@ -20,6 +30,7 @@ test:
 bin:
   stage: build
   needs: []
+  extends: .go-cache
   image: golang:latest
   script:
     - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
