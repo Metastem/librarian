@@ -5,6 +5,7 @@ variables:
 stages:
   - test
   - build
+  - deploy
 
 .go-cache:
   variables:
@@ -58,3 +59,14 @@ docker:
     - docker context create mybuilder
     - docker buildx create --use --name mybuilder mybuilder
     - docker buildx build --platform linux/amd64,linux/arm64 --push -t nineteengladespool/librarian:latest .
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  before_script:
+    - apk update && apk --no-cache add curl git
+    - wget -O - https://fly.io/install.sh | sh
+    - git clone https://codeberg.org/video-prize-ranch/fly-cfg.git
+  script:
+    - cd fly-cfg
+    - /root/.fly/bin/flyctl deploy --no-cache --detach
