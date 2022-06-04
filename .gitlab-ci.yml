@@ -36,7 +36,7 @@ bin:
     - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
     - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
     - cd $GOPATH/src/$REPO_NAME
-    - CGO_ENABLED=0 go build -o $CI_PROJECT_DIR/librarian-linux-amd64
+    - CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags "-X codeberg.org/librarian/librarian/pages.VersionInfo=$(date '+%Y-%m-%d')-$(git rev-list --abbrev-commit -1 HEAD)" -o $CI_PROJECT_DIR/librarian-linux-amd64
     - CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags "-X codeberg.org/librarian/librarian/pages.VersionInfo=$(date '+%Y-%m-%d')-$(git rev-list --abbrev-commit -1 HEAD)" -o $CI_PROJECT_DIR/librarian-linux-arm64
   artifacts:
     paths:
