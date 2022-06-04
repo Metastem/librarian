@@ -83,7 +83,6 @@ main {
   display: flex;
   gap: 4px;
   width: 100%;
-  justify-content: flex-end;
 }
 
 .claimsGrid {
