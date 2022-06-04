@@ -75,10 +75,10 @@
       <div class="videoDesc__meta">
         <div class="videoDesc__meta__item videoDesc__meta__item-btn">
           <div>
-            <a href="{{stream}}?download=1" rel="nofollow noreferrer">
+            <a href="{{stream.url}}?download=1" rel="nofollow noreferrer">
               <span class="material-icons-outlined">download</span>
             </a>
-            <a href="{{stream}}?download=1" rel="nofollow noreferrer">Download</a>
+            <a href="{{stream.url}}?download=1" rel="nofollow noreferrer">Download</a>
           </div>
         </div>
       </div>
@@ -122,11 +122,11 @@
 
   {{> 'partials/footer' }}
 
-  {{#unless nojs}}
+  {{#unless settings.nojs}}
   <script src="/static/js/comments.js"></script>
   {{#unless document}}
   <script src="/static/js/plyr.js"></script>
-  {{#if isHls}}
+  {{#if stream.isHls}}
   <script src="/static/js/hls.js"></script>
   <script src="/static/js/plyr-hls.js"></script>
   {{else}}

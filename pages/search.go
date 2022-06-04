@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"codeberg.org/librarian/librarian/api"
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,23 +18,12 @@ func SearchHandler(c *fiber.Ctx) error {
 	c.Set("Referrer-Policy", "no-referrer")
 	c.Set("X-Content-Type-Options", "nosniff")
 	c.Set("Strict-Transport-Security", "max-age=31557600")
-	c.Set("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=()")
 	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
 	page := 1
 	pageParam, err := strconv.Atoi(c.Query("page"))
 	if err == nil || pageParam != 0 {
 		page = pageParam
-	}
-
-	nsfw := false
-	if c.Query("nsfw") == "true" || c.Cookies("nsfw") == "true" {
-		nsfw = true
-	}
-
-	theme := "light"
-	if c.Cookies("theme") != "" {
-		theme = c.Cookies("theme")
 	}
 
 	query := c.FormValue("q")
@@ -45,14 +35,14 @@ func SearchHandler(c *fiber.Ctx) error {
 		return c.Render("search", fiber.Map{
 			"results":   nil,
 			"lenUnder3": true,
-			"theme":		 theme,
-			"query": map[string]interface{}{
+			"theme":     utils.ReadSettingFromCookie(c, "theme"),
+			"query": fiber.Map{
 				"query": query,
 			},
 		})
 	}
 
-	results, err := api.Search(query, page, "file,channel", nsfw, "", 12)
+	results, err := api.Search(query, page, "file,channel", utils.ReadSettingFromCookie(c, "nsfw") == "true", "", 12)
 	if err != nil {
 		return err
 	}
@@ -67,8 +57,8 @@ func SearchHandler(c *fiber.Ctx) error {
 
 	return c.Render("search", fiber.Map{
 		"results": results,
-		"theme":	 theme,
-		"query": map[string]interface{}{
+		"theme":   utils.ReadSettingFromCookie(c, "theme"),
+		"query": fiber.Map{
 			"query":       query,
 			"page":        fmt.Sprint(page),
 			"prevPageIs0": (page - 1) == 0,

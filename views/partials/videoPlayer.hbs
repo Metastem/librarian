@@ -1,8 +1,10 @@
 <div class="videoWrapper">
   <video id="player" class="videoPlayer" poster="{{claim.ThumbnailUrl}}&w=1280&h=720" controls=true>
-    <source type="{{streamType}}" src="{{stream}}">
-    {{#equal streamType "application/x-mpegurl"}}
-    <source type="video/mp4" src="{{stream}}?download=1">
-    {{/equal}}
+    {{#if stream.isHls}}
+    <source type="{{stream.type}}" src="{{stream.hlsUrl}}">
+    <source type="video/mp4" src="{{stream.url}}?download=1">
+    {{else}}
+    <source type="{{stream.type}}" src="{{stream.url}}">
+    {{/if}}
   </video>
 </div>

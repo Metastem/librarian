@@ -97,10 +97,9 @@
     <br><br>
 
     <div class="pageSelector">
-      {{#equal query.prevPage "0" }}
-      {{else}}
+      {{#unless query.prevPageIs0 }}
       <a class="claimLink" href="{{channel.RelUrl}}?page={{query.prevPage}}">Previous page</a>
-      {{/equal}}
+      {{/unless}}
       <a class="claimLink" href="{{channel.RelUrl}}?page={{query.nextPage}}">Next page</a>
     </div>
   </main>

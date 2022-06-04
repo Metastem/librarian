@@ -6,7 +6,7 @@
     <span class="comments__expandBtn__icon material-icons-outlined"></span>
   </label>
   <div id="comments" class="comments">
-    {{#if nojs}}
+    {{#if settings.nojs}}
     {{#each comments}}
     <div class="comment">
       {{#with this.Channel}}
@@ -27,7 +27,7 @@
   <div id="spinner" class="center">
     <div class="spinner"></div>
   </div>
-  {{#unless nojs}}
+  {{#unless settings.nojs}}
   <p id="nojs">
     <a href="{{claim.RelUrl}}?nojs=1">
       Hi! Looks like you have JavaScript turned off. Click here to view comments, keep in mind they may take a bit
