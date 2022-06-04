@@ -148,6 +148,11 @@ Build Librarian.
 go build .
 ```
 
+To include version information use:
+```
+go build -ldflags "-X codeberg.org/librarian/librarian/pages.VersionInfo=$(date '+%Y-%m-%d')-$(git rev-list --abbrev-commit -1 HEAD)"
+```
+
 Edit the config file using your preferred editor.
 ```
 cp config.example.yml config.yml

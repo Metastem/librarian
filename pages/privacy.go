@@ -5,6 +5,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var VersionInfo string
+
 func PrivacyHandler(c *fiber.Ctx) error {
 	c.Set("Cache-Control", "public,max-age=1800")
 	c.Set("X-Frame-Options", "DENY")
@@ -23,5 +25,6 @@ func PrivacyHandler(c *fiber.Ctx) error {
 	return c.Render("privacy", fiber.Map{
 		"config": viper.AllSettings(),
 		"theme": theme,
+		"version": VersionInfo,
 	})
 }
