@@ -54,7 +54,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 	comments := []types.Comment{}
 	nojs := false
 	if c.Query("nojs") == "1" {
-		comments = api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 5000, 1)
+		comments = api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 25, 1)
 		nojs = true
 	}
 
