@@ -27,6 +27,10 @@
   margin-top: 1em;
 }
 
+.actionBar {
+  justify-content: flex-end;
+}
+
 @media only screen and (max-width: 812px) {
   .coverImg {
     max-height: 72px;
