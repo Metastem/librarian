@@ -2,14 +2,14 @@
   <div class="thumbnailWrapper">
     {{#unless this.Id }}
     <a href={{this.RelUrl}}>
-      <img class="thumbnail" src="{{this.ThumbnailUrl}}&w=854&h=480" loading="lazy" />
+      <img class="thumbnail" src="{{this.ThumbnailUrl}}&w=480" loading="lazy" />
     </a>
     {{else}}
     <a href={{this.RelUrl}}>
       {{#if this.Thumbnail}}
-      <img class="thumbnail channelThumbnail" src="{{this.Thumbnail}}&w=420&h=420" loading="lazy" />
+      <img class="thumbnail channelThumbnail" src="{{this.Thumbnail}}&w=400" loading="lazy" />
       {{else}}
-      <img src="/static/img/spaceman.png" class="thumbnail channelThumbnail pfp--default" width="420" height="420"
+      <img src="/static/img/spaceman.webp" class="thumbnail channelThumbnail pfp--default" width="420" height="420"
         loading="lazy" />
       {{/if}}
     </a>

@@ -24,8 +24,8 @@ function renderComments() {
     let comment = commentsArr[i];
 
     let pfpClass = "pfp"
-    if(!comment.Channel.Thumbnail || comment.Channel.Thumbnail == "/static/img/spaceman.png") {
-      comment.Channel.Thumbnail = "/static/img/spaceman.png"
+    if(!comment.Channel.Thumbnail || comment.Channel.Thumbnail == "/static/img/spaceman.webp") {
+      comment.Channel.Thumbnail = "/static/img/spaceman.webp"
       pfpClass = "pfp pfp--default"
     } else {
       comment.Channel.Thumbnail = comment.Channel.Thumbnail + "&w=48&h=48"
