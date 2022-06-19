@@ -122,12 +122,3 @@ li br {
     height: 1.5em;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  .relVid__link {
-    color: #ffffff;
-  }
-  .streamOffline {
-    background-color: --var(--purple);
-  }
-}

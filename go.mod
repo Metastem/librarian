@@ -3,6 +3,7 @@ module codeberg.org/librarian/librarian
 go 1.16
 
 require (
+	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gofiber/fiber/v2 v2.33.0

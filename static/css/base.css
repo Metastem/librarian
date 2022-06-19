@@ -265,20 +265,3 @@ footer {
     text-align: center;
   }
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #fff;
-    --bg-100: #414141;
-    --bg-200: #515151;
-  }
-
-  body {
-    background-color: #000;
-    color: #fff;
-  }
-
-  .logo {
-    filter: invert(1) hue-rotate(180deg);
-  }
-}

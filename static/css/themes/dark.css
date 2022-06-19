@@ -35,3 +35,8 @@ body {
 select {
   color: #fff;
 }
+
+code {
+  background-color: #616161;
+  color: white;
+}

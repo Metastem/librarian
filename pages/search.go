@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -35,14 +34,14 @@ func SearchHandler(c *fiber.Ctx) error {
 		return c.Render("search", fiber.Map{
 			"results":   nil,
 			"lenUnder3": true,
-			"theme":     utils.ReadSettingFromCookie(c, "theme"),
+			"theme":     c.Cookies("theme"),
 			"query": fiber.Map{
 				"query": query,
 			},
 		})
 	}
 
-	results, err := api.Search(query, page, "file,channel", utils.ReadSettingFromCookie(c, "nsfw") == "true", "", 12)
+	results, err := api.Search(query, page, "file,channel", c.Cookies("nsfw") == "true", "", 12)
 	if err != nil {
 		return err
 	}
@@ -57,7 +56,7 @@ func SearchHandler(c *fiber.Ctx) error {
 
 	return c.Render("search", fiber.Map{
 		"results": results,
-		"theme":   utils.ReadSettingFromCookie(c, "theme"),
+		"theme":   c.Cookies("theme"),
 		"query": fiber.Map{
 			"query":       query,
 			"page":        fmt.Sprint(page),

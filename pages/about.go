@@ -1,9 +1,6 @@
 package pages
 
-import (
-	"codeberg.org/librarian/librarian/utils"
-	"github.com/gofiber/fiber/v2"
-)
+import "github.com/gofiber/fiber/v2"
 
 func AboutHandler(c *fiber.Ctx) error {
 	c.Set("Cache-Control", "public,max-age=604800")
@@ -15,6 +12,6 @@ func AboutHandler(c *fiber.Ctx) error {
 	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
 	return c.Render("about", fiber.Map{
-		"theme": utils.ReadSettingFromCookie(c, "theme"),
+		"theme": c.Cookies("theme"),
 	})
 }

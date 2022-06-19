@@ -23,12 +23,12 @@ function updateGeneralSetting(setting) {
 function loadGeneralSetting(setting) {
   let elem = document.getElementById(setting)
 
-  if (setting == "nfsw") {
+  if (setting == "nsfw") {
     if (document.cookie.includes("nsfw=true")) {
       elem.checked = true
     }
   } else if (setting == "theme") {
-    elem.value = getCookie("theme") || "light"
+    elem.value = getCookie("theme") || "system"
   } else {
     let value = localStorage.getItem(setting)
     if (value) {

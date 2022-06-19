@@ -97,9 +97,3 @@ input:checked + .slider:before {
   -ms-transform: translateX(1em);
   transform: translateX(1em);
 }
-
-@media (prefers-color-scheme: dark) {
-  select {
-    color: #fff;
-  }
-}

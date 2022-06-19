@@ -14,6 +14,7 @@ import (
 	"codeberg.org/librarian/librarian/proxy"
 	"codeberg.org/librarian/librarian/static"
 	"codeberg.org/librarian/librarian/views"
+	"github.com/aymerick/raymond"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
@@ -62,6 +63,14 @@ func main() {
 	}
 
 	engine := handlebars.NewFileSystem(http.FS(views.GetFiles()), ".hbs")
+
+	engine.AddFunc("noteq", func(a interface{}, b interface{}, options *raymond.Options) interface{} {
+		if raymond.Str(a) != raymond.Str(b) {
+			return options.Fn()
+		}
+		return ""
+	})
+
 	app := fiber.New(fiber.Config{
 		Views:             engine,
 		Prefork:           viper.GetBool("FIBER_PREFORK"),
@@ -74,14 +83,9 @@ func main() {
 				code = e.Code
 			}
 
-			theme := "light"
-			if ctx.Cookies("theme") != "" {
-				theme = ctx.Cookies("theme")
-			}
-
 			err = ctx.Status(code).Render("error", fiber.Map{
 				"err": err,
-				"theme": theme,
+				"theme": ctx.Cookies("theme"),
 			})
 			if err != nil {
 				return ctx.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")

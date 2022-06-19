@@ -14,6 +14,9 @@
 
 <link rel="stylesheet" href="/static/css/base.css"/>
 <link rel="stylesheet" href="/static/fonts/Material-Icons-Outlined.css" />
+<link rel="stylesheet" media="(prefers-color-scheme: dark)" href="/static/css/themes/dark.css"/>
 {{#if theme}}
+{{#noteq theme "system"}}
 <link rel="stylesheet" href="/static/css/themes/{{theme}}.css"/>
+{{/noteq}}
 {{/if}}

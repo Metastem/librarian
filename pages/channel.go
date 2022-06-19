@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -51,7 +50,7 @@ func ChannelHandler(c *fiber.Ctx) error {
 		"channel": channelData,
 		"config":  viper.AllSettings(),
 		"claims":  claims,
-		"theme":   utils.ReadSettingFromCookie(c, "theme"),
+		"theme":   c.Cookies("theme"),
 		"query": fiber.Map{
 			"page":        fmt.Sprint(page),
 			"prevPageIs0": (page - 1) == 0,

@@ -22,7 +22,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 	c.Set("Strict-Transport-Security", "max-age=31557600")
 	c.Set("Content-Security-Policy", "default-src 'self'; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
 
-	theme := utils.ReadSettingFromCookie(c, "theme")
+	theme := c.Cookies("theme")
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {

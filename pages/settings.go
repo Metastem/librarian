@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -17,6 +16,6 @@ func SettingsHandler(c *fiber.Ctx) error {
 
 	return c.Render("settings", fiber.Map{
 		"config": viper.AllSettings(),
-		"theme": utils.ReadSettingFromCookie(c, "theme"),
+		"theme": c.Cookies("theme"),
 	})
 }

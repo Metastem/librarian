@@ -4,7 +4,6 @@ import (
 	"sort"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -18,7 +17,7 @@ func FrontpageHandler(c *fiber.Ctx) error {
 	c.Set("Strict-Transport-Security", "max-age=31557600")
 	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
-	videos, err := api.GetFrontpageVideos(utils.ReadSettingFromCookie(c, "nsfw") == "true")
+	videos, err := api.GetFrontpageVideos(c.Cookies("nsfw") == "true")
 	if err != nil {
 		return err
 	}
@@ -29,6 +28,6 @@ func FrontpageHandler(c *fiber.Ctx) error {
 	return c.Render("home", fiber.Map{
 		"config": viper.AllSettings(),
 		"videos": videos,
-		"theme": utils.ReadSettingFromCookie(c, "theme"),
+		"theme": c.Cookies("theme"),
 	})
 }

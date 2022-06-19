@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -18,8 +17,8 @@ func PrivacyHandler(c *fiber.Ctx) error {
 	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
 	return c.Render("privacy", fiber.Map{
-		"config": viper.AllSettings(),
-		"theme": utils.ReadSettingFromCookie(c, "nsfw"),
+		"config":  viper.AllSettings(),
+		"theme":   c.Cookies("theme"),
 		"version": VersionInfo,
 	})
 }
