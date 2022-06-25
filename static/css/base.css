@@ -225,7 +225,7 @@ footer {
 
   .actionBar {
     flex-wrap: wrap;
-    justify-content: normal;
+    justify-content: normal !important;
   }
 
   .videoData {
