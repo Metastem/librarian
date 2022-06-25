@@ -2,12 +2,12 @@ package utils
 
 import (
 	"bytes"
-	"html"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"codeberg.org/librarian/librarian/data"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/spf13/viper"
 	"github.com/yuin/goldmark"
@@ -27,18 +27,36 @@ func ProcessText(text string, newline bool) string {
 		text = strings.ReplaceAll(text, "\n\n", "")
 		text = strings.ReplaceAll(text, "\n", "<br>")
 	}
-	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
-	imgs := re.FindAllString(text, len(text)/4)
-	for i := 0; i < len(imgs); i++ {
-		hmac := EncodeHMAC(imgs[i])
-		text = re.ReplaceAllString(text, "/image?url=$1"+hmac)
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(text))
+	if err != nil {
+		panic(err)
 	}
-	text = strings.ReplaceAll(text, `img src="`, `img src="/image?url=`)
-	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
-	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
-	text = html.UnescapeString(text)
-	text = bluemonday.UGCPolicy().RequireNoReferrerOnLinks(true).RequireNoFollowOnLinks(true).RequireCrossOriginAnonymous(true).Sanitize(text)
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, _ := s.Attr("src")
+		src = url.QueryEscape(src)
+		hmac := EncodeHMAC(src)
+		src = "/image?url=" + src + "&hash=" + hmac
+		s.SetAttr("src", src)
+	})
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		href, _ := s.Attr("href")
+		href = strings.ReplaceAll(href, "https://odysee.com", "")
+		href = strings.ReplaceAll(href, "https://open.lbry.com", "")
+		s.SetAttr("href", href)
+	})
+
+	text, _ = doc.Html()
+
 	text = ReplaceStickersAndEmotes(text)
+
+	p := bluemonday.UGCPolicy()
+	p.AllowImages()
+	p.RequireNoReferrerOnLinks(true)
+	p.RequireNoFollowOnLinks(true)
+	p.RequireCrossOriginAnonymous(true)
+	text = p.Sanitize(text)
 
 	return text
 }
@@ -55,37 +73,29 @@ func ProcessDocument(text string, isMd bool) string {
 		text = buf.String()
 	}
 
-	re := regexp.MustCompile(`(?:img src=")(.*)(?:")`)
-	imgs := re.FindAllString(text, len(text)/4)
-	for i := 0; i < len(imgs); i++ {
-		imgUrlRe := regexp.MustCompile(`https?:\/\/[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_:%&;\?\#\/.=]+`)
-		imgUrl := imgUrlRe.FindString(imgs[i])
-		imgUrl = url.QueryEscape(imgUrl)
-		hmac := EncodeHMAC(imgUrl)
-		text = strings.ReplaceAll(text, imgs[i], `img src="/image?`+`hash=`+hmac+`&url=`+imgUrl+`"`)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(text))
+	if err != nil {
+		panic(err)
 	}
 
-	re2 := regexp.MustCompile(`<iframe src="http(.*)>`)
-	text = re2.ReplaceAllString(text, "")
-
-	re3 := regexp.MustCompile(`<iframe src="(.*)>`)
-	embeds := re3.FindAllString(text, len(text)/4)
-	for i := 0; i < len(embeds); i++ {
-		embed := embeds[i]
-		newEmbed := strings.ReplaceAll(embed, "#", ":")
-		newEmbed = strings.ReplaceAll(newEmbed, "lbry://", "/embed/")
-		text = strings.ReplaceAll(text, embed, newEmbed)
-	}
-
-	text = strings.ReplaceAll(text, "https://odysee.com", viper.GetString("DOMAIN"))
-	text = strings.ReplaceAll(text, "https://open.lbry.com", viper.GetString("DOMAIN"))
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, _ := s.Attr("src")
+		src = url.QueryEscape(src)
+		hmac := EncodeHMAC(src)
+		src = "/image?url=" + src + "&hash=" + hmac
+		s.SetAttr("src", src)
+	})
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		href, _ := s.Attr("href")
+		href = strings.ReplaceAll(href, "https://odysee.com", "")
+		href = strings.ReplaceAll(href, "https://open.lbry.com", "")
+		s.SetAttr("href", href)
+	})
+	
+	text, _ = doc.Html()
 
 	p := bluemonday.UGCPolicy()
 	p.AllowImages()
-	p.AllowElements("iframe")
-	p.AllowAttrs("width").Matching(bluemonday.Number).OnElements("iframe")
-	p.AllowAttrs("height").Matching(bluemonday.Number).OnElements("iframe")
-	p.AllowAttrs("src").OnElements("iframe")
 	p.RequireNoReferrerOnLinks(true)
 	p.RequireNoFollowOnLinks(true)
 	p.RequireCrossOriginAnonymous(true)

@@ -3,6 +3,7 @@ module codeberg.org/librarian/librarian
 go 1.16
 
 require (
+	github.com/PuerkitoBio/goquery v1.8.0 // indirect
 	github.com/aymerick/raymond v2.0.2+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.0
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
