@@ -6,15 +6,14 @@ import (
 	"strconv"
 	"strings"
 
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/spf13/viper"
 )
 
 func ProxyLive(c *fiber.Ctx) error {
-	client := retryablehttp.NewClient()
-	client.Logger = nil
-	client.Backoff = retryablehttp.LinearJitterBackoff
+	client := utils.NewClient(false)
 
 	url := "https://cloud.odysee.live/" + c.Params("+")
 

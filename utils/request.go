@@ -5,11 +5,18 @@ import (
 	"io/ioutil"
 
 	"github.com/hashicorp/go-retryablehttp"
+	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
+var h2client = NewClient(false)
+var h3client = NewClient(viper.GetBool("USE_HTTP3"))
+
 func Request(url string, data interface{}, http3 bool, byteLimit int64) ([]byte, error) {
-	client := NewClient(http3)
+	client := h2client
+	if http3 {
+		client = h3client
+	}
 
 	req, err := retryablehttp.NewRequest("GET", url, nil)
 	if data != nil {
@@ -35,6 +42,8 @@ func Request(url string, data interface{}, http3 bool, byteLimit int64) ([]byte,
 	if err != nil {
 		return []byte{}, err
 	}
+
+	defer res.Body.Close()
 
 	if res.ContentLength > byteLimit {
 		return []byte{}, fmt.Errorf("rejected response: over byte limit")
