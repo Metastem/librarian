@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
+	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 )
@@ -18,17 +19,16 @@ func EmbedHandler(c *fiber.Ctx) error {
 	c.Set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src *; media-src * blob:; block-all-mixed-content")
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
-	if claimData.ClaimId == "" {
-		return c.Status(404).Render("404", fiber.Map{"theme": c.Cookies("theme")})
-	}
 	if err != nil {
+		if strings.ContainsAny(err.Error(), "NOT_FOUND") {
+			return c.Status(404).Render("errors/notFound", nil)
+		}
 		return err
 	}
 
-	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
-		return c.Render("blocked", fiber.Map{
+	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.ClaimId) {
+		return c.Status(451).Render("errors/blocked", fiber.Map{
 			"claim": claimData,
-			"theme": c.Cookies("theme"),
 		})
 	}
 
@@ -41,7 +41,6 @@ func EmbedHandler(c *fiber.Ctx) error {
 		return c.Render("embed", fiber.Map{
 			"stream": videoStream,
 			"video":  claimData,
-			"theme":  c.Cookies("theme"),
 		})
 	} else {
 		return fmt.Errorf("unsupported stream type: " + claimData.StreamType)

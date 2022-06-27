@@ -46,7 +46,6 @@ func main() {
 		b := make([]byte, 36)
 		rand.Read(b)
 		viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
-		viper.WriteConfig()
 	}
 
 	if viper.GetBool("IMAGE_CACHE") {

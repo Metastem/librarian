@@ -26,14 +26,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {
+		if strings.ContainsAny(err.Error(), "NOT_FOUND") {
+			return c.Status(404).Render("errors/notFound", fiber.Map{"theme": theme})
+		}
 		return err
 	}
-	if claimData.ClaimId == "" {
-		return c.Status(404).Render("404", fiber.Map{"theme": theme})
-	}
 
-	if viper.GetString("BLOCKED_CLAIMS") != "" && strings.Contains(viper.GetString("BLOCKED_CLAIMS"), claimData.ClaimId) {
-		return c.Render("blocked", fiber.Map{
+	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.ClaimId) {
+		return c.Status(451).Render("errors/blocked", fiber.Map{
 			"claim": claimData,
 			"theme": theme,
 		})

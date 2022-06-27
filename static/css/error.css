@@ -11,3 +11,14 @@ main {
   align-items: center;
   flex-direction: column;
 }
+
+code {
+  display: block;
+  padding: 0.5em;
+  background-color: #f5f5f5;
+  width: 50%;
+  margin: 0 auto;
+  word-wrap: break-word;
+  border-radius: 4px;
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+}

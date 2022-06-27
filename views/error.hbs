@@ -4,18 +4,7 @@
 <head>
   {{> 'partials/head' }}
 
-  <style>
-    code {
-      display: block;
-      padding: 0.5em;
-      background-color: #f5f5f5;
-      width: 50%;
-      margin: 0 auto;
-      word-wrap: break-word;
-      border-radius: 4px;
-      font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/error.css" />
 
   <title>Error - Librarian</title>
 </head>
@@ -24,8 +13,8 @@
   {{> 'partials/header' }}
 
   <main>
-    <h2 style="text-align: center;">An error occured.</h2>
-    <p style="text-align: center;">You may have found a bug in Librarian. If this is a bug, open an issue on <a href="https://codeberg.org/librarian/librarian/issues/new">Codeberg</a>.</p>
+    <h2>An error occured.</h2>
+    <p>You may have found a bug in Librarian. If this is a bug, open an issue on <a href="https://codeberg.org/librarian/librarian/issues/new">Codeberg</a>.</p>
     <code>{{err}}</code>
   </main>
 

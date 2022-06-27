@@ -31,7 +31,7 @@ func ChannelHandler(c *fiber.Ctx) error {
 	}
 
 	if channelData.Id == "" {
-		return c.Status(404).Render("404", fiber.Map{})
+		return c.Status(404).Render("errors/notFound", fiber.Map{})
 	}
 
 	if channelData.ValueType != "channel" {
