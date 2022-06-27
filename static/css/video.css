@@ -94,6 +94,20 @@ li br {
   justify-content: space-between;
 }
 
+.dl {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.largeIcon {
+  font-size: 36px;
+}
+
+.videoMeta__download {
+  margin-top: 0;
+}
+
 @media only screen and (max-width: 812px) {
   main {
     margin: 0;

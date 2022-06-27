@@ -32,24 +32,6 @@
   <link rel="stylesheet" href="/static/css/video.css" />
   {{/if}}
 
-  {{#if download}}
-  <style>
-    .dl {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .largeIcon {
-      font-size: 36px;
-    }
-
-    .videoMeta__download {
-      margin-top: 0;
-    }
-  </style>
-  {{/if}}
-
   <link rel="stylesheet" href="/static/css/comments.css" />
 
   <p class="jsonData" id="commentData">
@@ -69,16 +51,12 @@
         report_problem
       </span>
       <p>This file could not be displayed.</p>
-      <div class="videoDesc__meta">
-        <div class="videoDesc__meta__item videoDesc__meta__item-btn">
-          <div>
-            <a href="{{stream.url}}?download=1" rel="nofollow noreferrer">
-              <span class="material-icons-outlined">download</span>
-            </a>
-            <a href="{{stream.url}}?download=1" rel="nofollow noreferrer">Download</a>
-          </div>
-        </div>
-      </div>
+      <a href="{{stream.URL}}?download=1" rel="nofollow noreferrer">
+        <button class="btn">
+          <span class="material-icons-outlined">download</span>
+          Download
+        </button>
+      </a>
     </div>
     {{/if}}
 
@@ -123,7 +101,7 @@
   <script src="/static/js/comments.js"></script>
   {{#unless document}}
   <script src="/static/js/plyr.js"></script>
-  {{#if stream.isHls}}
+  {{#if stream.HLS}}
   <script src="/static/js/hls.js"></script>
   <script src="/static/js/plyr-hls.js"></script>
   {{else}}

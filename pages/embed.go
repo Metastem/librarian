@@ -33,7 +33,7 @@ func EmbedHandler(c *fiber.Ctx) error {
 	}
 
 	if claimData.StreamType == "video" {
-		videoStream, err := api.GetVideoStream(claimData.LbryUrl)
+		videoStream, err := api.GetStream(claimData.LbryUrl)
 		if err != nil {
 			return err
 		}

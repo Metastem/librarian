@@ -2,8 +2,6 @@ package pages
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
@@ -23,6 +21,11 @@ func ClaimHandler(c *fiber.Ctx) error {
 	c.Set("Content-Security-Policy", "default-src 'self'; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
 
 	theme := c.Cookies("theme")
+	nojs := c.Query("nojs") == "1"
+	settings := fiber.Map{
+		"theme": theme,
+		"nojs":  nojs,
+	}
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {
@@ -30,6 +33,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 			return c.Status(404).Render("errors/notFound", fiber.Map{"theme": theme})
 		}
 		return err
+	}
+
+	if claimData.ValueType == "repost" {
+		repostLink, err := utils.LbryTo(claimData.Repost)
+		if err != nil {
+			return err
+		}
+		return c.Redirect(repostLink["rel"])
 	}
 
 	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.ClaimId) {
@@ -46,146 +57,92 @@ func ClaimHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	stream, err := api.GetVideoStream(claimData.LbryUrl)
+	related, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId, 9)
 	if err != nil {
 		return err
 	}
 
+	if claimData.MediaType == "" && claimData.ValueType == "stream" {
+		live, err := api.GetLive(claimData.Channel.Id)
+		if err != nil && err.Error() != "no data associated with claim id" {
+			return err
+		}
+
+		if !viper.GetBool("ENABLE_LIVE_STREAM") {
+			return c.Render("errors/liveDisabled", fiber.Map{
+				"switchUrl": c.Path(),
+				"settings":  settings,
+			})
+		}
+
+		return c.Render("live", fiber.Map{
+			"live":     live,
+			"claim":    claimData,
+			"settings": settings,
+			"config":   viper.AllSettings(),
+		})
+	}
+
+	stream, err := api.GetStream(claimData.LbryUrl)
+	if err != nil {
+		if err.Error() == "this content cannot be accessed due to a DMCA request" {
+			return c.Status(451).Render("errors/dmca", nil)
+		}
+		return err
+	}
+
 	comments := []types.Comment{}
-	nojs := false
-	if c.Query("nojs") == "1" {
+	if nojs {
 		comments = api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 25, 1)
-		nojs = true
 	}
 
 	switch claimData.StreamType {
 	case "document":
-		docRes, err := http.Get(stream)
-		if err != nil {
-			return err
-		}
-
-		docBody, err := ioutil.ReadAll(docRes.Body)
+		body, err := utils.Request(stream.URL, nil, false, 500000)
 		if err != nil {
 			return err
 		}
 
 		document := ""
-		switch docRes.Header.Get("Content-Type") {
+		switch stream.Type {
 		case "text/html":
-			document = utils.ProcessDocument(string(docBody), false)
+			document = utils.ProcessDocument(string(body), false)
 		case "text/plain":
-			document = string(docBody)
+			document = string(body)
 		case "text/markdown":
-			document = utils.ProcessDocument(string(docBody), true)
+			document = utils.ProcessDocument(string(body), true)
 		default:
-			return fmt.Errorf("document type not supported: " + docRes.Header.Get("Content-Type"))
+			return fmt.Errorf("document type not supported: " + stream.Type)
 		}
 
 		return c.Render("claim", fiber.Map{
 			"document": document,
 			"claim":    claimData,
 			"comments": comments,
-			"settings": fiber.Map{
-				"theme": theme,
-				"nojs":  nojs,
-			},
-			"config": viper.AllSettings(),
+			"settings": settings,
+			"config":   viper.AllSettings(),
 		})
 	case "video":
-		hls, isHls, err := api.CheckHLS(stream)
-		if err != nil && err.Error() == "this content cannot be accessed due to a DMCA request" {
-			return c.Status(451).Render("errors/dmca", nil)
-		}
-		if err != nil {
-			return err
-		}
-
-		streamType := hls
-		if isHls {
-			streamType = "application/x-mpegurl"
+		if stream.HLS {
 			c.Set("Content-Security-Policy", "default-src 'self'; style-src 'self'; img-src *; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
 		}
 
-		relatedVids, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId, 9)
-		if err != nil {
-			return err
-		}
-
 		return c.Render("claim", fiber.Map{
-			"stream": fiber.Map{
-				"url":    stream,
-				"hlsUrl": hls,
-				"type":   streamType,
-				"isHls":  isHls,
-			},
-			"comments": comments,
-			"settings": fiber.Map{
-				"theme": theme,
-				"nojs":  nojs,
-			},
+			"stream":      stream,
 			"claim":       claimData,
-			"relatedVids": relatedVids,
+			"relatedVids": related,
+			"comments":    comments,
+			"settings":    settings,
 			"config":      viper.AllSettings(),
 		})
-	case "binary":
-		return c.Render("claim", fiber.Map{
-			"stream": fiber.Map{
-				"url": stream,
-			},
-			"download": true,
-			"comments": comments,
-			"claim":    claimData,
-			"settings": fiber.Map{
-				"theme": theme,
-			},
-			"config": viper.AllSettings(),
-		})
 	default:
-		if claimData.ValueType == "repost" {
-			repostLink, err := utils.LbryTo(claimData.Repost)
-			if err != nil {
-				return err
-			}
-			return c.Redirect(repostLink["rel"])
-		}
-
-		if claimData.MediaType == "" && claimData.ValueType == "stream" {
-			live, err := api.GetLive(claimData.Channel.Id)
-			if err != nil && err.Error() != "no data associated with claim id" {
-				return err
-			}
-
-			if !viper.GetBool("ENABLE_LIVE_STREAM") {
-				return c.Render("errors/liveDisabled", fiber.Map{
-					"switchUrl": c.Path(),
-					"settings": fiber.Map{
-						"theme": theme,
-					},
-				})
-			}
-
-			return c.Render("live", fiber.Map{
-				"live":  live,
-				"claim": claimData,
-				"settings": fiber.Map{
-					"theme": theme,
-				},
-				"config": viper.AllSettings(),
-			})
-		}
-
 		return c.Render("claim", fiber.Map{
-			"stream": fiber.Map{
-				"url": stream,
-			},
+			"stream":   stream,
 			"download": true,
 			"comments": comments,
 			"claim":    claimData,
-			"settings": fiber.Map{
-				"theme": theme,
-			},
-			"config": viper.AllSettings(),
+			"settings": settings,
+			"config":   viper.AllSettings(),
 		})
 	}
 }

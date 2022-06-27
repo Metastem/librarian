@@ -31,7 +31,7 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 
 	image, err := utils.UrlEncode(viper.GetString("DOMAIN") + channel.Thumbnail)
 	if err != nil {
-		_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: "+err.Error())
+		_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: " + err.Error())
 		return err
 	}
 
@@ -51,7 +51,7 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 			Link:        &feeds.Link{Href: claims[i].Url},
 			Description: "<img width=\"480\" src=\"" + viper.GetString("DOMAIN") + claims[i].ThumbnailUrl + "\"><br><br>" + string(claims[i].Description),
 			Created:     time.Unix(claims[i].Timestamp, 0),
-			Enclosure: 	 &feeds.Enclosure{},
+			Enclosure:   &feeds.Enclosure{},
 		}
 
 		if c.Query("odyseeLink") == "true" {
@@ -59,13 +59,13 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 		}
 
 		if c.Query("enclosure") == "true" {
-			stream, err := api.GetVideoStream(claims[i].LbryUrl)
+			stream, err := api.GetStream(claims[i].LbryUrl)
 			if err != nil {
 				return err
 			}
-			url, err := utils.UrlEncode(stream)
+			url, err := utils.UrlEncode(stream.URL)
 			if err != nil {
-				_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: "+err.Error())
+				_, err := c.Status(500).WriteString("500 Internal Server Error\nERROR: " + err.Error())
 				return err
 			}
 			item.Enclosure.Url = url

@@ -4,7 +4,7 @@ import "html/template"
 
 type Claim struct {
 	Url          string
-	RelUrl			 string
+	RelUrl       string
 	LbryUrl      string
 	OdyseeUrl    string
 	ClaimId      string
@@ -17,14 +17,20 @@ type Claim struct {
 	Likes        int64
 	Dislikes     int64
 	Tags         []string
-	Timestamp		 int64
-	RelTime			 string
+	Timestamp    int64
+	RelTime      string
 	Date         string
-	Duration		 string
-	MediaType		 string
-	Repost			 string
-	ValueType		 string
-	SrcSize			 string
-	StreamType	 string
-	HasFee			 bool
+	Duration     string
+	MediaType    string
+	Repost       string
+	ValueType    string
+	SrcSize      string
+	StreamType   string
+	HasFee       bool
+}
+
+type Stream struct {
+	Type string
+	URL  string
+	HLS  bool
 }
