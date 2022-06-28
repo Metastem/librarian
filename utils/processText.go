@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"encoding/base64"
 	"net/url"
 	"regexp"
 	"strings"
@@ -32,10 +33,10 @@ func ProcessText(text string, newline bool) string {
 	if err != nil {
 		panic(err)
 	}
-
+	
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
 		src, _ := s.Attr("src")
-		src = url.QueryEscape(src)
+		src = base64.URLEncoding.EncodeToString([]byte(src))
 		hmac := EncodeHMAC(src)
 		src = "/image?url=" + src + "&hash=" + hmac
 		s.SetAttr("src", src)
@@ -80,7 +81,7 @@ func ProcessDocument(text string, isMd bool) string {
 
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
 		src, _ := s.Attr("src")
-		src = url.QueryEscape(src)
+		src = base64.URLEncoding.EncodeToString([]byte(src))
 		hmac := EncodeHMAC(src)
 		src = "/image?url=" + src + "&hash=" + hmac
 		s.SetAttr("src", src)
@@ -140,11 +141,13 @@ func ReplaceStickersAndEmotes(text string) string {
 	for i := 0; i < len(emotes); i++ {
 		emote := strings.ReplaceAll(emotes[i], ":", "")
 		if data.Stickers[emote] != "" {
+			data.Stickers[emote] = base64.URLEncoding.EncodeToString([]byte(data.Stickers[emote]))
 			proxiedImage := "/image?width=0&height=200&url=" + data.Stickers[emote] + "&hash=" + EncodeHMAC(data.Stickers[emote])
 			htmlEmote := `<img loading="lazy" src="` + proxiedImage + `" height="200px">`
 
 			text = strings.ReplaceAll(text, emotes[i], htmlEmote)
 		} else if data.Emotes[emote] != "" {
+			data.Emotes[emote] = base64.URLEncoding.EncodeToString([]byte(data.Emotes[emote]))
 			proxiedImage := "/image?url=" + data.Emotes[emote] + "&hash=" + EncodeHMAC(data.Emotes[emote])
 			htmlEmote := `<img loading="lazy" class="emote" src="` + proxiedImage + `" height="24px">`
 

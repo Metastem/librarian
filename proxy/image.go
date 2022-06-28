@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"io"
-	url2 "net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -15,16 +14,20 @@ import (
 )
 
 func ProxyImage(c *fiber.Ctx) error {
-	url := c.Query("url")
+	imgUrl := c.Query("url")
 	hash := c.Query("hash")
-	if hash == "" || url == "" {
+	if hash == "" || imgUrl == "" {
 		_, err := c.Status(400).WriteString("no hash or url")
 		return err
 	}
 
-	unescapedUrl, _ := url2.QueryUnescape(url)
-	unescapedUrl, _ = url2.PathUnescape(unescapedUrl)
-	if !utils.VerifyHMAC(unescapedUrl, hash) {
+	urlBytes, err := base64.URLEncoding.DecodeString(imgUrl)
+	if err != nil {
+		return err
+	}
+	imgUrl = string(urlBytes)
+
+	if !utils.VerifyHMAC(c.Query("url"), hash) {
 		_, err := c.Status(400).WriteString("invalid hash")
 		return err
 	}
@@ -41,7 +44,7 @@ func ProxyImage(c *fiber.Ctx) error {
 	optionsHash := ""
 	if viper.GetBool("IMAGE_CACHE") {
 		hasher := sha256.New()
-		hasher.Write([]byte(url + hash + width + height))
+		hasher.Write([]byte(imgUrl + hash + width + height))
 		optionsHash = base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 
 		image, err := os.ReadFile(viper.GetString("IMAGE_CACHE_DIR") + "/" + optionsHash)
@@ -55,9 +58,9 @@ func ProxyImage(c *fiber.Ctx) error {
 
 	client := utils.NewClient(false)
 
-	requestUrl := "https://thumbnails.odycdn.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + url
-	if strings.Contains(url, "static.odycdn.com/emoticons") {
-		requestUrl = url
+	requestUrl := "https://thumbnails.odycdn.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + imgUrl
+	if strings.Contains(imgUrl, "static.odycdn.com/emoticons") {
+		requestUrl = imgUrl
 	}
 	
 	res, err := client.Get(requestUrl)

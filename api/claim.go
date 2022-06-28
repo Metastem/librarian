@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -92,14 +93,14 @@ func ProcessClaim(claimData gjson.Result, getViews bool, getRatings bool) (types
 	}
 	time := time.Unix(timestamp, 0)
 	thumbnail := claimData.Get("value.thumbnail.url").String()
-	thumbnail = url.QueryEscape(thumbnail)
+	thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
 	channelThumbnail := claimData.Get("signing_channel.value.thumbnail.url").String()
-	channelThumbnail = url.QueryEscape(channelThumbnail)
 
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		if channelThumbnail != "" {
+			channelThumbnail = base64.URLEncoding.EncodeToString([]byte(channelThumbnail))
 			channelThumbnail = "/image?url=" + channelThumbnail + "&hash=" + utils.EncodeHMAC(channelThumbnail)
 		}
 	}()

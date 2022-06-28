@@ -2,10 +2,10 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -64,6 +64,7 @@ func ProcessChannel(data gjson.Result, getFollowers bool) (types.Channel, error)
 		defer wg.Done()
 		description = utils.ProcessText(data.Get("value.description").String(), true)
 		if thumbnail != "" {
+			thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
 			thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
 		}
 	}()
@@ -72,6 +73,7 @@ func ProcessChannel(data gjson.Result, getFollowers bool) (types.Channel, error)
 	go func() {
 		defer wg.Done()
 		if coverImg != "" {
+			coverImg = base64.URLEncoding.EncodeToString([]byte(coverImg))
 			coverImg = "/image?url=" + coverImg + "&hash=" + utils.EncodeHMAC(coverImg)
 		}
 	}()
@@ -171,7 +173,7 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 
 				time := time.Unix(value.Get("value.release_time").Int(), 0)
 				thumbnail := value.Get("value.thumbnail.url").String()
-				thumbnail = url.QueryEscape(thumbnail)
+				thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
 
 				views, err := GetViews(claimId)
 				if err != nil {

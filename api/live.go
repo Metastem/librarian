@@ -1,8 +1,8 @@
 package api
 
 import (
+	"encoding/base64"
 	"fmt"
-	"net/url"
 	"strings"
 	"time"
 
@@ -28,7 +28,7 @@ func GetLive(claimId string) (types.Live, error) {
 	}
 
 	thumbnail := data.Get("data.ThumbnailURL").String()
-	thumbnail = url.QueryEscape(thumbnail)
+	thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
 	thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
 
 	streamUrl := strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", "/live")
