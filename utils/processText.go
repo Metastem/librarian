@@ -17,7 +17,10 @@ import (
 	"github.com/yuin/goldmark/extension"
 )
 
-var timeRe = regexp.MustCompile(`(?m)[0-9]{2}:[0-9]{2}`)
+var timeRe = regexp.MustCompile(`(?m)([0-9]?[0-9]:)?[0-9]?[0-9]:[0-9]{2}`)
+var ytRe = regexp.MustCompile(`https?://(www\.)?youtu\.?be(\.com)?`)
+var imgurRe = regexp.MustCompile(`https?:\/\/(i\.)?imgur\.com`)
+var igRe = regexp.MustCompile(`https?://(www\.)?instagram\.com`)
 
 func ProcessText(text string, newline bool) string {
 	md := goldmark.New(
@@ -162,21 +165,19 @@ func replaceLinks(doc *goquery.Document) {
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		href, _ := s.Attr("href")
 		href = strings.ReplaceAll(href, "https://odysee.com", "")
+		href = strings.ReplaceAll(href, "https://lbry.tv", "")
 		href = strings.ReplaceAll(href, "https://open.lbry.com", "")
 
 		if viper.GetString("frontend.youtube") != "" {
-			ytRe := regexp.MustCompile(`https?://(www\.)?youtu\.?be(\.com)?`)
 			href = ytRe.ReplaceAllString(href, viper.GetString("frontend.youtube"))
 		}
 		if viper.GetString("frontend.twitter") != "" {
 			href = strings.ReplaceAll(href, "https://twitter.com", viper.GetString("frontend.twitter"))
 		}
 		if viper.GetString("frontend.imgur") != "" {
-			imgurRe := regexp.MustCompile(`https?:\/\/(i\.)?imgur\.com`)
 			href = imgurRe.ReplaceAllString(href, viper.GetString("frontend.imgur"))
 		}
 		if viper.GetString("frontend.instagram") != "" {
-			igRe := regexp.MustCompile(`https?://(www\.)?instagram\.com`)
 			href = igRe.ReplaceAllString(href, viper.GetString("frontend.instagram"))
 		}
 		if viper.GetString("frontend.tiktok") != "" {
