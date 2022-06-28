@@ -69,6 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
           window.location.href = nextVid
         })
       }
+
+      if (location.hash) {
+        player.on('loadeddata', () => {player.currentTime = location.hash.replace("#", "") * 1})
+      }
+      window.addEventListener('hashchange', () => {
+        player.currentTime = location.hash.replace("#", "") * 1
+      })
     });
 
     hls.attachMedia(video);

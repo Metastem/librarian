@@ -3,8 +3,10 @@ package utils
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"codeberg.org/librarian/librarian/data"
@@ -14,6 +16,8 @@ import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 )
+
+var timeRe = regexp.MustCompile(`(?m)[0-9]{2}:[0-9]{2}`)
 
 func ProcessText(text string, newline bool) string {
 	md := goldmark.New(
@@ -49,6 +53,14 @@ func ProcessText(text string, newline bool) string {
 	})
 
 	text, _ = doc.Html()
+
+	for _, match := range timeRe.FindAllString(text, -1) {
+		times := strings.Split(match, ":")
+		mins, _ := strconv.Atoi(times[0])
+		secs, _ := strconv.Atoi(times[1])
+		time := fmt.Sprint((mins * 60) + secs)
+		text = strings.ReplaceAll(text, match, `<a href="#` + time + `">` + match + "</a>")
+	}
 
 	text = ReplaceStickersAndEmotes(text)
 
