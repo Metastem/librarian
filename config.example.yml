@@ -26,6 +26,14 @@ ENABLE_LIVE_STREAM: false
 # for livestreams is recommended. Due to limitations with Go's HTTP library,
 # resolution with the built-in proxy is limited to 480p.
 LIVE_STREAMING_URL: ''
+# Rewrite links to other frontends
+FRONTEND:
+  youtube: 'https://yt.domain.tld'
+  twitter: 'https://twitter.domain.tld'
+  imgur: 'https://imgur.domain.tld'
+  instagram: 'https://insta.domain.tld'
+  tiktok: 'https://tiktok.domain.tld'
+  reddit: 'https://reddit.domain.tld'
 # Instance privacy: This is required to get your instance listed. For more info,
 # See: https://codeberg.org/librarian/librarian/wiki/Instance-privacy
 INSTANCE_PRIVACY:

@@ -38,19 +38,8 @@ func ProcessText(text string, newline bool) string {
 		panic(err)
 	}
 	
-	doc.Find("img").Each(func(i int, s *goquery.Selection) {
-		src, _ := s.Attr("src")
-		src = base64.URLEncoding.EncodeToString([]byte(src))
-		hmac := EncodeHMAC(src)
-		src = "/image?url=" + src + "&hash=" + hmac
-		s.SetAttr("src", src)
-	})
-	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-		href, _ := s.Attr("href")
-		href = strings.ReplaceAll(href, "https://odysee.com", "")
-		href = strings.ReplaceAll(href, "https://open.lbry.com", "")
-		s.SetAttr("href", href)
-	})
+	replaceImgs(doc)
+	replaceLinks(doc)
 
 	text, _ = doc.Html()
 
@@ -91,19 +80,8 @@ func ProcessDocument(text string, isMd bool) string {
 		panic(err)
 	}
 
-	doc.Find("img").Each(func(i int, s *goquery.Selection) {
-		src, _ := s.Attr("src")
-		src = base64.URLEncoding.EncodeToString([]byte(src))
-		hmac := EncodeHMAC(src)
-		src = "/image?url=" + src + "&hash=" + hmac
-		s.SetAttr("src", src)
-	})
-	doc.Find("a").Each(func(i int, s *goquery.Selection) {
-		href, _ := s.Attr("href")
-		href = strings.ReplaceAll(href, "https://odysee.com", "")
-		href = strings.ReplaceAll(href, "https://open.lbry.com", "")
-		s.SetAttr("href", href)
-	})
+	replaceImgs(doc)
+	replaceLinks(doc)
 	
 	text, _ = doc.Html()
 
@@ -168,4 +146,46 @@ func ReplaceStickersAndEmotes(text string) string {
 	}
 
 	return text
+}
+
+func replaceImgs(doc *goquery.Document) {
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, _ := s.Attr("src")
+		src = base64.URLEncoding.EncodeToString([]byte(src))
+		hmac := EncodeHMAC(src)
+		src = "/image?url=" + src + "&hash=" + hmac
+		s.SetAttr("src", src)
+	})
+}
+
+func replaceLinks(doc *goquery.Document) {
+	doc.Find("a").Each(func(i int, s *goquery.Selection) {
+		href, _ := s.Attr("href")
+		href = strings.ReplaceAll(href, "https://odysee.com", "")
+		href = strings.ReplaceAll(href, "https://open.lbry.com", "")
+
+		if viper.GetString("frontend.youtube") != "" {
+			ytRe := regexp.MustCompile(`https?://(www\.)?youtu\.?be(\.com)?`)
+			href = ytRe.ReplaceAllString(href, viper.GetString("frontend.youtube"))
+		}
+		if viper.GetString("frontend.twitter") != "" {
+			href = strings.ReplaceAll(href, "https://twitter.com", viper.GetString("frontend.twitter"))
+		}
+		if viper.GetString("frontend.imgur") != "" {
+			imgurRe := regexp.MustCompile(`https?:\/\/(i\.)?imgur\.com`)
+			href = imgurRe.ReplaceAllString(href, viper.GetString("frontend.imgur"))
+		}
+		if viper.GetString("frontend.instagram") != "" {
+			igRe := regexp.MustCompile(`https?://(www\.)?instagram\.com`)
+			href = igRe.ReplaceAllString(href, viper.GetString("frontend.instagram"))
+		}
+		if viper.GetString("frontend.tiktok") != "" {
+			href = strings.ReplaceAll(href, "https://tiktok.com", viper.GetString("frontend.tiktok"))
+		}
+		if viper.GetString("frontend.reddit") != "" {
+			href = strings.ReplaceAll(href, "https://reddit.com", viper.GetString("frontend.reddit"))
+		}
+
+		s.SetAttr("href", href)
+	})
 }
