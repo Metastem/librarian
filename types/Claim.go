@@ -30,7 +30,8 @@ type Claim struct {
 }
 
 type Stream struct {
-	Type string
-	URL  string
-	HLS  bool
+	Type        string
+	URL         string
+	FallbackURL string
+	HLS         bool
 }

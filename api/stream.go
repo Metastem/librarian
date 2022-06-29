@@ -69,8 +69,9 @@ func checkStream(url string) (types.Stream, error) {
 
 	isHls := res.Header.Get("Content-Type") == "application/x-mpegurl"
 	return types.Stream{
-		Type: res.Header.Get("Content-Type"),
-		URL: res.Request.URL.String(),
-		HLS: isHls,
+		Type:        res.Header.Get("Content-Type"),
+		URL:         res.Request.URL.String(),
+		FallbackURL: url + "?download=1",
+		HLS:         isHls,
 	}, nil
 }
