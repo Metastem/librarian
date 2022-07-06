@@ -3,6 +3,8 @@ async function comments(claimId, channelId, channelName, page) {
   let res = await fetch(`/api/comments?claim_id=${claimId}&channel_id=${channelId}&channel_name=${channelName}&page=${page}&page_size=10`);
   let data = await res.json();
 
+  document.getElementById('commentsHeader').innerText = `Comments (${data.Items})`
+
   let commentsElem = document.getElementById("comments")
   for (let key in data.Comments) {
     let comment = data.Comments[key]

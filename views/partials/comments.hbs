@@ -1,7 +1,12 @@
 <div>
   <input id="comments__expandBtn" type="checkbox" checked>
   <label class="comments__expandBtn__label" for="comments__expandBtn">
-    <h3 class="claimLink" id="commentsHeader">Comments ({{comments.Items}})</h3>
+    <h3 class="claimLink" id="commentsHeader">
+      Comments 
+      {{#if settings.nojs}}
+      ({{comments.Items}})
+      {{/if}}
+    </h3>
     <span class="comments__expandBtn__icon material-icons-outlined"></span>
   </label>
   <div id="comments" class="comments">
