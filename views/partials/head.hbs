@@ -20,3 +20,8 @@
 <link rel="stylesheet" href="/static/css/themes/{{theme}}.css"/>
 {{/noteq}}
 {{/if}}
+{{#if settings.theme}}
+{{#noteq settings.theme "system"}}
+<link rel="stylesheet" href="/static/css/themes/{{settings.theme}}.css"/>
+{{/noteq}}
+{{/if}}
