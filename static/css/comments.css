@@ -3,6 +3,11 @@
   flex-direction: column;
 }
 
+.comments, .replies {
+  display: flex;
+  flex-direction: column;
+}
+
 .comment .pfp {
   width: 48px;
   height: 48px;
@@ -45,6 +50,15 @@
 
 #loadMore {
   cursor: pointer
+}
+
+.replies {
+  margin-left: 25px;
+}
+
+.showReplyBtn {
+  cursor: pointer;
+  margin-bottom: 1em;
 }
 
 #spinner {

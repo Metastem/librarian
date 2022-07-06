@@ -91,9 +91,12 @@ func ClaimHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	comments := []types.Comment{}
+	comments := types.Comments{}
 	if nojs {
-		comments = api.GetComments(claimData.ClaimId, claimData.Channel.Id, claimData.Channel.Name, 25, 1)
+		comments, err = api.GetComments(claimData, "", 3, 25, 1)
+		if err != nil {
+			return err
+		}
 	}
 
 	switch claimData.StreamType {

@@ -1,81 +1,118 @@
-let commentsArr = [];
-
 async function comments(claimId, channelId, channelName, page) {
   document.getElementById("spinner").style.display = "flex"
-  let res = await fetch(`/api/comments?claim_id=${claimId}&channel_id=${channelId}&channel_name=${channelName}&page=${page}&page_size=15`);
+  let res = await fetch(`/api/comments?claim_id=${claimId}&channel_id=${channelId}&channel_name=${channelName}&page=${page}&page_size=10`);
   let data = await res.json();
 
-  data.comments.forEach(comment => {
-    commentsArr.push(comment)
-  });
+  document.getElementById('commentsHeader').innerText = `Comments (${data.Items})`
 
-  renderComments()
+  let commentsElem = document.getElementById("comments")
+  for (let key in data.Comments) {
+    let comment = data.Comments[key]
+    if (document.getElementById(`${comment.CommentId}-replies`)) {
+      continue;
+    }
+    commentsElem.appendChild(generateCommentElem(comment))
+  }
+  document.getElementById("spinner").style.display = "none"
 
-  let comments = document.getElementById("comments").innerHTML;
-  document.getElementById("comments").innerHTML = comments + `<a id="loadMore">Load more</a>`
+  let loadMoreElem = document.createElement('a');
+  loadMoreElem.id = 'loadMore';
+  loadMoreElem.innerText = 'Load more';
+  commentsElem.appendChild(loadMoreElem)
+
+  page = data.Comments.length >= 10 ? page + 1 : page
   loadMoreBtn(page)
 }
 
-function renderComments() {
-  commentsArr = commentsArr.sort((a, b) => (b.Likes - b.Dislikes) - (a.Likes - a.Dislikes))
+function generateCommentElem(comment) {
+  let commentElem = document.createElement('div')
+  commentElem.className = "comment"
 
-  let commentsHTML = "";
-  for(let i = 0; i < commentsArr.length; i++) {
-    let comment = commentsArr[i];
+  let channelElem = document.createElement('div')
+  channelElem.className = "videoDesc__channel"
+  commentElem.appendChild(channelElem)
 
-    let pfpClass = "pfp"
-    if(!comment.Channel.Thumbnail || comment.Channel.Thumbnail == "/static/img/spaceman.webp") {
-      comment.Channel.Thumbnail = "/static/img/spaceman.webp"
-      pfpClass = "pfp pfp--default"
-    } else {
-      comment.Channel.Thumbnail = comment.Channel.Thumbnail + "&w=48&h=48"
-    }
-    
-    let commentHTML = `
-    <div class="comment">
-      ${comment.Channel.Name !== "" ? `<a href="${comment.Channel.Url}">` : ""}
-        <div class="videoDesc__channel">
-          <img src="${comment.Channel.Thumbnail}" class="${pfpClass}" width="48" height="48" loading="lazy">   
-          <p>
-            ${
-              comment.Channel.Title ?
-              `<b>${comment.Channel.Title}</b><br>${comment.Channel.Name}`
-              :
-              comment.Channel.Name ? 
-              `<b>${comment.Channel.Name}</b>`
-              :
-              "<b>[deleted]</b>"
-            }
-          </p>
-        </div>
-      ${comment.Channel.Name !== "" ? `</a>` : ""}
-      <div>
-        ${comment.Comment}
-        ${comment.RelTime == "a long while ago" ? 
-            `<p>
-              ${comment.Time} |
-              <span class="material-icons-outlined">thumb_up</span> ${comment.Likes}
-              <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}
-            </p>`
-          : `<p>
-              <span title="${comment.Time}">${comment.RelTime}</span> |
-              <span class="material-icons-outlined">thumb_up</span> ${comment.Likes}
-              <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}
-            </p>`
+  let pfpElem = document.createElement('img')
+  let pfp = comment.Channel.Thumbnail
+  pfpElem.className = !pfp ? "pfp pfp--default" : "pfp"
+  pfpElem.src = !pfp ? "/static/img/spaceman.webp" : pfp + "&w=48&h=48"
+  pfpElem.width = 48
+  pfpElem.height = 48
+  pfpElem.loading = "lazy"
+  if (comment.Channel.Name) {
+    let pfpChannelLink = document.createElement('a')
+    pfpChannelLink.href = comment.Channel.Url
+    pfpChannelLink.appendChild(pfpElem)
+    pfpElem = pfpChannelLink
+  }
+  channelElem.appendChild(pfpElem)
+
+  let channelTitleElem = document.createElement('p')
+  let primaryTitleElem = document.createElement('b')
+  channelTitleElem.appendChild(primaryTitleElem)
+  if (comment.Channel.Title) {
+    primaryTitleElem.innerText = comment.Channel.Title
+    channelTitleElem.appendChild(document.createElement('br'))
+    let secondaryTitleElem = document.createElement('span')
+    secondaryTitleElem.innerText = comment.Channel.Name
+    channelTitleElem.appendChild(secondaryTitleElem)
+  } else if (comment.Channel.Name) {
+    primaryTitleElem.innerText = comment.Channel.Name
+  } else {
+    primaryTitleElem.innerText = "[deleted]"
+  }
+  if (comment.Channel.Name) {
+    let titleChannelLink = document.createElement('a')
+    titleChannelLink.href = comment.Channel.Url
+    titleChannelLink.appendChild(channelTitleElem)
+    channelTitleElem = titleChannelLink
+  }
+  channelElem.appendChild(channelTitleElem)
+
+  let wrapperDiv = document.createElement('div')
+  wrapperDiv.innerHTML = comment.Comment
+  commentElem.appendChild(wrapperDiv)
+
+  let commentMetaElem = document.createElement('p')
+  commentMetaElem.innerHTML = `${comment.RelTime == "a long while ago" ? comment.Time : `<span title="${comment.Time}">${comment.RelTime}</span>`} | <span class="material-icons-outlined">thumb_up</span> ${comment.Likes} <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}`
+  wrapperDiv.appendChild(commentMetaElem)
+
+  let repliesElem = document.createElement('div')
+  repliesElem.className = "replies"
+  repliesElem.id = `${comment.CommentId}-replies`
+  commentElem.appendChild(repliesElem)
+
+  if (comment.Replies) {
+    let showReplyBtn = document.createElement('a')
+    showReplyBtn.className = "showReplyBtn"
+    showReplyBtn.innerText = comment.Replies == 1 ? "Show reply" : `Show ${comment.Replies} replies`
+    showReplyBtn.addEventListener('click', async () => {
+      if (showReplyBtn.innerText == "Loading replies…") return;
+      if (showReplyBtn.innerText == "Hide replies") {
+        showReplyBtn.innerText = comment.Replies == 1 ? "Show reply" : `Show ${comment.Replies} replies`
+        for (let elem of Array.from(repliesElem.children)) {
+          if (elem.className === "comment") elem.remove()
         }
-      </div>
-    </div>`;
+        return
+      }
 
-    commentsHTML = commentsHTML + commentHTML;
+      showReplyBtn.innerText = "Loading replies…"
+      let res = await fetch(`/api/comments?parent_id=${comment.CommentId}&claim_id=${commentData.claimId}&channel_id=${commentData.channelId}&channel_name=${commentData.channelName}&page=1&page_size=100`);
+      let data = await res.json();
+      for (let key in data.Comments) {
+        repliesElem.appendChild(generateCommentElem(data.Comments[key]))
+      }
+      showReplyBtn.innerText = "Hide replies"
+    })
+    repliesElem.appendChild(showReplyBtn)
   }
 
-  document.getElementById("comments").innerHTML = commentsHTML
-  document.getElementById("spinner").style.display = "none"
+  return commentElem
 }
 
 document.getElementById("nojs").remove();
 
-let commentData = JSON.parse(document.getElementById("commentData").innerText)
+const commentData = JSON.parse(document.getElementById("commentData").innerText)
 
 comments(commentData.claimId, commentData.channelId, commentData.channelName, 1)
 
@@ -83,6 +120,6 @@ function loadMoreBtn(page) {
   let loadMore = document.getElementById("loadMore");
   loadMore.addEventListener('click', () => {
     loadMore.remove()
-    comments(commentData.claimId, commentData.channelId, commentData.channelName, page + 1)
+    comments(commentData.claimId, commentData.channelId, commentData.channelName, page)
   })
 }

@@ -4,21 +4,33 @@ import (
 	"testing"
 
 	"codeberg.org/librarian/librarian/api"
+	"codeberg.org/librarian/librarian/types"
 	"github.com/spf13/viper"
 )
 
 func TestGetComments(t *testing.T) {
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	
-	comments := api.GetComments("463e63afb35a319f260b36ef8d5c3dc41a98ce28", "ecf0a6be99030d0ad4e10aec11d2c0bab94246ae", "@MusicARetro", 5, 1)
-	if len(comments) == 0 {
+	comments, err := api.GetComments(types.Claim{
+		ClaimId: "463e63afb35a319f260b36ef8d5c3dc41a98ce28",
+		Channel: types.Channel{
+			Id: "ecf0a6be99030d0ad4e10aec11d2c0bab94246ae", 
+			Name: "@MusicARetro", 
+		},
+	}, "", 3, 5, 1)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(comments.Comments) == 0 {
 		t.Fail()
 	}
-	if comments[0].CommentId == "" {
-		t.Fail()
-	}
-	if comments[0].Time == "" {
-		t.Fail()
+	for _, comment := range comments.Comments {
+		if comment.CommentId == "" {
+			t.Fail()
+		}
+		if comment.Time == "" {
+			t.Fail()
+		}
 	}
 }
 

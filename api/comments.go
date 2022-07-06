@@ -32,6 +32,14 @@ func CommentsHandler(c *fiber.Ctx) error {
 		return err
 	}
 
+	sortBy := 3
+	switch c.Query("sort_by") {
+	case "controversial":
+		sortBy = 2
+	case "new":
+		sortBy = 0
+	}
+
 	newPage, err := strconv.Atoi(page)
 	if err != nil {
 		return err
@@ -41,51 +49,69 @@ func CommentsHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	comments := GetComments(claimId, channelId, channelName, newPageSize, newPage)
-
-	c.Set("Content-Type", "application/json")
-	return c.JSON(map[string]interface{}{
-		"comments": comments,
-	})
-}
-
-func GetComments(claimId string, channelId string, channelName string, pageSize int, page int) []types.Comment {
-	cacheData, found := commentCache.Get(claimId + fmt.Sprint(page) + fmt.Sprint(pageSize))
-	if found {
-		return cacheData.([]types.Comment)
+	comments, err := GetComments(types.Claim{
+		ClaimId: claimId,
+		Channel: types.Channel{
+			Id:   channelId,
+			Name: channelName,
+		},
+	}, c.Query("parent_id"), sortBy, newPageSize, newPage)
+	if err != nil {
+		return err
 	}
 
-	commentsDataMap := map[string]interface{}{
+	c.Set("Content-Type", "application/json")
+	return c.JSON(comments)
+}
+
+func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, page int) (types.Comments, error) {
+	cacheData, found := commentCache.Get(claim.ClaimId + parentId + fmt.Sprint(sortBy) + fmt.Sprint(page) + fmt.Sprint(pageSize))
+	if found {
+		return cacheData.(types.Comments), nil
+	}
+
+	reqDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
 		"method":  "comment.List",
 		"params": map[string]interface{}{
 			"page":         page,
-			"claim_id":     claimId,
+			"claim_id":     claim.ClaimId,
 			"page_size":    pageSize,
-			"channel_id":   channelId,
-			"channel_name": channelName,
+			"sort_by":      sortBy,
+			"top_level":    true,
+			"channel_id":   claim.Channel.Id,
+			"channel_name": claim.Channel.Name,
 		},
 	}
-	commentsData, _ := json.Marshal(commentsDataMap)
-
-	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=comment.List", bytes.NewBuffer(commentsData), true)
-	if err != nil {
-		fmt.Println(err)
+	if parentId != "" {
+		reqDataMap["params"].(map[string]interface{})["parent_id"] = parentId
+		reqDataMap["params"].(map[string]interface{})["top_level"] = false
 	}
 
-	commentIds := make([]string, 0)
+	reqData, err := json.Marshal(reqDataMap)
+	if err != nil {
+		return types.Comments{}, err
+	}
+
+	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=comment.List", bytes.NewBuffer(reqData), true)
+	if err != nil {
+		return types.Comments{}, err
+	}
+
+	commentIds := []string{}
+	sortOrder := map[string]int64{}
 	data.Get("result.items.#.comment_id").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			commentIds = append(commentIds, value.String())
-
+			sortOrder[value.String()] = key.Int()
 			return true
 		},
 	)
 
 	likesDislikes := GetCommentLikeDislikes(commentIds)
 
-	comments := make([]types.Comment, 0)
+	comments := []types.Comment{}
 
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
@@ -94,12 +120,11 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 
 			go func() {
 				defer wg.Done()
-				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 
 				comment := utils.ProcessText(value.Get("comment").String(), false)
-
 				commentId := value.Get("comment_id").String()
 
+				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
 				time := timestamp.UTC().Format("January 2, 2006 15:04")
 				relTime := humanize.Time(timestamp)
 				if relTime == "a long while ago" {
@@ -119,6 +144,7 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 					ParentId:  value.Get("parent_id").String(),
 					Time:      time,
 					RelTime:   relTime,
+					Replies:   value.Get("replies").Int(),
 					Likes:     likesDislikes[commentId][0],
 					Dislikes:  likesDislikes[commentId][1],
 				})
@@ -129,26 +155,32 @@ func GetComments(claimId string, channelId string, channelName string, pageSize 
 	)
 	wg.Wait()
 
-	sort.Slice(comments[:], func(i, j int) bool {
-		return comments[i].Likes > comments[j].Likes
+	sort.Slice(comments, func(i, j int) bool {
+		return sortOrder[comments[i].CommentId] < sortOrder[comments[j].CommentId]
 	})
 
-	commentCache.Set(claimId+fmt.Sprint(page)+fmt.Sprint(pageSize), comments, cache.DefaultExpiration)
-	return comments
+	returnData := types.Comments{
+		Comments: comments,
+		Pages:    data.Get("result.total_pages").Int(),
+		Items:    data.Get("result.total_items").Int(),
+	}
+
+	commentCache.Set(claim.ClaimId+fmt.Sprint(page)+fmt.Sprint(pageSize), returnData, cache.DefaultExpiration)
+	return returnData, nil
 }
 
 func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 	commentsDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"id":      1,
-		"method":  "comment_react_list",
+		"method":  "reaction.List",
 		"params": map[string]interface{}{
 			"comment_ids": strings.Join(commentIds, ","),
 		},
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
 
-	data, err := utils.RequestJSON("https://api.na-backend.odysee.com/api/v1/proxy?m=comment_react_list", bytes.NewBuffer(commentsData), true)
+	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=reaction.List", bytes.NewBuffer(commentsData), true)
 	if err != nil {
 		fmt.Println(err)
 	}
