@@ -25,9 +25,6 @@ body {
   background-color: var(--bg-100);
 }
 
-.relVid__link {
-  color: #000;
-}
 .streamOffline {
   background-color: --var(--purple);
 }

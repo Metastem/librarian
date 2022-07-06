@@ -25,11 +25,8 @@ body {
   background-color: var(--bg-100);
 }
 
-.relVid__link {
-  color: #ffffff;
-}
 .streamOffline {
-  background-color: --var(--purple);
+  background-color: var(--purple) !important;
 }
 
 select {
@@ -37,6 +34,6 @@ select {
 }
 
 code {
-  background-color: #616161;
-  color: white;
+  background-color: #616161 !important;
+  color: white !important;
 }
