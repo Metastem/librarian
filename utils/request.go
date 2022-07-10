@@ -5,24 +5,17 @@ import (
 	"io/ioutil"
 
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
-var h2client = NewClient(false)
-var h3client = NewClient(viper.GetBool("USE_HTTP3"))
+var client = NewClient()
 
 type Data struct {
 	Bytes interface{}
 	Type 	string
 }
 
-func Request(url string, http3 bool, byteLimit int64, dataArr ...Data) ([]byte, error) {
-	client := h2client
-	if http3 {
-		client = h3client
-	}
-
+func Request(url string, byteLimit int64, dataArr ...Data) ([]byte, error) {
 	req, err := retryablehttp.NewRequest("GET", url, nil)
 	data := dataArr[0]
 	if data.Bytes != nil {
@@ -63,8 +56,8 @@ func Request(url string, http3 bool, byteLimit int64, dataArr ...Data) ([]byte, 
 	return body, nil
 }
 
-func RequestJSON(url string, data interface{}, http3 bool) (gjson.Result, error) {
-	body, err := Request(url, http3, 1000000, Data{
+func RequestJSON(url string, data interface{}) (gjson.Result, error) {
+	body, err := Request(url, 1000000, Data{
 		Bytes: data,
 		Type: "application/json",
 	})

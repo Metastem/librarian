@@ -53,7 +53,7 @@ func GetChannel(channel string) (Channel, error) {
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
 
-	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData), true)
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData))
 	if err != nil {
 		return Channel{}, err
 	}
@@ -99,7 +99,7 @@ func (channel *Channel) GetFollowers() (int64, error) {
 		return channel.Followers, nil
 	}
 
-	data, err := utils.RequestJSON("https://api.odysee.com/subscription/sub_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+channel.Id, nil, true)
+	data, err := utils.RequestJSON("https://api.odysee.com/subscription/sub_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+channel.Id, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -133,7 +133,7 @@ func (channel Channel) GetClaims(page int) ([]Claim, error) {
 	}
 	channelData, _ := json.Marshal(channelDataMap)
 
-	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(channelData), true)
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(channelData))
 	if err != nil {
 		return []Claim{}, nil
 	}

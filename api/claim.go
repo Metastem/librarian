@@ -71,7 +71,7 @@ func GetClaim(channel string, video string, claimId string) (Claim, error) {
 	}
 	resolveData, _ := json.Marshal(resolveDataMap)
 
-	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData), true)
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData))
 	if err != nil {
 		return Claim{}, err
 	}
@@ -161,7 +161,7 @@ func (claim *Claim) GetViews() (error) {
 		return nil
 	}
 
-	data, err := utils.RequestJSON("https://api.odysee.com/file/view_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+claim.Id, nil, true)
+	data, err := utils.RequestJSON("https://api.odysee.com/file/view_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+claim.Id, nil)
 	if err != nil {
 		return err
 	}
@@ -182,7 +182,7 @@ func (claim *Claim) GetRatings() error {
 	formData := url.Values{
 		"claim_ids": []string{claim.Id},
 	}
-	body, err := utils.Request("https://api.odysee.com/reaction/list", true, 1000000, utils.Data{
+	body, err := utils.Request("https://api.odysee.com/reaction/list", 1000000, utils.Data{
 		Bytes: strings.NewReader(formData.Encode()),
 		Type: "application/x-www-form-urlencoded",
 	})

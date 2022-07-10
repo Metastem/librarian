@@ -112,7 +112,7 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 		return Comments{}, err
 	}
 
-	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=comment.List", bytes.NewBuffer(reqData), true)
+	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=comment.List", bytes.NewBuffer(reqData))
 	if err != nil {
 		return Comments{}, err
 	}
@@ -190,7 +190,7 @@ func GetCommentLikeDislikes(commentIds []string) map[string][]int64 {
 	}
 	commentsData, _ := json.Marshal(commentsDataMap)
 
-	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=reaction.List", bytes.NewBuffer(commentsData), true)
+	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=reaction.List", bytes.NewBuffer(commentsData))
 	if err != nil {
 		fmt.Println(err)
 	}

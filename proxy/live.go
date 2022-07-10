@@ -13,7 +13,7 @@ import (
 )
 
 func ProxyLive(c *fiber.Ctx) error {
-	client := utils.NewClient(false)
+	client := utils.NewClient()
 
 	url := "https://cloud.odysee.live/" + c.Params("+")
 

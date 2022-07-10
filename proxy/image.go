@@ -56,7 +56,7 @@ func ProxyImage(c *fiber.Ctx) error {
 
 	c.Set("Cache-Control", "public,max-age=31557600")
 
-	client := utils.NewClient(false)
+	client := utils.NewClient()
 
 	requestUrl := "https://thumbnails.odycdn.com/optimize/s:" + width + ":" + height + "/quality:85/plain/" + imgUrl
 	if strings.Contains(imgUrl, "static.odycdn.com/emoticons") {

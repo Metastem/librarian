@@ -22,7 +22,7 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 		url = url + "&related_to=" + relatedTo
 	}
 
-	data, err := utils.RequestJSON(url, nil, true)
+	data, err := utils.RequestJSON(url, nil)
 	if err != nil {
 		return nil, err
 	}

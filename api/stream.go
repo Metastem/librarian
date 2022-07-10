@@ -42,7 +42,7 @@ func GetStream(video string) (Stream, error) {
 		return Stream{}, err
 	}
 
-	data, err := utils.RequestJSON(viper.GetString("STREAMING_API_URL")+"?m=get", bytes.NewBuffer(reqData), true)
+	data, err := utils.RequestJSON(viper.GetString("STREAMING_API_URL")+"?m=get", bytes.NewBuffer(reqData))
 	if err != nil {
 		return Stream{}, err
 	}

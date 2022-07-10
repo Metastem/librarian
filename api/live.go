@@ -21,7 +21,7 @@ type Live struct {
 }
 
 func GetLive(claimId string) (Live, error) {
-	data, err := utils.RequestJSON("https://api.odysee.live/livestream/is_live?channel_claim_id="+claimId, nil, false)
+	data, err := utils.RequestJSON("https://api.odysee.live/livestream/is_live?channel_claim_id="+claimId, nil)
 	if err != nil {
 		return Live{}, err
 	}

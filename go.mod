@@ -11,15 +11,11 @@ require (
 	github.com/gorilla/feeds v1.1.1
 	github.com/hashicorp/go-retryablehttp v0.7.1
 	github.com/klauspost/compress v1.15.6 // indirect
-	github.com/lucas-clemente/quic-go v0.27.2
 	github.com/microcosm-cc/bluemonday v1.0.18
-	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
 	github.com/spf13/viper v1.12.0
 	github.com/tidwall/gjson v1.14.1
 	github.com/yuin/goldmark v1.4.12
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
-	golang.org/x/tools v0.1.11 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

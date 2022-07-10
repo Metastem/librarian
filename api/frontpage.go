@@ -51,7 +51,7 @@ func GetFrontpageVideos(nsfw bool) ([]Claim, error) {
 	}
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
 
-	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(claimSearchReqData), true)
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(claimSearchReqData))
 	if err != nil {
 		return []Claim{}, err
 	}
