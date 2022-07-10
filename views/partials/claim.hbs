@@ -1,10 +1,11 @@
 <div class="video">
   <div class="thumbnailWrapper">
-    {{#unless this.Id }}
+    {{#equal this.ValueType "stream"}}
     <a href={{this.RelUrl}}>
       <img class="thumbnail" src="{{this.ThumbnailUrl}}&w=480" loading="lazy" />
     </a>
-    {{else}}
+    {{/equal}}
+    {{#equal this.ValueType "channel"}}
     <a href={{this.RelUrl}}>
       {{#if this.Thumbnail}}
       <img class="thumbnail channelThumbnail" src="{{this.Thumbnail}}&w=400" loading="lazy" />
@@ -13,17 +14,16 @@
         loading="lazy" />
       {{/if}}
     </a>
-    {{/unless}}
+    {{/equal}}
 
     {{#equal this.StreamType "video" }}
     <p class="duration">{{this.Duration}}</p>
-    {{else}}
     {{/equal}}
   </div>
   <p>
     <a class="claimLink" href={{this.RelUrl}}>{{this.Title}}</a>
   </p>
-  {{#unless this.Id }}
+  {{#equal this.ValueType "stream"}}
   <p>
     <a class="claimLink" href={{this.Channel.RelUrl}}>{{this.Channel.Name}}</a>
   </p>
@@ -31,7 +31,8 @@
     <p title="{{this.Date}}">Shared {{this.RelTime}}</p>
     <p>{{this.Views}} views</p>
   </div>
-  {{else}}
+  {{/equal}}
+  {{#equal this.ValueType "channel"}}
   <p>
     <a class="claimLink" href={{this.RelUrl}}>{{this.Name}}</a>
   </p>
@@ -39,5 +40,5 @@
     {{this.Followers}} followers<br>
     {{this.UploadCount}} uploads
   </p>
-  {{/unless}}
+  {{/equal}}
 </div>

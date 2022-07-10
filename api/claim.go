@@ -2,16 +2,13 @@ package api
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/url"
-	"sync"
+	"strings"
 	"time"
 
-	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/patrickmn/go-cache"
@@ -21,7 +18,35 @@ import (
 
 var claimCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func GetClaim(channel string, video string, claimId string) (types.Claim, error) {
+type Claim struct {
+	Url          string
+	RelUrl       string
+	LbryUrl      string
+	OdyseeUrl    string
+	Id           string
+	Channel      Channel
+	Title        string
+	ThumbnailUrl string
+	Description  template.HTML
+	License      string
+	Views        int64
+	Likes        int64
+	Dislikes     int64
+	Tags         []string
+	Timestamp    int64
+	RelTime      string
+	Date         string
+	Time         time.Time
+	Duration     string
+	MediaType    string
+	Repost       string
+	ValueType    string
+	SrcSize      string
+	StreamType   string
+	HasFee       bool
+}
+
+func GetClaim(channel string, video string, claimId string) (Claim, error) {
 	urls := []string{"lbry://" + channel + "/" + video}
 	if channel == "" && video != "" {
 		urls = []string{"lbry://" + video + "#" + claimId}
@@ -31,7 +56,7 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 
 	cacheData, found := claimCache.Get(urls[0])
 	if found {
-		return cacheData.(types.Claim), nil
+		return cacheData.(Claim), nil
 	}
 
 	resolveDataMap := map[string]interface{}{
@@ -48,170 +73,131 @@ func GetClaim(channel string, video string, claimId string) (types.Claim, error)
 
 	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData), true)
 	if err != nil {
-		return types.Claim{}, err
+		return Claim{}, err
 	}
 	data = data.Get("result.lbry*")
-	
+
 	if data.Get("error.name").String() != "" {
-		return types.Claim{}, fmt.Errorf("API Error: " + data.Get("error.name").String() + data.Get("error.text").String())
+		return Claim{}, fmt.Errorf("API Error: " + data.Get("error.name").String() + data.Get("error.text").String())
 	}
 
-	returnData, err := ProcessClaim(data, true, true)
+	claim, err := ProcessClaim(data)
 	if err != nil {
-		return types.Claim{}, err
+		return Claim{}, err
 	}
-	claimCache.Set(urls[0], returnData, cache.DefaultExpiration)
-	return returnData, nil
+	claim.GetViews()
+	claim.GetRatings()
+
+	claimCache.Set(urls[0], claim, cache.DefaultExpiration)
+	return claim, nil
 }
 
-func ProcessClaim(claimData gjson.Result, getViews bool, getRatings bool) (types.Claim, error) {
+func ProcessClaim(claimData gjson.Result) (Claim, error) {
 	if claimData.Get("value_type").String() == "channel" {
-		return types.Claim{}, fmt.Errorf("value type is channel")
+		return Claim{}, fmt.Errorf("value type is channel")
 	}
-	
-	wg := sync.WaitGroup{}
 
-	tags := make([]string, 0)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		claimData.Get("value.tags").ForEach(
-			func(key gjson.Result, value gjson.Result) bool {
-				tags = append(tags, value.String())
-				return true
-			},
-		)
-	}()
-
-	claimId := claimData.Get("claim_id").String()
-	lbryUrl := claimData.Get("canonical_url").String()
-	channelLbryUrl := claimData.Get("signing_channel.canonical_url").String()
+	claim := Claim{
+		LbryUrl: claimData.Get("canonical_url").String(),
+		Id:      claimData.Get("claim_id").String(),
+		Channel: Channel{
+			Name:        claimData.Get("signing_channel.name").String(),
+			Title:       claimData.Get("signing_channel.value.title").String(),
+			Id:          claimData.Get("signing_channel.claim_id").String(),
+			LbryUrl:     claimData.Get("signing_channel.canonical_url").String(),
+			Description: template.HTML(claimData.Get("signing_channel.value.description").String()),
+			Thumbnail: utils.ToProxiedImageUrl(claimData.Get("signing_channel.value.thumbnail.url").String()),
+		},
+		Duration:    utils.FormatDuration(claimData.Get("value.video.duration").Int()),
+		Title:       claimData.Get("value.title").String(),
+		Description: template.HTML(utils.ProcessText(claimData.Get("value.description").String(), true)),
+		ThumbnailUrl: utils.ToProxiedImageUrl(claimData.Get("value.thumbnail.url").String()),
+		License:     claimData.Get("value.license").String(),
+		ValueType:   claimData.Get("value_type").String(),
+		Repost:      claimData.Get("reposted_claim.canonical_url").String(),
+		MediaType:   claimData.Get("value.source.media_type").String(),
+		StreamType:  claimData.Get("value.stream_type").String(),
+		HasFee:      claimData.Get("value.fee").Exists(),
+	}
 
 	timestamp := claimData.Get("value.release_time").Int()
 	if timestamp == 0 {
 		timestamp = claimData.Get("timestamp").Int()
 	}
-	time := time.Unix(timestamp, 0)
-	thumbnail := claimData.Get("value.thumbnail.url").String()
-	thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
-	channelThumbnail := claimData.Get("signing_channel.value.thumbnail.url").String()
+	claim.Time = time.Unix(timestamp, 0)
+	claim.RelTime = humanize.Time(claim.Time)
+	claim.Date = claim.Time.Format("January 2, 2006")
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if channelThumbnail != "" {
-			channelThumbnail = base64.URLEncoding.EncodeToString([]byte(channelThumbnail))
-			channelThumbnail = "/image?url=" + channelThumbnail + "&hash=" + utils.EncodeHMAC(channelThumbnail)
-		}
-	}()
-
-	likeDislike, err := []int64{0, 0}, error(nil)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if getRatings {
-			likeDislike, err = GetLikeDislike(claimId)
-		}
-	}()
-
-	views, err := int64(0), error(nil)
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		if getViews {
-			views, err = GetViews(claimId)
-		}
-	}()
-
-	wg.Wait()
-	if err != nil {
-		return types.Claim{}, err
-	}
-
-	url, err := utils.LbryTo(lbryUrl)
-	if err != nil {
-		return types.Claim{}, err
-	}
-
-	channelUrl, err := utils.LbryTo(channelLbryUrl)
-	if err != nil {
-		return types.Claim{}, err
-	}
-
-	return types.Claim{
-		Url:       url["http"],
-		LbryUrl:   lbryUrl,
-		RelUrl:    url["rel"],
-		OdyseeUrl: url["odysee"],
-		ClaimId:   claimData.Get("claim_id").String(),
-		Channel: types.Channel{
-			Name:        claimData.Get("signing_channel.name").String(),
-			Title:       claimData.Get("signing_channel.value.title").String(),
-			Id:          claimData.Get("signing_channel.claim_id").String(),
-			Url:         channelUrl["http"],
-			RelUrl:      channelUrl["rel"],
-			OdyseeUrl:   channelUrl["odysee"],
-			Description: template.HTML(claimData.Get("signing_channel.value.description").String()),
-			Thumbnail:   channelThumbnail,
+	claimData.Get("value.tags").ForEach(
+		func(key gjson.Result, value gjson.Result) bool {
+			claim.Tags = append(claim.Tags, value.String())
+			return true
 		},
-		Duration:     utils.FormatDuration(claimData.Get("value.video.duration").Int()),
-		Title:        claimData.Get("value.title").String(),
-		ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-		Description:  template.HTML(utils.ProcessText(claimData.Get("value.description").String(), true)),
-		License:      claimData.Get("value.license").String(),
-		Views:        views,
-		Likes:        likeDislike[0],
-		Dislikes:     likeDislike[1],
-		Tags:         tags,
-		RelTime:      humanize.Time(time),
-		ValueType:		claimData.Get("value_type").String(),
-		Repost: 			claimData.Get("reposted_claim.canonical_url").String(),
-		MediaType: 		claimData.Get("value.source.media_type").String(),
-		Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-		StreamType:   claimData.Get("value.stream_type").String(),
-		HasFee: 			claimData.Get("value.fee").Exists(),
-	}, nil
-}
+	)
 
-func GetViews(claimId string) (int64, error) {
-	cacheData, found := claimCache.Get(claimId + "-views")
-	if found {
-		return cacheData.(int64), nil
-	}
-
-	data, err := utils.RequestJSON("https://api.odysee.com/file/view_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId, nil, true)
+	url, err := utils.LbryTo(claim.LbryUrl)
 	if err != nil {
-		return 0, err
+		return Claim{}, err
 	}
+	claim.Url = url["http"]
+	claim.RelUrl = url["rel"]
+	claim.OdyseeUrl = url["odysee"]
 
-	returnData := data.Get("data.0").Int()
-	claimCache.Set(claimId+"-views", returnData, cache.DefaultExpiration)
-	return returnData, nil
+	channelUrl, err := utils.LbryTo(claim.Channel.LbryUrl)
+	if err != nil {
+		return Claim{}, err
+	}
+	claim.Channel.Url = channelUrl["http"]
+	claim.Channel.RelUrl = channelUrl["rel"]
+	claim.Channel.OdyseeUrl = channelUrl["odysee"]
+
+	return claim, nil
 }
 
-func GetLikeDislike(claimId string) ([]int64, error) {
-	cacheData, found := claimCache.Get(claimId + "-reactions")
+func (claim *Claim) GetViews() (error) {
+	cacheData, found := claimCache.Get(claim.Id + "-views")
 	if found {
-		return cacheData.([]int64), nil
+		claim.Views = cacheData.(int64)
+		return nil
 	}
 
-	Client := utils.NewClient(true)
-	likeDislikeRes, err := Client.PostForm("https://api.odysee.com/reaction/list", url.Values{
-		"claim_ids": []string{claimId},
+	data, err := utils.RequestJSON("https://api.odysee.com/file/view_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+claim.Id, nil, true)
+	if err != nil {
+		return err
+	}
+
+	claim.Views = data.Get("data.0").Int()
+	claimCache.Set(claim.Id+"-views", claim.Views, cache.DefaultExpiration)
+	return nil
+}
+
+func (claim *Claim) GetRatings() error {
+	cacheData, found := claimCache.Get(claim.Id + "-reactions")
+	if found {
+		ratings := cacheData.([]int64)
+		claim.Likes = ratings[0]
+		claim.Dislikes = ratings[1]
+	}
+
+	formData := url.Values{
+		"claim_ids": []string{claim.Id},
+	}
+	body, err := utils.Request("https://api.odysee.com/reaction/list", true, 1000000, utils.Data{
+		Bytes: strings.NewReader(formData.Encode()),
+		Type: "application/x-www-form-urlencoded",
 	})
 	if err != nil {
-		return []int64{}, err
+		return err
 	}
 
-	likeDislikeBody, err := ioutil.ReadAll(likeDislikeRes.Body)
-	if err != nil {
-		return []int64{}, err
+	data := gjson.Parse(string(body))
+	ratings := []int64{
+		data.Get("data.others_reactions."+claim.Id+".like").Int(),
+		data.Get("data.others_reactions."+claim.Id+".dislike").Int(),
 	}
+	claim.Likes = ratings[0]
+	claim.Dislikes = ratings[1]
 
-	returnData := []int64{
-		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".like").Int(),
-		gjson.Get(string(likeDislikeBody), "data.others_reactions."+claimId+".dislike").Int(),
-	}
-	claimCache.Set(claimId+"-reactions", returnData, cache.DefaultExpiration)
-	return returnData, nil
+	claimCache.Set(claim.Id+"-reactions", ratings, cache.DefaultExpiration)
+	return nil
 }

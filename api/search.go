@@ -37,21 +37,24 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 				defer wg.Done()
 				if claimType == "file" {
 					vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
-					if err == nil && vid.ClaimId != relatedTo {
+					if err == nil && vid.Id != relatedTo {
 						results = append(results, vid)
 					}
 				} else if claimType == "channel" {
-					channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true)
+					channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String())
 					if err == nil {
+						channel.GetFollowers()
 						results = append(results, channel)
 					}
 				} else if claimType == "file,channel" {
 					vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
-					if err == nil && vid.ClaimId != relatedTo {
+					if err == nil && vid.Id != relatedTo {
+						vid.GetViews()
 						results = append(results, vid)
 					} else if err != nil && err.Error() == "value type is channel" {
-						channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String(), true)
+						channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String())
 						if err == nil {
+							channel.GetFollowers()
 							results = append(results, channel)
 						}
 					}

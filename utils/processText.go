@@ -190,3 +190,11 @@ func replaceLinks(doc *goquery.Document) {
 		s.SetAttr("href", href)
 	})
 }
+
+func ToProxiedImageUrl(url string) (string) {
+	if url != "" {
+		url = base64.URLEncoding.EncodeToString([]byte(url))
+		url = "/image?url=" + url + "&hash=" + EncodeHMAC(url)
+	}
+	return url
+}

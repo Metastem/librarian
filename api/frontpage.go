@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"codeberg.org/librarian/librarian/data"
-	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
@@ -17,10 +16,10 @@ import (
 
 var fpCache = cache.New(30*time.Minute, 30*time.Minute)
 
-func GetFrontpageVideos(nsfw bool) ([]types.Claim, error) {
+func GetFrontpageVideos(nsfw bool) ([]Claim, error) {
 	cacheData, found := fpCache.Get("featured")
 	if found {
-		return cacheData.([]types.Claim), nil
+		return cacheData.([]Claim), nil
 	}
 
 	nsfwTags := []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"}
@@ -34,7 +33,7 @@ func GetFrontpageVideos(nsfw bool) ([]types.Claim, error) {
 		"method":  "claim_search",
 		"params": map[string]interface{}{
 			"page_size":                12,
-			"page":											1,
+			"page":                     1,
 			"no_totals":                true,
 			"claim_type":               []string{"stream"},
 			"any_tags":                 []string{},
@@ -43,9 +42,9 @@ func GetFrontpageVideos(nsfw bool) ([]types.Claim, error) {
 			"not_channel_ids":          []string{},
 			"order_by":                 []string{"trending_group", "trending_mixed"},
 			"fee_amount":               "<=0",
-			"remove_duplicates":				true,
-			"has_source":								true,
-			"limit_claims_per_channel":	1,
+			"remove_duplicates":        true,
+			"has_source":               true,
+			"limit_claims_per_channel": 1,
 			"release_time":             ">" + fmt.Sprint(time.Now().Unix()-15778458),
 			"include_purchase_receipt": true,
 		},
@@ -54,10 +53,10 @@ func GetFrontpageVideos(nsfw bool) ([]types.Claim, error) {
 
 	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(claimSearchReqData), true)
 	if err != nil {
-		return []types.Claim{}, err
+		return []Claim{}, err
 	}
 
-	claims := make([]types.Claim, 0)
+	claims := make([]Claim, 0)
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
@@ -65,7 +64,8 @@ func GetFrontpageVideos(nsfw bool) ([]types.Claim, error) {
 			go func() {
 				defer wg.Done()
 
-				claim, _ := ProcessClaim(value, true, false)
+				claim, _ := ProcessClaim(value)
+				claim.GetViews()
 				claims = append(claims, claim)
 			}()
 

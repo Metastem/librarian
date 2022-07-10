@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="/static/css/comments.css" />
 
   <p class="jsonData" id="commentData">
-    {"claimId": "{{claim.ClaimId}}", "channelId": "{{claim.Channel.Id}}", "channelName": "{{claim.Channel.Name}}"}
+    {"claimId": "{{claim.Id}}", "channelId": "{{claim.Channel.Id}}", "channelName": "{{claim.Channel.Name}}"}
   </p>
 
   <title>{{claim.Title}} - Librarian</title>
@@ -89,7 +89,7 @@
       {{{document}}}
     </article>
 
-    <p class="videoDesc__claimId">Claim ID: {{claim.ClaimId}}</p>
+    <p class="videoDesc__claimId">Claim ID: {{claim.Id}}</p>
 
     {{> 'partials/comments' }}
     {{/unless}}

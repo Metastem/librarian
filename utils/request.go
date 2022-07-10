@@ -12,16 +12,22 @@ import (
 var h2client = NewClient(false)
 var h3client = NewClient(viper.GetBool("USE_HTTP3"))
 
-func Request(url string, data interface{}, http3 bool, byteLimit int64) ([]byte, error) {
+type Data struct {
+	Bytes interface{}
+	Type 	string
+}
+
+func Request(url string, http3 bool, byteLimit int64, dataArr ...Data) ([]byte, error) {
 	client := h2client
 	if http3 {
 		client = h3client
 	}
 
 	req, err := retryablehttp.NewRequest("GET", url, nil)
-	if data != nil {
-		req, err = retryablehttp.NewRequest("POST", url, data)
-		req.Header.Set("Content-Type", "application/json")
+	data := dataArr[0]
+	if data.Bytes != nil {
+		req, err = retryablehttp.NewRequest("POST", url, data.Bytes)
+		req.Header.Set("Content-Type", data.Type)
 	}
 	if err != nil {
 		return []byte{}, err
@@ -58,7 +64,10 @@ func Request(url string, data interface{}, http3 bool, byteLimit int64) ([]byte,
 }
 
 func RequestJSON(url string, data interface{}, http3 bool) (gjson.Result, error) {
-	body, err := Request(url, data, http3, 1000000)
+	body, err := Request(url, http3, 1000000, Data{
+		Bytes: data,
+		Type: "application/json",
+	})
 	if err != nil {
 		return gjson.Result{}, err
 	}

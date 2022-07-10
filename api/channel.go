@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -10,9 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
-	"github.com/dustin/go-humanize"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/patrickmn/go-cache"
 	"github.com/spf13/viper"
@@ -21,10 +18,27 @@ import (
 
 var channelCache = cache.New(30*time.Minute, 15*time.Minute)
 
-func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
+type Channel struct {
+	Name           string
+	Title          string
+	Id             string
+	Followers      int64
+	Url            string
+	RelUrl         string
+	OdyseeUrl      string
+	LbryUrl        string
+	CoverImg       string
+	Description    template.HTML
+	DescriptionTxt string
+	Thumbnail      string
+	ValueType      string
+	UploadCount    int64
+}
+
+func GetChannel(channel string) (Channel, error) {
 	cacheData, found := channelCache.Get(channel)
 	if found {
-		return cacheData.(types.Channel), nil
+		return cacheData.(Channel), nil
 	}
 
 	resolveDataMap := map[string]interface{}{
@@ -41,98 +55,64 @@ func GetChannel(channel string, getFollowers bool) (types.Channel, error) {
 
 	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData), true)
 	if err != nil {
-		return types.Channel{}, err
+		return Channel{}, err
 	}
 	data = data.Get("result." + strings.ReplaceAll(channel, ".", "\\."))
 
-	channelData, err := ProcessChannel(data, getFollowers)
+	channelData, err := ProcessChannel(data)
 	if err != nil {
-		return types.Channel{}, err
+		return Channel{}, err
 	}
-	
+
 	channelCache.Set(channel, channelData, cache.DefaultExpiration)
 	return channelData, nil
 }
 
-func ProcessChannel(data gjson.Result, getFollowers bool) (types.Channel, error) {
-	wg := sync.WaitGroup{}
-	wg.Add(3)
-
-	description := ""
-	thumbnail := data.Get("value.thumbnail.url").String()
-	go func() {
-		defer wg.Done()
-		description = utils.ProcessText(data.Get("value.description").String(), true)
-		if thumbnail != "" {
-			thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
-			thumbnail = "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail)
-		}
-	}()
-
-	coverImg := data.Get("value.cover.url").String()
-	go func() {
-		defer wg.Done()
-		if coverImg != "" {
-			coverImg = base64.URLEncoding.EncodeToString([]byte(coverImg))
-			coverImg = "/image?url=" + coverImg + "&hash=" + utils.EncodeHMAC(coverImg)
-		}
-	}()
-
-	followers, err := int64(0), error(nil)
-	go func() {
-		defer wg.Done()
-		if getFollowers {
-			followers, err = GetChannelFollowers(data.Get("claim_id").String())
-		}
-	}()
-	if err != nil {
-		return types.Channel{}, err
-	}
-
-	wg.Wait()
-
-	url, err := utils.LbryTo(data.Get("canonical_url").String())
-	if err != nil {
-		return types.Channel{}, err
-	}
-
-	return types.Channel{
+func ProcessChannel(data gjson.Result) (Channel, error) {
+	channel := Channel{
 		Name:           data.Get("name").String(),
 		Title:          data.Get("value.title").String(),
 		Id:             data.Get("claim_id").String(),
-		Url:            url["http"],
-		OdyseeUrl:      url["odysee"],
-		RelUrl:         url["rel"],
-		CoverImg:       coverImg,
-		Description:    template.HTML(description),
-		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(description),
-		Thumbnail:      thumbnail,
-		Followers:      followers,
+		CoverImg:       utils.ToProxiedImageUrl(data.Get("value.cover.url").String()),
+		Description:    template.HTML(utils.ProcessText(data.Get("value.description").String(), true)),
+		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(data.Get("value.description").String()),
+		Thumbnail:      utils.ToProxiedImageUrl(data.Get("value.thumbnail.url").String()),
 		ValueType:      data.Get("value_type").String(),
 		UploadCount:    data.Get("meta.claims_in_channel").Int(),
-	}, nil
-}
-
-func GetChannelFollowers(claimId string) (int64, error) {
-	cacheData, found := channelCache.Get(claimId + "-followers")
-	if found {
-		return cacheData.(int64), nil
 	}
 
-	data, err := utils.RequestJSON("https://api.odysee.com/subscription/sub_count?auth_token=" + viper.GetString("AUTH_TOKEN") + "&claim_id=" + claimId, nil, true)
+	url, err := utils.LbryTo(data.Get("canonical_url").String())
+	if err != nil {
+		return Channel{}, err
+	}
+	channel.Url = url["http"]
+	channel.RelUrl = url["rel"]
+	channel.OdyseeUrl = url["odysee"]
+
+	return channel, nil
+}
+
+func (channel *Channel) GetFollowers() (int64, error) {
+	cacheData, found := channelCache.Get(channel.Id + "-followers")
+	if found {
+		channel.Followers = cacheData.(int64)
+		return channel.Followers, nil
+	}
+
+	data, err := utils.RequestJSON("https://api.odysee.com/subscription/sub_count?auth_token="+viper.GetString("AUTH_TOKEN")+"&claim_id="+channel.Id, nil, true)
 	if err != nil {
 		return 0, err
 	}
 
-	returnData := data.Get("data.0").Int()
-	channelCache.Set(claimId+"-followers", returnData, cache.DefaultExpiration)
-	return returnData, err
+	channel.Followers = data.Get("data.0").Int()
+	channelCache.Set(channel.Id+"-followers", channel.Followers, cache.DefaultExpiration)
+	return channel.Followers, err
 }
 
-func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
-	cacheData, found := channelCache.Get(channelId + "-claims-" + fmt.Sprint(page))
+func (channel Channel) GetClaims(page int) ([]Claim, error) {
+	cacheData, found := channelCache.Get(channel.Id + "-claims-" + fmt.Sprint(page))
 	if found {
-		return cacheData.([]types.Claim), nil
+		return cacheData.([]Claim), nil
 	}
 
 	channelDataMap := map[string]interface{}{
@@ -146,7 +126,7 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 			"claim_type":               []string{"stream"},
 			"order_by":                 []string{"release_time"},
 			"fee_amount":               "<=0",
-			"channel_ids":              []string{channelId},
+			"channel_ids":              []string{channel.Id},
 			"release_time":             "<" + fmt.Sprint(time.Now().Unix()),
 			"include_purchase_receipt": true,
 		},
@@ -155,70 +135,19 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 
 	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(channelData), true)
 	if err != nil {
-		return []types.Claim{}, nil
+		return []Claim{}, nil
 	}
 
-	claims := make([]types.Claim, 0)
+	claims := make([]Claim, 0)
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
 			wg.Add(1)
-
 			go func() {
 				defer wg.Done()
-
-				claimId := value.Get("claim_id").String()
-				lbryUrl := value.Get("canonical_url").String()
-				channelLbryUrl := value.Get("signing_channel.canonical_url").String()
-
-				time := time.Unix(value.Get("value.release_time").Int(), 0)
-				thumbnail := value.Get("value.thumbnail.url").String()
-				thumbnail = base64.URLEncoding.EncodeToString([]byte(thumbnail))
-
-				views, err := GetViews(claimId)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				url, err := utils.LbryTo(lbryUrl)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				channelUrl, err := utils.LbryTo(channelLbryUrl)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
-
-				claims = append(claims, types.Claim{
-					Url:       url["http"],
-					LbryUrl:   lbryUrl,
-					RelUrl:    url["rel"],
-					OdyseeUrl: url["odysee"],
-					ClaimId:   value.Get("claim_id").String(),
-					Channel: types.Channel{
-						Name:      value.Get("signing_channel.name").String(),
-						Title:     value.Get("signing_channel.value.title").String(),
-						Id:        value.Get("signing_channel.claim_id").String(),
-						Url:       channelUrl["http"],
-						RelUrl:    channelUrl["rel"],
-						OdyseeUrl: channelUrl["odysee"],
-					},
-					Description:  template.HTML(utils.ProcessText(value.Get("value.description").String(), true)),
-					Title:        value.Get("value.title").String(),
-					ThumbnailUrl: "/image?url=" + thumbnail + "&hash=" + utils.EncodeHMAC(thumbnail),
-					Views:        views,
-					Timestamp:    time.Unix(),
-					Date:         time.Month().String() + " " + fmt.Sprint(time.Day()) + ", " + fmt.Sprint(time.Year()),
-					Duration:     utils.FormatDuration(value.Get("value.video.duration").Int()),
-					RelTime:      humanize.Time(time),
-					MediaType:    value.Get("value.source.media_type").String(),
-					StreamType:   value.Get("value.stream_type").String(),
-					SrcSize:      value.Get("value.source.size").String(),
-				})
+				claim, _ := ProcessClaim(value)
+				claim.GetViews()
+				claims = append(claims, claim)
 			}()
 
 			return true
@@ -226,6 +155,6 @@ func GetChannelClaims(page int, channelId string) ([]types.Claim, error) {
 	)
 	wg.Wait()
 
-	channelCache.Set(channelId+"-claims-"+fmt.Sprint(page), claims, cache.DefaultExpiration)
+	channelCache.Set(channel.Id+"-claims-"+fmt.Sprint(page), claims, cache.DefaultExpiration)
 	return claims, nil
 }

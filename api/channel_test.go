@@ -11,7 +11,7 @@ func TestGetChannel(t *testing.T) {
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	viper.SetDefault("DOMAIN", "https://example.com")
 
-	channel, err := api.GetChannel("@SomeOrdinaryGamers:a", false)
+	channel, err := api.GetChannel("@SomeOrdinaryGamers:a")
 	if err != nil {
 		t.Error(err)
 	}
@@ -36,7 +36,10 @@ func TestGetChannelFollowers(t *testing.T) {
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	viper.Set("AUTH_TOKEN", api.NewUser())
 
-	followers, err := api.GetChannelFollowers("a8cca58a9a49b08a1325be5fe76646ea85201dbd")
+	channel := api.Channel{
+		Id: "a8cca58a9a49b08a1325be5fe76646ea85201dbd",
+	}
+	followers, err := channel.GetFollowers()
 	if err != nil {
 		t.Error(err)
 	}
@@ -49,7 +52,10 @@ func TestGetChannelClaims(t *testing.T) {
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	viper.Set("AUTH_TOKEN", api.NewUser())
 
-	claims, err := api.GetChannelClaims(1, "a8cca58a9a49b08a1325be5fe76646ea85201dbd")
+	channel := api.Channel{
+		Id: "a8cca58a9a49b08a1325be5fe76646ea85201dbd",
+	}
+	claims, err := channel.GetClaims(1)
 	if err != nil {
 		t.Error(err)
 	}
@@ -59,7 +65,7 @@ func TestGetChannelClaims(t *testing.T) {
 	if claims[0].RelUrl == "" {
 		t.Fail()
 	}
-	if claims[0].ClaimId == "" {
+	if claims[0].Id == "" {
 		t.Fail()
 	}
 	if claims[0].Channel.Name == "" {

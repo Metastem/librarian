@@ -15,7 +15,7 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 	c.Set("Content-Type", "application/rss+xml")
 
 	now := time.Now()
-	channel, err := api.GetChannel(c.Params("channel"), false)
+	channel, err := api.GetChannel(c.Params("channel"))
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 		_, err := c.Status(404).WriteString("404 Not Found\nERROR: Unable to find channel")
 		return err
 	}
-	claims, err := api.GetChannelClaims(1, channel.Id)
+	claims, err := channel.GetClaims(1)
 	if err != nil {
 		return err
 	}

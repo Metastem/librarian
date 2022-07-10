@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
@@ -43,7 +42,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		return c.Redirect(repostLink["rel"])
 	}
 
-	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.ClaimId) {
+	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.Id) {
 		return c.Status(451).Render("errors/blocked", fiber.Map{
 			"claim": claimData,
 			"theme": theme,
@@ -57,7 +56,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	related, err := api.Search(claimData.Title, 1, "file", false, claimData.ClaimId, 9)
+	related, err := api.Search(claimData.Title, 1, "file", false, claimData.Id, 9)
 	if err != nil {
 		return err
 	}
@@ -91,9 +90,9 @@ func ClaimHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	comments := types.Comments{}
+	comments := api.Comments{}
 	if nojs {
-		comments, err = api.GetComments(claimData, "", 3, 25, 1)
+		comments, err = claimData.GetComments("", 3, 25, 1)
 		if err != nil {
 			return err
 		}
@@ -101,7 +100,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	switch claimData.StreamType {
 	case "document":
-		body, err := utils.Request(stream.URL, nil, false, 500000)
+		body, err := utils.Request(stream.URL, false, 500000)
 		if err != nil {
 			return err
 		}

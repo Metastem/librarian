@@ -25,20 +25,21 @@ func ChannelHandler(c *fiber.Ctx) error {
 		page = pageParam
 	}
 
-	channelData, err := api.GetChannel(c.Params("channel"), true)
+	channel, err := api.GetChannel(c.Params("channel"))
 	if err != nil {
 		return err
 	}
+	channel.GetFollowers()
 
-	if channelData.Id == "" {
+	if channel.Id == "" {
 		return c.Status(404).Render("errors/notFound", fiber.Map{})
 	}
 
-	if channelData.ValueType != "channel" {
+	if channel.ValueType != "channel" {
 		return ClaimHandler(c)
 	}
 
-	claims, err := api.GetChannelClaims(page, channelData.Id)
+	claims, err := channel.GetClaims(page)
 	if err != nil {
 		return err
 	}
@@ -47,7 +48,7 @@ func ChannelHandler(c *fiber.Ctx) error {
 	})
 
 	return c.Render("channel", fiber.Map{
-		"channel": channelData,
+		"channel": channel,
 		"config":  viper.AllSettings(),
 		"claims":  claims,
 		"theme":   c.Cookies("theme"),

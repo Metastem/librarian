@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	"codeberg.org/librarian/librarian/types"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
 	"github.com/gofiber/fiber/v2"
@@ -20,6 +19,24 @@ import (
 )
 
 var commentCache = cache.New(30*time.Minute, 15*time.Minute)
+
+type Comments struct {
+	Comments []Comment
+	Items    int64
+	Pages    int64
+}
+
+type Comment struct {
+	Channel   Channel
+	Comment   template.HTML
+	CommentId string
+	ParentId  string
+	Time      string
+	RelTime   string
+	Replies   int64
+	Likes     int64
+	Dislikes  int64
+}
 
 func CommentsHandler(c *fiber.Ctx) error {
 	claimId := c.Query("claim_id")
@@ -49,13 +66,14 @@ func CommentsHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	comments, err := GetComments(types.Claim{
-		ClaimId: claimId,
-		Channel: types.Channel{
+	claim := Claim{
+		Id: claimId,
+		Channel: Channel{
 			Id:   channelId,
 			Name: channelName,
 		},
-	}, c.Query("parent_id"), sortBy, newPageSize, newPage)
+	}
+	comments, err := claim.GetComments(c.Query("parent_id"), sortBy, newPageSize, newPage)
 	if err != nil {
 		return err
 	}
@@ -64,10 +82,10 @@ func CommentsHandler(c *fiber.Ctx) error {
 	return c.JSON(comments)
 }
 
-func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, page int) (types.Comments, error) {
-	cacheData, found := commentCache.Get(claim.ClaimId + parentId + fmt.Sprint(sortBy) + fmt.Sprint(page) + fmt.Sprint(pageSize))
+func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page int) (Comments, error) {
+	cacheData, found := commentCache.Get(claim.Id + parentId + fmt.Sprint(sortBy) + fmt.Sprint(page) + fmt.Sprint(pageSize))
 	if found {
-		return cacheData.(types.Comments), nil
+		return cacheData.(Comments), nil
 	}
 
 	reqDataMap := map[string]interface{}{
@@ -76,7 +94,7 @@ func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, p
 		"method":  "comment.List",
 		"params": map[string]interface{}{
 			"page":         page,
-			"claim_id":     claim.ClaimId,
+			"claim_id":     claim.Id,
 			"page_size":    pageSize,
 			"sort_by":      sortBy,
 			"top_level":    true,
@@ -91,12 +109,12 @@ func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, p
 
 	reqData, err := json.Marshal(reqDataMap)
 	if err != nil {
-		return types.Comments{}, err
+		return Comments{}, err
 	}
 
 	data, err := utils.RequestJSON("https://comments.odysee.tv/api/v2?m=comment.List", bytes.NewBuffer(reqData), true)
 	if err != nil {
-		return types.Comments{}, err
+		return Comments{}, err
 	}
 
 	commentIds := []string{}
@@ -111,7 +129,7 @@ func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, p
 
 	likesDislikes := GetCommentLikeDislikes(commentIds)
 
-	comments := []types.Comment{}
+	comments := []Comment{}
 
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
@@ -120,34 +138,26 @@ func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, p
 
 			go func() {
 				defer wg.Done()
-
-				comment := utils.ProcessText(value.Get("comment").String(), false)
-				commentId := value.Get("comment_id").String()
+				comment := Comment{
+					Comment:   template.HTML(utils.ProcessText(value.Get("comment").String(), false)),
+					CommentId: value.Get("comment_id").String(),
+					ParentId:  value.Get("parent_id").String(),
+					Replies:   value.Get("replies").Int(),
+				}
 
 				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
-				time := timestamp.UTC().Format("January 2, 2006 15:04")
-				relTime := humanize.Time(timestamp)
-				if relTime == "a long while ago" {
-					relTime = time
+				comment.Time = timestamp.UTC().Format("January 2, 2006 15:04")
+				comment.RelTime = humanize.Time(timestamp)
+				if comment.RelTime == "a long while ago" {
+					comment.RelTime = comment.Time
 				}
 
-				channel, err := GetChannel(value.Get("channel_url").String(), false)
-				if err != nil {
-					fmt.Println(err)
-					return
-				}
+				comment.Likes = likesDislikes[comment.CommentId][0]
+				comment.Dislikes = likesDislikes[comment.CommentId][1]
 
-				comments = append(comments, types.Comment{
-					Channel:   channel,
-					Comment:   template.HTML(comment),
-					CommentId: commentId,
-					ParentId:  value.Get("parent_id").String(),
-					Time:      time,
-					RelTime:   relTime,
-					Replies:   value.Get("replies").Int(),
-					Likes:     likesDislikes[commentId][0],
-					Dislikes:  likesDislikes[commentId][1],
-				})
+				comment.Channel, _ = GetChannel(value.Get("channel_url").String())
+
+				comments = append(comments, comment)
 			}()
 
 			return true
@@ -159,13 +169,13 @@ func GetComments(claim types.Claim, parentId string, sortBy int, pageSize int, p
 		return sortOrder[comments[i].CommentId] < sortOrder[comments[j].CommentId]
 	})
 
-	returnData := types.Comments{
+	returnData := Comments{
 		Comments: comments,
 		Pages:    data.Get("result.total_pages").Int(),
 		Items:    data.Get("result.total_items").Int(),
 	}
 
-	commentCache.Set(claim.ClaimId+fmt.Sprint(page)+fmt.Sprint(pageSize), returnData, cache.DefaultExpiration)
+	commentCache.Set(claim.Id+fmt.Sprint(page)+fmt.Sprint(pageSize), returnData, cache.DefaultExpiration)
 	return returnData, nil
 }
 

@@ -26,7 +26,7 @@ func EmbedHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.ClaimId) {
+	if utils.Contains(viper.GetStringSlice("blocked_claims"), claimData.Id) {
 		return c.Status(451).Render("errors/blocked", fiber.Map{
 			"claim": claimData,
 		})

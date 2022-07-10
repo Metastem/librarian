@@ -4,20 +4,20 @@ import (
 	"testing"
 
 	"codeberg.org/librarian/librarian/api"
-	"codeberg.org/librarian/librarian/types"
 	"github.com/spf13/viper"
 )
 
 func TestGetComments(t *testing.T) {
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	
-	comments, err := api.GetComments(types.Claim{
-		ClaimId: "463e63afb35a319f260b36ef8d5c3dc41a98ce28",
-		Channel: types.Channel{
+	claim := api.Claim{
+		Id: "463e63afb35a319f260b36ef8d5c3dc41a98ce28",
+		Channel: api.Channel{
 			Id: "ecf0a6be99030d0ad4e10aec11d2c0bab94246ae", 
 			Name: "@MusicARetro", 
 		},
-	}, "", 3, 5, 1)
+	}
+	comments, err := claim.GetComments("", 3, 5, 1)
 	if err != nil {
 		t.Error(err)
 	}
