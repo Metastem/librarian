@@ -50,7 +50,7 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 			Title:       claims[i].Title,
 			Link:        &feeds.Link{Href: claims[i].Url},
 			Description: "<img width=\"480\" src=\"" + viper.GetString("DOMAIN") + claims[i].ThumbnailUrl + "\"><br><br>" + string(claims[i].Description),
-			Created:     time.Unix(claims[i].Timestamp, 0),
+			Created:     claims[i].Time,
 			Enclosure:   &feeds.Enclosure{},
 		}
 
