@@ -1,0 +1,5 @@
+pipeline:
+  test:
+    image: golang:alpine
+    commands:
+      - CGO_ENABLED=0 go test $(go list ./...)

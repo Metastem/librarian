@@ -9,9 +9,6 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
 <a href="https://matrix.to/#/#librarian:nitro.chat">
   <img alt="Matrix" src="https://img.shields.io/badge/chat-matrix-blue">
 </a>
-<a href="https://gitlab.com/overtime-zone-wildfowl/librarian">
-  <img alt="CI" src="https://gitlab.com/overtime-zone-wildfowl/librarian/badges/main/pipeline.svg">
-</a>
 
 ## Features
 
