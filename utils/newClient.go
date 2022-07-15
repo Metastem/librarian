@@ -10,7 +10,7 @@ import (
 func NewClient() *retryablehttp.Client {
 	Client := retryablehttp.NewClient()
 	Client.Logger = nil
-	Client.RetryMax = 4
+	Client.RetryMax = 2
 	Client.Backoff = retryablehttp.LinearJitterBackoff
 
 	Client.HTTPClient = &http.Client{
