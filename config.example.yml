@@ -21,8 +21,8 @@ IMAGE_CACHE_CLEANUP_INTERVAL: 24h
 # Live streams are proxied through the instance (unless LIVE_STREAMING_URL is set) 
 # and may cause increased bandwidth usage.
 ENABLE_LIVE_STREAM: false
-# Using an external proxy (such as https://codeberg.org/librarian/stream-proxy) 
-# for livestreams is recommended. Due to limitations with Go's HTTP library,
+# Using an external proxy (such as https://codeberg.org/librarian/stream-proxy-ng) 
+# for livestreams is recommended. Due to issues with FastHTTP,
 # resolution with the built-in proxy is limited to 480p.
 LIVE_STREAMING_URL: ''
 # Rewrite links to other frontends. example: https://yt.domain.tld
