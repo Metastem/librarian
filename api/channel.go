@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -139,9 +140,12 @@ func (channel Channel) GetClaims(page int) ([]Claim, error) {
 	}
 
 	claims := make([]Claim, 0)
+	claimIds := map[string]int64{}
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
+			claimIds[value.Get("claim_id").String()] = key.Int()
+
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
@@ -154,6 +158,10 @@ func (channel Channel) GetClaims(page int) ([]Claim, error) {
 		},
 	)
 	wg.Wait()
+
+	sort.Slice(claims, func(i, j int) bool {
+		return claimIds[claims[i].Id] < claimIds[claims[j].Id]
+	})
 
 	channelCache.Set(channel.Id+"-claims-"+fmt.Sprint(page), claims, cache.DefaultExpiration)
 	return claims, nil
