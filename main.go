@@ -72,6 +72,8 @@ func main() {
 
 	app := fiber.New(fiber.Config{
 		Views:             engine,
+		ReadTimeout:  	 	 time.Second * 10,
+		WriteTimeout:  	 	 time.Second * 10,
 		Prefork:           viper.GetBool("FIBER_PREFORK"),
 		UnescapePath:      true,
 		StreamRequestBody: true,
