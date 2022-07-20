@@ -34,6 +34,7 @@ video {
 
 .videoData__left {
   width: 80%;
+  margin-bottom: 1em;
 }
 
 .videoData__right {
@@ -98,10 +99,6 @@ li br {
   display: flex;
   align-items: center;
   flex-direction: column;
-}
-
-.largeIcon {
-  font-size: 36px;
 }
 
 .videoMeta__download {

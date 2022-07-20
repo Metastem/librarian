@@ -54,6 +54,10 @@ header {
   font-size: 24px;
 }
 
+.largeIcon {
+  font-size: 36px;
+}
+
 .sectionHeader {
   margin-top: 0;
 }

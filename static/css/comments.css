@@ -1,3 +1,32 @@
+.comments__warning {
+  gap: 0.75em;
+  margin-bottom: 1em;
+}
+
+.comments__warning__msg {
+  display: flex;
+  border-radius: 6px;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--warning);
+  padding: 0 1rem
+}
+
+.comments__warning__btn {
+  font-size: 1em;
+  color: #000;
+  background-color: var(--warning);
+  border-radius: 6px;
+  text-align: center;
+  width: 100%;
+  font-size: 1em;
+  padding: 0.5em;
+  border: none;
+  cursor: pointer;
+}
+
+.comments__warning,
 .comment {
   display: flex;
   flex-direction: column;

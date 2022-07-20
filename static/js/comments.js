@@ -1,3 +1,5 @@
+const commentData = JSON.parse(document.getElementById("commentData").innerText)
+
 async function comments(claimId, channelId, channelName, page) {
   document.getElementById("spinner").style.display = "flex"
   let res = await fetch(`/api/comments?claim_id=${claimId}&channel_id=${channelId}&channel_name=${channelName}&page=${page}&page_size=10`);
@@ -110,12 +112,6 @@ function generateCommentElem(comment) {
   return commentElem
 }
 
-document.getElementById("nojs").remove();
-
-const commentData = JSON.parse(document.getElementById("commentData").innerText)
-
-comments(commentData.claimId, commentData.channelId, commentData.channelName, 1)
-
 function loadMoreBtn(page) {
   let loadMore = document.getElementById("loadMore");
   loadMore.addEventListener('click', () => {
@@ -123,3 +119,10 @@ function loadMoreBtn(page) {
     comments(commentData.claimId, commentData.channelId, commentData.channelName, page)
   })
 }
+
+const commentWarningBtn = document.getElementById('commentWarningBtn')
+commentWarningBtn.removeAttribute('href')
+commentWarningBtn.addEventListener('click', () => {
+  document.getElementById('commentsWarning').style.display = 'none';
+  comments(commentData.claimId, commentData.channelId, commentData.channelName, 1)
+})

@@ -1,8 +1,8 @@
-<div>
+<div class="comments_wrapper">
   <input id="comments__expandBtn" type="checkbox" checked>
   <label class="comments__expandBtn__label" for="comments__expandBtn">
     <h3 class="claimLink" id="commentsHeader">
-      Comments 
+      Comments
       {{#if settings.nojs}}
       ({{comments.Items}})
       {{/if}}
@@ -10,6 +10,24 @@
     <span class="comments__expandBtn__icon material-icons-outlined"></span>
   </label>
   <div id="comments" class="comments">
+    {{#unless settings.nojs}}
+    <div class="comments__warning" id="commentsWarning">
+      <div class="comments__warning__msg">
+        <span class="material-icons-outlined largeIcon">
+          report_problem
+        </span>  
+        <p>
+          Comments may contain harmful or inappropriate content.<br>
+          Are you sure you want to continue?
+        </p>
+      </div>
+      <a href="{{claim.RelUrl}}?nojs=1" id="commentWarningBtn">
+        <button class="comments__warning__btn">
+          Show comments
+        </button>
+      </a>
+    </div>
+    {{/unless}}
     {{#if settings.nojs}}
     {{#each comments.Comments}}
     <div class="comment">
@@ -31,12 +49,4 @@
   <div id="spinner" class="center">
     <div class="spinner"></div>
   </div>
-  {{#unless settings.nojs}}
-  <p id="nojs">
-    <a href="{{claim.RelUrl}}?nojs=1">
-      Hi! Looks like you have JavaScript turned off. Click here to view comments, keep in mind they may take a bit
-      longer to load.
-    </a>
-  </p>
-  {{/unless}}
 </div>
