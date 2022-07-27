@@ -16,6 +16,12 @@ if (localStorage.getItem("autoplayNextVid") === "true") {
 if (location.hash) {
   player.on('loadeddata', () => {player.currentTime = location.hash.replace("#", "") * 1})
 }
+
+const urlParams = new URLSearchParams(location.search);
+if (urlParams.get("t")) {
+  player.on('loadeddata', () => {player.currentTime = urlParams.get("t") * 1})
+}
+
 window.addEventListener('hashchange', () => {
   player.currentTime = location.hash.replace("#", "") * 1
 })

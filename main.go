@@ -113,6 +113,7 @@ func main() {
 		app.Get("/live/+", proxy.ProxyLive)
 	}
 	app.Get("/search", pages.SearchHandler)
+	app.Get("/$/search", pages.SearchHandler)
 	app.Post("/search", pages.SearchHandler)
 	app.Get("/privacy", pages.PrivacyHandler)
 	app.Get("/about", pages.AboutHandler)
@@ -135,8 +136,8 @@ func main() {
 
 	app.Get("/:channel/", pages.ChannelHandler)
 	app.Get("/$/invite/:channel", pages.ChannelHandler)
-	app.Get("/$/invite/:channel/", pages.ChannelHandler)
 	app.Get("/:channel/rss", pages.ChannelRSSHandler)
+	app.Get("/$/rss/:channel", pages.ChannelRSSHandler)
 	app.Get("/embed/:channel/:claim", pages.EmbedHandler)
 	app.Get("/:channel/:claim", pages.ClaimHandler)
 
