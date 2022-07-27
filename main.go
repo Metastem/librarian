@@ -139,6 +139,7 @@ func main() {
 	app.Get("/:channel/rss", pages.ChannelRSSHandler)
 	app.Get("/$/rss/:channel", pages.ChannelRSSHandler)
 	app.Get("/embed/:channel/:claim", pages.EmbedHandler)
+	app.Get("/embed/:channel", pages.EmbedHandler)
 	app.Get("/:channel/:claim", pages.ClaimHandler)
 
 	app.Listen(viper.GetString("ADDRESS") + ":" + viper.GetString("PORT"))
