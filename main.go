@@ -138,6 +138,8 @@ func main() {
 	app.Get("/$/invite/:channel", pages.ChannelHandler)
 	app.Get("/:channel/rss", pages.ChannelRSSHandler)
 	app.Get("/$/rss/:channel", pages.ChannelRSSHandler)
+	app.Get("/$/embed/:channel/:claim", pages.EmbedHandler)
+	app.Get("/$/embed/:channel", pages.EmbedHandler)
 	app.Get("/embed/:channel/:claim", pages.EmbedHandler)
 	app.Get("/embed/:channel", pages.EmbedHandler)
 	app.Get("/:channel/:claim", pages.ClaimHandler)
