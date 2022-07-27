@@ -17,7 +17,12 @@ func FrontpageHandler(c *fiber.Ctx) error {
 	c.Set("Strict-Transport-Security", "max-age=31557600")
 	c.Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; font-src 'self'; form-action 'self'; block-all-mixed-content; manifest-src 'self'")
 
-	videos, err := api.GetFrontpageVideos(c.Cookies("nsfw") == "true")
+	categories, err := api.GetCategoryData()
+	if err != nil {
+		return err
+	}
+
+	videos, err := categories["Featured"].GetCategoryVideos(1, c.Cookies("nsfw") == "true")
 	if err != nil {
 		return err
 	}
