@@ -100,7 +100,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	switch claimData.StreamType {
 	case "document":
-		body, err := utils.Request(stream.URL, 500000)
+		body, err := utils.Request(stream.URL, 500000, utils.Data{Bytes: nil})
 		if err != nil {
 			return err
 		}
