@@ -43,12 +43,6 @@
       "live": false
     },
     {
-      "name": "lbry.slipfox.xyz",
-      "url": "https://lbry.slipfox.xyz",
-      "country": "🇺🇸 US",
-      "cloudflare": false
-    },
-    {
       "name": "librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion",
       "url": "http://librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion",
       "country": "",
