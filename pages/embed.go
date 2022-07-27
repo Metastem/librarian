@@ -16,7 +16,7 @@ func EmbedHandler(c *fiber.Ctx) error {
 	c.Set("X-Content-Type-Options", "nosniff")
 	c.Set("X-Robots-Tag", "noindex, noimageindex, nofollow")
 	c.Set("Strict-Transport-Security", "max-age=31557600")
-	c.Set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src *; media-src * blob:; block-all-mixed-content")
+	c.Set("Content-Security-Policy", "default-src 'self'; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
 
 	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
 	if err != nil {
@@ -33,14 +33,17 @@ func EmbedHandler(c *fiber.Ctx) error {
 	}
 
 	if claimData.StreamType == "video" {
-		videoStream, err := api.GetStream(claimData.LbryUrl)
+		stream, err := api.GetStream(claimData.LbryUrl)
 		if err != nil {
 			return err
 		}
+		if stream.HLS {
+			c.Set("Content-Security-Policy", "default-src 'self'; img-src *; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
+		}
 
 		return c.Render("embed", fiber.Map{
-			"stream": videoStream,
-			"video":  claimData,
+			"stream": stream,
+			"claim":  claimData,
 		})
 	} else {
 		return fmt.Errorf("unsupported stream type: " + claimData.StreamType)
