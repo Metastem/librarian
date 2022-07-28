@@ -18,6 +18,8 @@ func EncodeHMAC(data string) string {
 }
 
 func VerifyHMAC(data string, mac string) bool {
+	byteMac, _ := hex.DecodeString(mac)
 	expectedMAC := EncodeHMAC(data)
-	return expectedMAC == mac
+	byteExpectedMAC, _ := hex.DecodeString(expectedMAC)
+	return hmac.Equal(byteMac, byteExpectedMAC)
 }
