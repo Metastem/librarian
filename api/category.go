@@ -19,6 +19,7 @@ var categoryCache = cache.New(72*time.Hour, 36*time.Hour)
 
 type Category struct {
 	Name          string
+	Path					string
 	ChannelIds    []string
 	ChannelLimit	int64
 	DaysOfContent int64
@@ -39,8 +40,9 @@ func GetCategoryData() (map[string]Category, error) {
 	categories := map[string]Category{}
 	data.Get("data.en.categories").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
-			categories[value.Get("label").String()] = Category{
+			categories[value.Get("name").String()] = Category{
 				Name:          value.Get("label").String(),
+				Path: 				 value.Get("name").String(),
 				ChannelIds:    strings.Split(strings.TrimSuffix(strings.TrimPrefix(value.Get("channelIds").Raw, `["`), `"]`), `","`),
 				ChannelLimit:  value.Get("channelLimit").Int(),
 				DaysOfContent: value.Get("daysOfContent").Int(),
@@ -54,7 +56,7 @@ func GetCategoryData() (map[string]Category, error) {
 	return categories, nil
 }
 
-func (category Category) GetCategoryVideos(page int, nsfw bool) ([]Claim, error) {
+func (category Category) GetCategoryClaims(page int, nsfw bool) ([]Claim, error) {
 	cacheData, found := fpCache.Get(category.Name)
 	if found {
 		return cacheData.([]Claim), nil

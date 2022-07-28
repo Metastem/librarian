@@ -107,7 +107,7 @@ func main() {
 		Root: http.FS(static.GetFiles()),
 	}))
 
-	app.Get("/", pages.FrontpageHandler)
+	app.Get("/", pages.CategoryHandler)
 	app.Get("/image", proxy.ProxyImage)
 	if viper.GetBool("ENABLE_LIVE_STREAM") {
 		app.Get("/live/+", proxy.ProxyLive)
@@ -134,12 +134,14 @@ func main() {
 	app.Get("/api/comments", api.CommentsHandler)
 	app.Get("/api/sponsorblock/:id", proxy.ProxySponsorBlock)
 
-	app.Get("/:channel/", pages.ChannelHandler)
 	app.Get("/$/invite/:channel", pages.ChannelHandler)
-	app.Get("/:channel/rss", pages.ChannelRSSHandler)
 	app.Get("/$/rss/:channel", pages.ChannelRSSHandler)
 	app.Get("/$/embed/:claim/:id", pages.EmbedHandler)
 	app.Get("/$/embed/:claim", pages.EmbedHandler)
+	app.Get("/$/:category", pages.CategoryHandler)
+
+	app.Get("/:channel/", pages.ChannelHandler)
+	app.Get("/:channel/rss", pages.ChannelRSSHandler)
 	app.Get("/embed/:claim/:id", pages.EmbedHandler)
 	app.Get("/embed/:claim", pages.EmbedHandler)
 	app.Get("/:channel/:claim", pages.ClaimHandler)

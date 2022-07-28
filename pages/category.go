@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func FrontpageHandler(c *fiber.Ctx) error {
+func CategoryHandler(c *fiber.Ctx) error {
 	c.Set("Cache-Control", "public,max-age=1800")
 	c.Set("X-Frame-Options", "DENY")
 	c.Set("X-Robots-Tag", "noindex, noimageindex, nofollow")
@@ -22,17 +22,23 @@ func FrontpageHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	videos, err := categories["Featured"].GetCategoryVideos(1, c.Cookies("nsfw") == "true")
+	categoryName := "featured"
+	if c.Params("category") != "" {
+		categoryName = c.Params("category")
+	}
+
+	claims, err := categories[categoryName].GetCategoryClaims(1, c.Cookies("nsfw") == "true")
 	if err != nil {
 		return err
 	}
-	sort.Slice(videos, func(i int, j int) bool {
-		return videos[i].Timestamp > videos[j].Timestamp
+	sort.Slice(claims, func(i int, j int) bool {
+		return claims[i].Timestamp > claims[j].Timestamp
 	})
 
-	return c.Render("home", fiber.Map{
-		"config": viper.AllSettings(),
-		"videos": videos,
-		"theme": c.Cookies("theme"),
+	return c.Render("category", fiber.Map{
+		"config":   viper.AllSettings(),
+		"category": categories[categoryName],
+		"claims":   claims,
+		"theme":    c.Cookies("theme"),
 	})
 }
