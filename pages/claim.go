@@ -26,7 +26,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		"nojs":  nojs,
 	}
 
-	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
+	claimData, err := api.GetClaim("lbry://" + c.Params("channel") + "/" + c.Params("claim"))
 	if err != nil {
 		if strings.ContainsAny(err.Error(), "NOT_FOUND") {
 			return c.Status(404).Render("errors/notFound", fiber.Map{"theme": theme})

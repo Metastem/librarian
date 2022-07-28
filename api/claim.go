@@ -46,15 +46,8 @@ type Claim struct {
 	HasFee       bool
 }
 
-func GetClaim(channel string, video string, claimId string) (Claim, error) {
-	urls := []string{"lbry://" + channel + "/" + video}
-	if channel == "" && video != "" {
-		urls = []string{"lbry://" + video + "#" + claimId}
-	} else if video == "" {
-		urls = []string{"lbry://" + channel}
-	}
-
-	cacheData, found := claimCache.Get(urls[0])
+func GetClaim(lbryUrl string) (Claim, error) {
+	cacheData, found := claimCache.Get(lbryUrl)
 	if found {
 		return cacheData.(Claim), nil
 	}
@@ -63,7 +56,7 @@ func GetClaim(channel string, video string, claimId string) (Claim, error) {
 		"jsonrpc": "2.0",
 		"method":  "resolve",
 		"params": map[string]interface{}{
-			"urls":                     urls,
+			"urls":                     []string{lbryUrl},
 			"include_purchase_receipt": true,
 			"include_is_my_output":     true,
 		},
@@ -88,7 +81,7 @@ func GetClaim(channel string, video string, claimId string) (Claim, error) {
 	claim.GetViews()
 	claim.GetRatings()
 
-	claimCache.Set(urls[0], claim, cache.DefaultExpiration)
+	claimCache.Set(lbryUrl, claim, cache.DefaultExpiration)
 	return claim, nil
 }
 

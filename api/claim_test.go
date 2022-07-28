@@ -11,7 +11,7 @@ func TestGetClaim(t *testing.T) {
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	viper.Set("AUTH_TOKEN", api.NewUser())
 
-	claim, err := api.GetClaim("@SomeOrdinaryGamers:a", "reddit-mod-gets-destroyed-on-national:b", "")
+	claim, err := api.GetClaim("lbry://@SomeOrdinaryGamers:a8cca58a9a49b08a1325be5fe76646ea85201dbd/reddit-mod-gets-destroyed-on-national:bc3dcabb350ed498804f746c6125e1eb0127c92d")
 	if err != nil {
 		t.Error(err)
 	}

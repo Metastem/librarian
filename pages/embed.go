@@ -18,7 +18,12 @@ func EmbedHandler(c *fiber.Ctx) error {
 	c.Set("Strict-Transport-Security", "max-age=31557600")
 	c.Set("Content-Security-Policy", "default-src 'self'; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
 
-	claimData, err := api.GetClaim(c.Params("channel"), c.Params("claim"), "")
+	url := "lbry://" + c.Params("claim")
+	if c.Params("id") != "" {
+		url = url + "#" + c.Params("id")
+	}
+	
+	claimData, err := api.GetClaim(url)
 	if err != nil {
 		if strings.ContainsAny(err.Error(), "NOT_FOUND") {
 			return c.Status(404).Render("errors/notFound", nil)

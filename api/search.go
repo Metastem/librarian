@@ -36,7 +36,7 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 			go func() {
 				defer wg.Done()
 				if claimType == "file" {
-					vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
+					vid, err := GetClaim("lbry://" + value.Get("name").String() + "#" + value.Get("claimId").String())
 					if err == nil && vid.Id != relatedTo {
 						results = append(results, vid)
 					}
@@ -47,7 +47,7 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 						results = append(results, channel)
 					}
 				} else if claimType == "file,channel" {
-					vid, err := GetClaim("", value.Get("name").String(), value.Get("claimId").String())
+					vid, err := GetClaim("lbry://" + value.Get("name").String() + "#" + value.Get("claimId").String())
 					if err == nil && vid.Id != relatedTo {
 						vid.GetViews()
 						results = append(results, vid)
