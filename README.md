@@ -83,13 +83,15 @@ Open an issue to have your instance listed here!
 | [lbry.mutahar.rocks](https://lbry.mutahar.rocks/)               | 🇫🇷 FR   |            | ❌️ |
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA   |            | ❌️ |
 | [lbry.vern.cc](https://lbry.vern.cc/) ([edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian)) | 🇨🇦 CA   |  | ❌️ |
-
+| [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US   |            | ❌️ |
+ 
 ### Tor
 
 | URL | Country | Live streams |
 | :-- | :------ | :----------- |
 | [librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion](http://librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion/) | N/A | ❌️ |
 | [lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion](http://lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/) ([edited theme](http://git.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/root/modifications/src/branch/master/librarian)) | N/A | ❌️ |
+| [5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion](http:///5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion/) | N/A | ❌️ |
 
 ### Automatically redirect links
 
