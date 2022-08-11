@@ -17,7 +17,7 @@ services:
 # video_streaming_url: https://proxy.example.com/stream
 #
 #  stream-proxy:
-#    image: registry.gitlab.com/overtime-zone-wildfowl/stream-proxy-ng:latest
+#    image: codeberg.org/librarian/stream-proxy-ng:latest
 #    ports:
 #      - 3001:3001
 #    restart: unless-stopped
