@@ -57,14 +57,7 @@ They also use your data for these purposes and you cannot opt-out of it.
 - Link different devices
 - Receive and use automatically-sent device characteristics for identification
 
-**Ads/trackers:** (as of Feb 1, 2022)
-- Google
-- Vidcrunch
-- and many more listed on the list of partners in the cookie banner.
-
-And they have previously used:
-- Traffic Junky (P***Hub)
-- Unruly Media
+See what trackers and cookies they use: https://themarkup.org/blacklight.?url=odysee.com
 
 #### Librarian
 Librarian itself does not collect any data but instance operators may collect data. You can view a "privacy nutrition label" by clicking on the "Privacy" link at the bottom.
