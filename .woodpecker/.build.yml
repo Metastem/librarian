@@ -3,7 +3,8 @@ pipeline:
     image: woodpeckerci/plugin-docker-buildx
     settings:
       dockerfile: Dockerfile
-      repo: nineteengladespool/librarian
+      registry: https://codeberg.org/v2
+      repo: codeberg.org/librarian/librarian
       platforms: linux/amd64,linux/arm64
       tag: latest
       username:
