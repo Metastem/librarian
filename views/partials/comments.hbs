@@ -36,8 +36,11 @@
       {{/with}}
       <div>
         {{{this.Comment}}}
-        <p title="{{this.Time}}">
-          {{this.RelTime}} |
+        <p>
+          {{#if this.Pinned}}
+          <span class="material-icons-outlined">push_pin</span> Pinned |
+          {{/if}}
+          <span title="{{this.Time}}">{{this.RelTime}}</span> |
           <span class="material-icons-outlined">thumb_up</span> {{this.Likes}}
           <span class="material-icons-outlined">thumb_down</span> {{this.Dislikes}}
         </p>

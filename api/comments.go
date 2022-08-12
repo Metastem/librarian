@@ -31,6 +31,7 @@ type Comment struct {
 	Comment   template.HTML
 	CommentId string
 	ParentId  string
+	Pinned		bool
 	Time      string
 	RelTime   string
 	Replies   int64
@@ -143,6 +144,7 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 					CommentId: value.Get("comment_id").String(),
 					ParentId:  value.Get("parent_id").String(),
 					Replies:   value.Get("replies").Int(),
+					Pinned: 	 value.Get("is_pinned").Bool(),
 				}
 
 				timestamp := time.Unix(value.Get("timestamp").Int(), 0)

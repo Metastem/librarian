@@ -76,7 +76,7 @@ function generateCommentElem(comment) {
   commentElem.appendChild(wrapperDiv)
 
   let commentMetaElem = document.createElement('p')
-  commentMetaElem.innerHTML = `${comment.RelTime == "a long while ago" ? comment.Time : `<span title="${comment.Time}">${comment.RelTime}</span>`} | <span class="material-icons-outlined">thumb_up</span> ${comment.Likes} <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}`
+  commentMetaElem.innerHTML = `${comment.Pinned ? `<span class="material-icons-outlined">push_pin</span> Pinned |`: ''}  ${comment.RelTime == "a long while ago" ? comment.Time : `<span title="${comment.Time}">${comment.RelTime}</span>`} | <span class="material-icons-outlined">thumb_up</span> ${comment.Likes} <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}`
   wrapperDiv.appendChild(commentMetaElem)
 
   let repliesElem = document.createElement('div')
