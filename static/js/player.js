@@ -1,4 +1,21 @@
-const player = new Plyr('#player');
+const player = new Plyr('#player', {
+  keyboard: { focused: true, global: true }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (event) => {
+  event.preventDefault()
+  switch (event.key) {
+    case 'j':
+      player.rewind(15);
+      break;
+    case ' ':
+      player.togglePlay();
+    case 'l':
+      player.forward(15);
+      break;
+  }
+});
 
 if (localStorage.getItem("autoplay") === "true") {
   player.on('ready', player.play())
