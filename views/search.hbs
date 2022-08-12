@@ -33,9 +33,17 @@
     {{#if results}}
     <div class="pageSelector">
       {{#unless query.prevPageIs0 }}
-      <a class="claimLink" href="/search?q={{query.query}}&page={{query.prevPage}}">Previous page</a>
+      <form action="/search" method="POST">
+        <input type="hidden" name="q" value="{{query.query}}"/>
+        <input type="hidden" name="page" value="{{query.prevPage}}"/>
+        <button class="nextBtn claimLink">Previous page</button>
+      </form>
       {{/unless}}
-      <a class="claimLink" href="/search?q={{query.query}}&page={{query.nextPage}}">Next page</a>
+      <form action="/search" method="POST">
+        <input type="hidden" name="q" value="{{query.query}}"/>
+        <input type="hidden" name="page" value="{{query.nextPage}}"/>
+        <button class="nextBtn claimLink">Next page</button>
+      </form>
     </div>
     {{/if}}
   </main>

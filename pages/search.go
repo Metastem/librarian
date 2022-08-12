@@ -24,6 +24,10 @@ func SearchHandler(c *fiber.Ctx) error {
 	if err == nil || pageParam != 0 {
 		page = pageParam
 	}
+	pageParam, err = strconv.Atoi(c.FormValue("page"))
+	if err == nil || pageParam != 0 {
+		page = pageParam
+	}
 
 	query := c.FormValue("q")
 	if query == "" && c.Query("q") != "" {
