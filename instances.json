@@ -26,7 +26,7 @@
       "url": "https://lbry.projectsegfau.lt",
       "country": "🇫🇷 FR",
       "cloudflare": false,
-      "live": false
+      "live": true
     },
     {
       "name": "librarian.esmailelbob.xyz",

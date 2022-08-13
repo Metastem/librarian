@@ -73,7 +73,7 @@ Open an issue to have your instance listed here!
 | [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇨🇦️ CA, 🇳🇱️ NL, 🇸🇬️ SG  |            | ✅️ |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |  | ✅️ |
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE   |            | ✅️ |
-| [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)               | 🇫🇷 FR   |            | ❌️ |
+| [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)               | 🇫🇷 FR   |            | ✅️ |
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA   |            | ❌️ |
 | [lbry.vern.cc](https://lbry.vern.cc/) ([edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian)) | 🇨🇦 CA   |  | ❌️ |
 | [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US   |            | ❌️ |
