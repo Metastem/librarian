@@ -2,8 +2,8 @@ version: '3'
 
 services:
   librarian:
-    build: .
-    # image: codeberg.org/librarian/librarian:latest # Uncomment to use image
+    #build: . # Uncomment to build from source
+    image: codeberg.org/librarian/librarian:latest
     ports:
       - 3000:3000
     volumes:

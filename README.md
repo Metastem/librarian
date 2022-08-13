@@ -116,11 +116,24 @@ mkdir data
 cp config.example.yml data/config.yml
 nvim data/config.yml
 ```
-You can also edit `docker-compose.yml` if you want to change ports or use the image instead of building it.
+You can also edit `docker-compose.yml` if you want to change ports or build from source.
 
 You can now run Librarian. 🎉
 ```
 sudo docker-compose up -d
+```
+
+#### Automatic updates
+[Watchtower](https://containrrr.dev/watchtower/) can automatically update your Docker containers.
+
+Create a new `docker-compose.yml` file or add the watchtower section to your existing `docker-compose.yml` file.
+```yml
+version: "3"
+services:
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 ```
 
 ### Build from source
