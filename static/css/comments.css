@@ -43,6 +43,10 @@
   height: 48px;
 }
 
+.comment img {
+  max-height: 200px;
+}
+
 #comments__expandBtn {
   display: none;
 }
