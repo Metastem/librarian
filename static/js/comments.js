@@ -72,11 +72,24 @@ function generateCommentElem(comment) {
   channelElem.appendChild(channelTitleElem)
 
   let wrapperDiv = document.createElement('div')
-  wrapperDiv.innerHTML = comment.Comment
+  let commentContent = document.createElement('div')
+  commentContent.innerHTML = comment.Comment
+  if ((comment.Likes - comment.Dislikes) < -4) {
+    let message = '<p><span class="material-icons-outlined">report_problem</span> Comment hidden due to dislikes. Click to view.</p>'
+    commentContent.innerHTML = message
+    commentContent.addEventListener('click', () => {
+      if (commentContent.innerHTML != message) {
+        commentContent.innerHTML = message
+      } else {
+        commentContent.innerHTML = comment.Comment
+      }
+    })
+  }
+  wrapperDiv.appendChild(commentContent)
   commentElem.appendChild(wrapperDiv)
 
   let commentMetaElem = document.createElement('p')
-  commentMetaElem.innerHTML = `${comment.Pinned ? `<span class="material-icons-outlined">push_pin</span> Pinned |`: ''}  ${comment.RelTime == "a long while ago" ? comment.Time : `<span title="${comment.Time}">${comment.RelTime}</span>`} | <span class="material-icons-outlined">thumb_up</span> ${comment.Likes} <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}`
+  commentMetaElem.innerHTML = `${comment.Pinned ? `<span class="material-icons-outlined">push_pin</span> Pinned |` : ''}  ${comment.RelTime == "a long while ago" ? comment.Time : `<span title="${comment.Time}">${comment.RelTime}</span>`} | <span class="material-icons-outlined">thumb_up</span> ${comment.Likes} <span class="material-icons-outlined">thumb_down</span> ${comment.Dislikes}`
   wrapperDiv.appendChild(commentMetaElem)
 
   let repliesElem = document.createElement('div')
