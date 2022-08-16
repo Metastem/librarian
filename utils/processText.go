@@ -17,7 +17,7 @@ import (
 	"github.com/yuin/goldmark/extension"
 )
 
-var timeRe = regexp.MustCompile(`(?m)([0-9]?[0-9]:)?[0-9]?[0-9]:[0-9]{2}`)
+var timeRe = regexp.MustCompile(`(?m)(?:[0-9]+:)?[0-9]?[0-9]:[0-9]{2}`)
 var ytRe = regexp.MustCompile(`https?://(www\.)?youtu\.?be(\.com)?`)
 var imgurRe = regexp.MustCompile(`https?:\/\/(i\.)?imgur\.com`)
 var igRe = regexp.MustCompile(`https?://(www\.)?instagram\.com`)
@@ -40,7 +40,7 @@ func ProcessText(text string, newline bool) string {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	replaceImgs(doc)
 	replaceLinks(doc)
 
@@ -48,10 +48,23 @@ func ProcessText(text string, newline bool) string {
 
 	for _, match := range timeRe.FindAllString(text, -1) {
 		times := strings.Split(match, ":")
-		mins, _ := strconv.Atoi(times[0])
-		secs, _ := strconv.Atoi(times[1])
-		time := fmt.Sprint((mins * 60) + secs)
-		text = strings.ReplaceAll(text, match, `<a href="#` + time + `">` + match + "</a>")
+
+		var hours int
+		var mins int
+		var secs int
+
+		if len(times) == 2 {
+			hours = 0
+			mins, _ = strconv.Atoi(times[0])
+			secs, _ = strconv.Atoi(times[1])
+		} else {
+			hours, _ = strconv.Atoi(times[0])
+			mins, _ = strconv.Atoi(times[1])
+			secs, _ = strconv.Atoi(times[2])
+		}
+
+		time := fmt.Sprint((hours * 60 * 60) + (mins * 60) + secs)
+		text = strings.Replace(text, match, `<a href="#`+time+`">`+match+"</a>", 1)
 	}
 
 	text = ReplaceStickersAndEmotes(text)
@@ -85,7 +98,7 @@ func ProcessDocument(text string, isMd bool) string {
 
 	replaceImgs(doc)
 	replaceLinks(doc)
-	
+
 	text, _ = doc.Html()
 
 	p := bluemonday.UGCPolicy()
@@ -191,7 +204,7 @@ func replaceLinks(doc *goquery.Document) {
 	})
 }
 
-func ToProxiedImageUrl(url string) (string) {
+func ToProxiedImageUrl(url string) string {
 	if url != "" {
 		url = base64.URLEncoding.EncodeToString([]byte(url))
 		url = "/image?url=" + url + "&hash=" + EncodeHMAC(url)
