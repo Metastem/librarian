@@ -77,7 +77,7 @@ Open an issue to have your instance listed here!
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA   |            | ❌️ |
 | [lbry.vern.cc](https://lbry.vern.cc/) ([edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian)) | 🇨🇦 CA   |  | ❌️ |
 | [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US   |            | ❌️ |
-| [lbry.sytes.net](https://lbry.sytes.net)                        | 🇷🇺 RU   |            | ✅️ |
+| [lbry.sytes.net](https://lbry.sytes.net)                        | 🇲🇩 MD   |            | ✅️ |
  
 ### Tor
 
