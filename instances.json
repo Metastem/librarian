@@ -57,6 +57,13 @@
       "live": true
     },
     {
+      "name": "lbry.webhop.me",
+      "url": "https://lbry.webhop.me",
+      "country": "🇨🇿 CZ",
+      "cloudflare": false,
+      "live": true
+    },
+    {
       "name": "librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion",
       "url": "http://librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion",
       "country": "",
@@ -76,6 +83,13 @@
       "country": "",
       "cloudflare": false,
       "live": false
+    },
+    {
+      "name": "zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion",
+      "url": "http://zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion/",
+      "country": "",
+      "cloudflare": false,
+      "live": true
     }
   ]
 }

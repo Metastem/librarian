@@ -73,11 +73,12 @@ Open an issue to have your instance listed here!
 | [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇨🇦️ CA, 🇳🇱️ NL, 🇸🇬️ SG  |            | ✅️ |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |  | ✅️ |
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE   |            | ✅️ |
-| [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)               | 🇫🇷 FR   |            | ✅️ |
+| [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)         | 🇫🇷 FR   |            | ✅️ |
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA   |            | ❌️ |
 | [lbry.vern.cc](https://lbry.vern.cc/) ([edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian)) | 🇨🇦 CA   |  | ❌️ |
 | [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US   |            | ❌️ |
 | [lbry.sytes.net](https://lbry.sytes.net)                        | 🇲🇩 MD   |            | ✅️ |
+| [lbry.webhop.me](https://lbry.webhop.me)                        | 🇨🇿 CZ   |            | ✅️ |
  
 ### Tor
 
@@ -85,7 +86,8 @@ Open an issue to have your instance listed here!
 | :-- | :------ | :----------- |
 | [librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion](http://librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion/) | N/A | ❌️ |
 | [lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion](http://lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/) ([edited theme](http://git.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/root/modifications/src/branch/master/librarian)) | N/A | ❌️ |
-| [5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion](http:///5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion/) | N/A | ❌️ |
+| [5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion](http://5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion/) | N/A | ❌️ |
+| [zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion](http://zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion/) | N/A | ✅️ |
 
 ### Automatically redirect links
 
