@@ -54,7 +54,7 @@
       "url": "https://lbry.sytes.net",
       "country": "🇲🇩 MD",
       "cloudflare": false,
-      "live": true
+      "live": false
     },
     {
       "name": "lbry.webhop.me",
