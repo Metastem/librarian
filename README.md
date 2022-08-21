@@ -79,6 +79,7 @@ Open an issue to have your instance listed here!
 | [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US   |            | ❌️ |
 | [lbry.sytes.net](https://lbry.sytes.net)                        | 🇲🇩 MD   |            | ✅️ |
 | [lbry.webhop.me](https://lbry.webhop.me)                        | 🇨🇿 CZ   |            | ✅️ |
+| [lbry.mywire.org](https://lbry.mywire.org)                      | 🇷🇺 RU   |            | ❌️ |
  
 ### Tor
 

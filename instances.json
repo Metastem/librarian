@@ -64,6 +64,13 @@
       "live": true
     },
     {
+      "name": "lbry.mywire.org",
+      "url": "https://lbry.mywire.org",
+      "country": "🇷🇺 RU",
+      "cloudflare": false,
+      "live": false
+    },
+    {
       "name": "librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion",
       "url": "http://librarian.lqs5fjmajyp7rvp4qvyubwofzi6d4imua7vs237rkc4m5qogitqwrgyd.onion",
       "country": "",
