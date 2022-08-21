@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (event) => {
+      if (event.target.id === "searchBar") return;
       event.preventDefault()
       switch (event.key) {
         case 'j':
@@ -86,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Keyboard shortcuts
       document.addEventListener('keydown', (event) => {
+        if (event.target.id === "searchBar") return;
         event.preventDefault()
         switch (event.key) {
           case 'j':

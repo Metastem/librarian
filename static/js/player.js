@@ -4,6 +4,7 @@ const player = new Plyr('#player', {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (event) => {
+  if (event.target.id === "searchBar") return;
   event.preventDefault()
   switch (event.key) {
     case 'j':
