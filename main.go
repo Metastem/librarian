@@ -41,11 +41,11 @@ func main() {
 	}
 
 	viper.Set("AUTH_TOKEN", api.NewUser())
-	viper.WriteConfig()
 	if viper.GetString("HMAC_KEY") == "" {
 		b := make([]byte, 36)
 		rand.Read(b)
 		viper.Set("HMAC_KEY", fmt.Sprintf("%x", b))
+		viper.WriteConfig()
 	}
 
 	if viper.GetBool("IMAGE_CACHE") {
@@ -58,6 +58,18 @@ func main() {
 					os.RemoveAll(file)
 				}
 			}
+		}()
+	}
+
+	if viper.GetBool("ENABLE_LIVE_STREAM") {
+		fmt.Println("The integrated livestream proxy is deprecated and has been removed.")
+		fmt.Println("To continue using livestreams, follow the steps in the migration guide linked below.")
+		fmt.Println("https://codeberg.org/librarian/librarian/issues/147#issuecomment-607131")
+	}
+
+	if viper.GetBool("ENABLE_STREAM_PROXY") && viper.GetString("STREAM_PROXY_ADDR") != "" {
+		go func() {
+			proxy.NewStreamProxy(viper.GetString("STREAM_PROXY_ADDR"))
 		}()
 	}
 
@@ -109,9 +121,6 @@ func main() {
 
 	app.Get("/", pages.CategoryHandler)
 	app.Get("/image", proxy.ProxyImage)
-	if viper.GetBool("ENABLE_LIVE_STREAM") {
-		app.Get("/live/+", proxy.ProxyLive)
-	}
 	app.Get("/search", pages.SearchHandler)
 	app.Get("/$/search", pages.SearchHandler)
 	app.Post("/search", pages.SearchHandler)

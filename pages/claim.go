@@ -67,7 +67,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 			return err
 		}
 
-		if !viper.GetBool("ENABLE_LIVE_STREAM") {
+		if viper.GetString("LIVE_STREAMING_URL") == "" {
 			return c.Render("errors/liveDisabled", fiber.Map{
 				"switchUrl": c.Path(),
 				"settings":  settings,

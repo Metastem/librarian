@@ -9,15 +9,3 @@ services:
     volumes:
       - ./data/config.yml:/app/config.yml
     restart: unless-stopped
-
-# Uncomment to proxy videos and livestreams with stream-proxy.
-# You will need to set this up as a subdomain in your reverse proxy and add the following to your config.yml:
-# enable_live_stream: true
-# live_streaming_url: https://proxy.example.com/live
-# video_streaming_url: https://proxy.example.com/stream
-#
-#  stream-proxy:
-#    image: codeberg.org/librarian/stream-proxy-ng:latest
-#    ports:
-#      - 3001:3001
-#    restart: unless-stopped
