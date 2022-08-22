@@ -70,7 +70,7 @@ Open an issue to have your instance listed here!
 
 | URL                                                             | Country | Cloudflare | Live streams |
 | :-------------------------------------------------------------- | :------ | :--------- | :----------- |
-| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇨🇦️ CA, 🇳🇱️ NL, 🇸🇬️ SG  |            | ✅️ |
+| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇩🇪 DE   |            | ✅️ |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp) ([edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod)) | 🇯🇵 JP |  | ✅️ |
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE   |            | ✅️ |
 | [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)         | 🇫🇷 FR   |            | ✅️ |
