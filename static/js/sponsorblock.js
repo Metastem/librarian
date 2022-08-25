@@ -3,7 +3,8 @@ async function sponsorblock() {
   let ytId = ytLinkDesc.match(/(?:\.\.\..*v=)(.{11})/)
   if (ytId) {
     ytId = ytId[1]
-    let hashedId = sha256(ytId);
+    
+    let hashedId = await sha256(ytId);
     let res = await fetch("/api/sponsorblock/" + hashedId.substring(0, 4) + "?categories=" + localStorage.getItem("sb_categories"))
     let data = await res.json()
     let videoData = data.find(v => v.videoID == ytId)
@@ -24,4 +25,12 @@ async function sponsorblock() {
 
 if (localStorage.getItem("sb_categories")) {
   sponsorblock()
+}
+
+async function sha256(message) {
+  const msgUint8 = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
 }
