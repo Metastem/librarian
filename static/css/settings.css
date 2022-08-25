@@ -7,7 +7,6 @@ label {
   text-decoration: none;
 }
 
-.sbSectionHeader,
 .selectOpt {
   display: flex;
   gap: 6px;
@@ -16,15 +15,6 @@ label {
 
 .sbSectionText {
   margin-top: -0.75em;
-}
-
-.betaLabel {
-  padding: 3px 5px;
-  background-color: var(--accent);
-  color: white;
-  border-radius: 5px;
-  font-size: 0.85em;
-  font-weight: 700;
 }
 
 select {
