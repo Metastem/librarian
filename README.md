@@ -80,6 +80,7 @@ Open an issue to have your instance listed here!
 | [lbry.sytes.net](https://lbry.sytes.net)                        | 🇲🇩 MD   |            | ❌️ |
 | [lbry.webhop.me](https://lbry.webhop.me)                        | 🇨🇿 CZ   |            | ✅️ |
 | [lbry.mywire.org](https://lbry.mywire.org)                      | 🇷🇺 RU   |            | ❌️ |
+| [lbry.ooguy.com](https://lbry.ooguy.com)                        | 🇸🇰 SK   |            | ❌️ |
  
 ### Tor
 
@@ -89,6 +90,7 @@ Open an issue to have your instance listed here!
 | [lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion](http://lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/) ([edited theme](http://git.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/root/modifications/src/branch/master/librarian)) | N/A | ❌️ |
 | [5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion](http://5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion/) | N/A | ❌️ |
 | [zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion](http://zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion/) | N/A | ✅️ |
+| [bxewpsswttslepw27w2hhxhlizwm7l7y54x3jw5cfrb64hb6lgc557ad.onion](http://bxewpsswttslepw27w2hhxhlizwm7l7y54x3jw5cfrb64hb6lgc557ad.onion/) | N/A | ❌️ |
 
 ### Automatically redirect links
 
