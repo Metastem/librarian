@@ -85,6 +85,45 @@ func GetClaim(lbryUrl string) (Claim, error) {
 	return claim, nil
 }
 
+func GetClaims(lbryUrls []string, getFollowers bool, getViews bool) ([]interface{}, error) {
+	resolveDataMap := map[string]interface{}{
+		"jsonrpc": "2.0",
+		"method":  "resolve",
+		"params": map[string]interface{}{
+			"urls":                     lbryUrls,
+			"include_purchase_receipt": true,
+			"include_is_my_output":     true,
+		},
+		"id": time.Now().Unix(),
+	}
+	resolveData, _ := json.Marshal(resolveDataMap)
+
+	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=resolve", bytes.NewBuffer(resolveData))
+	if err != nil {
+		return nil, err
+	}
+
+	claims := []interface{}{}
+	data.Get("result").ForEach(func(key, value gjson.Result) bool {
+		if value.Get("value_type").String() == "channel" {
+			channel, _ := ProcessChannel(value)
+			if getFollowers {
+				channel.GetFollowers()
+			}
+			claims = append(claims, channel)
+		} else {
+			claim, _ := ProcessClaim(value)
+			if getViews {
+				claim.GetViews()
+			}
+			claims = append(claims, claim)
+		}
+		return true
+	})
+
+	return claims, nil
+}
+
 func ProcessClaim(claimData gjson.Result) (Claim, error) {
 	if claimData.Get("value_type").String() == "channel" {
 		return Claim{}, fmt.Errorf("value type is channel")
@@ -99,18 +138,18 @@ func ProcessClaim(claimData gjson.Result) (Claim, error) {
 			Id:          claimData.Get("signing_channel.claim_id").String(),
 			LbryUrl:     claimData.Get("signing_channel.canonical_url").String(),
 			Description: template.HTML(claimData.Get("signing_channel.value.description").String()),
-			Thumbnail: utils.ToProxiedImageUrl(claimData.Get("signing_channel.value.thumbnail.url").String()),
+			Thumbnail:   utils.ToProxiedImageUrl(claimData.Get("signing_channel.value.thumbnail.url").String()),
 		},
-		Duration:    utils.FormatDuration(claimData.Get("value.video.duration").Int()),
-		Title:       claimData.Get("value.title").String(),
-		Description: template.HTML(utils.ProcessText(claimData.Get("value.description").String(), true)),
+		Duration:     utils.FormatDuration(claimData.Get("value.video.duration").Int()),
+		Title:        claimData.Get("value.title").String(),
+		Description:  template.HTML(utils.ProcessText(claimData.Get("value.description").String(), true)),
 		ThumbnailUrl: utils.ToProxiedImageUrl(claimData.Get("value.thumbnail.url").String()),
-		License:     claimData.Get("value.license").String(),
-		ValueType:   claimData.Get("value_type").String(),
-		Repost:      claimData.Get("reposted_claim.canonical_url").String(),
-		MediaType:   claimData.Get("value.source.media_type").String(),
-		StreamType:  claimData.Get("value.stream_type").String(),
-		HasFee:      claimData.Get("value.fee").Exists(),
+		License:      claimData.Get("value.license").String(),
+		ValueType:    claimData.Get("value_type").String(),
+		Repost:       claimData.Get("reposted_claim.canonical_url").String(),
+		MediaType:    claimData.Get("value.source.media_type").String(),
+		StreamType:   claimData.Get("value.stream_type").String(),
+		HasFee:       claimData.Get("value.fee").Exists(),
 	}
 
 	timestamp := claimData.Get("value.release_time").Int()
@@ -147,7 +186,7 @@ func ProcessClaim(claimData gjson.Result) (Claim, error) {
 	return claim, nil
 }
 
-func (claim *Claim) GetViews() (error) {
+func (claim *Claim) GetViews() error {
 	cacheData, found := claimCache.Get(claim.Id + "-views")
 	if found {
 		claim.Views = cacheData.(int64)
@@ -177,7 +216,7 @@ func (claim *Claim) GetRatings() error {
 	}
 	body, err := utils.Request("https://api.odysee.com/reaction/list", 1000000, utils.Data{
 		Bytes: strings.NewReader(formData.Encode()),
-		Type: "application/x-www-form-urlencoded",
+		Type:  "application/x-www-form-urlencoded",
 	})
 	if err != nil {
 		return err
@@ -185,8 +224,8 @@ func (claim *Claim) GetRatings() error {
 
 	data := gjson.Parse(string(body))
 	ratings := []int64{
-		data.Get("data.others_reactions."+claim.Id+".like").Int(),
-		data.Get("data.others_reactions."+claim.Id+".dislike").Int(),
+		data.Get("data.others_reactions." + claim.Id + ".like").Int(),
+		data.Get("data.others_reactions." + claim.Id + ".dislike").Int(),
 	}
 	claim.Likes = ratings[0]
 	claim.Dislikes = ratings[1]

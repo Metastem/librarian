@@ -132,6 +132,17 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 
 	comments := []Comment{}
 
+	channelUrls := strings.Split(strings.Trim(strings.ReplaceAll(data.Get("result.items.#.channel_url").Raw, `"`, ""), "[]"),",")
+	channelsInt, err := GetClaims(channelUrls, false, false)
+	if err != nil {
+		return Comments{}, err
+	}
+	channels := map[string]Channel{}
+	for _, channelInt := range channelsInt {
+		channel := channelInt.(Channel)
+		channels[channel.Id] = channel
+	}
+
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
 		func(key, value gjson.Result) bool {
@@ -157,7 +168,7 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 				comment.Likes = likesDislikes[comment.CommentId][0]
 				comment.Dislikes = likesDislikes[comment.CommentId][1]
 
-				comment.Channel, _ = GetChannel(value.Get("channel_url").String())
+				comment.Channel = channels[strings.Split(value.Get("channel_url").String(), "#")[1]]
 
 				comments = append(comments, comment)
 			}()

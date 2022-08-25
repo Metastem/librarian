@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -29,41 +30,38 @@ func Search(query string, page int, claimType string, nsfw bool, relatedTo strin
 
 	results := make([]interface{}, 0)
 	wg := sync.WaitGroup{}
-	data.ForEach(
-		func(key gjson.Result, value gjson.Result) bool {
+
+	if claimType == "channel" {
+		data.ForEach(func(key gjson.Result, value gjson.Result) bool {
 			wg.Add(1)
 
 			go func() {
 				defer wg.Done()
-				if claimType == "file" {
-					vid, err := GetClaim("lbry://" + value.Get("name").String() + "#" + value.Get("claimId").String())
-					if err == nil && vid.Id != relatedTo {
-						results = append(results, vid)
-					}
-				} else if claimType == "channel" {
-					channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String())
-					if err == nil {
-						channel.GetFollowers()
-						results = append(results, channel)
-					}
-				} else if claimType == "file,channel" {
-					vid, err := GetClaim("lbry://" + value.Get("name").String() + "#" + value.Get("claimId").String())
-					if err == nil && vid.Id != relatedTo {
-						vid.GetViews()
-						results = append(results, vid)
-					} else if err != nil && err.Error() == "value type is channel" {
-						channel, err := GetChannel(value.Get("name").String()+"#"+value.Get("claimId").String())
-						if err == nil {
-							channel.GetFollowers()
-							results = append(results, channel)
-						}
-					}
+				channel, err := GetChannel("lbry://" + value.Get("name").String() + "#" + value.Get("claimId").String())
+				if err == nil {
+					channel.GetFollowers()
+					results = append(results, channel)
 				}
 			}()
 
 			return true
-		},
-	)
+		})
+	} else {
+		urls := []string{}
+		data.ForEach(func(key gjson.Result, value gjson.Result) bool {
+			urls = append(urls, "lbry://" + value.Get("name").String() + "#" + value.Get("claimId").String())
+			return true
+		})
+
+		claims, _ := GetClaims(urls, true, true)
+		for _, claim := range claims {
+			id := reflect.ValueOf(claim).FieldByName("Id").String()
+			if err == nil && id != relatedTo {
+				results = append(results, claim)
+			}
+		}
+	}
+
 	wg.Wait()
 
 	return results, nil
