@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"codeberg.org/librarian/librarian/api"
@@ -136,6 +137,13 @@ func main() {
 	app.Get("/sw.js", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "application/javascript")
 		file, _ := static.GetFiles().ReadFile("js/sw.js")
+		_, err := c.Write(file)
+		return err
+	})
+	app.Get("/opensearch.xml", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "application/opensearchdescription+xml")
+		file, _ := static.GetFiles().ReadFile("opensearch.xml")
+		file = []byte(strings.ReplaceAll(string(file), "DOMAIN_REPLACE", viper.GetString("DOMAIN")))
 		_, err := c.Write(file)
 		return err
 	})
