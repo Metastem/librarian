@@ -21,6 +21,10 @@ func CategoryHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	categoriesArr, err := api.GetOrderedCategoriesArray()
+	if err != nil {
+		return err
+	}
 
 	categoryName := "featured"
 	if c.Params("category") != "" {
@@ -36,9 +40,10 @@ func CategoryHandler(c *fiber.Ctx) error {
 	})
 
 	return c.Render("category", fiber.Map{
-		"config":   viper.AllSettings(),
-		"category": categories[categoryName],
-		"claims":   claims,
-		"theme":    c.Cookies("theme"),
+		"config":     viper.AllSettings(),
+		"category":   categories[categoryName],
+		"categories": categoriesArr,
+		"claims":     claims,
+		"theme":      c.Cookies("theme"),
 	})
 }

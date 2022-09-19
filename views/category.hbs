@@ -13,6 +13,8 @@
   <meta property="og:description" content="An alternative frontend for LBRY/Odysee.">
   <meta property="og:type" content="website">
 
+  <link rel="stylesheet" href="/static/css/category.css" />
+
   <title>{{category.Name}} - Librarian</title>
 </head>
 
@@ -20,11 +22,21 @@
   {{> 'partials/header' }}
 
   <main>
-    <h2 class="sectionHeader">{{category.Name}}</h2>
-    <div class="claimsGrid">
-      {{#each claims}}
-      {{> 'partials/claim' }}
+    <div class="categoryBar">
+      <!-- Rabbit Hole doesn't work yet -->
+      {{#each categories}}
+      {{#noteq this.Path "rabbithole"}}
+      <a href="/$/{{this.Path}}" class="categoryLabel {{#equal this.Name category.Name}}categoryLabel--active{{/equal}}">{{this.Name}}</a>
+      {{/noteq}}
       {{/each}}
+    </div>
+    <div class="categoryItems">
+      <h2 class="sectionHeader">{{category.Name}}</h2>
+      <div class="claimsGrid">
+        {{#each claims}}
+        {{> 'partials/claim' }}
+        {{/each}}
+      </div>
     </div>
   </main>
 

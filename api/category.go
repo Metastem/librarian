@@ -51,9 +51,34 @@ func GetCategoryData() (map[string]Category, error) {
 			return true
 		},
 	)
-
 	categoryCache.Set("en", categories, cache.DefaultExpiration)
 	return categories, nil
+}
+
+func GetOrderedCategoriesArray() ([]Category, error) {
+	categories, err := GetCategoryData()
+	if err != nil {
+		return []Category{}, err
+	}
+
+	newCategories := []Category{}
+	newCategories = append(newCategories, categories["featured"])
+	newCategories = append(newCategories, categories["popculture"])
+	newCategories = append(newCategories, categories["artists"])
+	newCategories = append(newCategories, categories["education"])
+	newCategories = append(newCategories, categories["comedy"])
+	newCategories = append(newCategories, categories["lifestyle"])
+	newCategories = append(newCategories, categories["music"])
+	newCategories = append(newCategories, categories["sports"])
+	newCategories = append(newCategories, categories["gaming"])
+	newCategories = append(newCategories, categories["tech"])
+	newCategories = append(newCategories, categories["universe"])
+	newCategories = append(newCategories, categories["finance"])
+	newCategories = append(newCategories, categories["spirituality"])
+	newCategories = append(newCategories, categories["news"])
+	newCategories = append(newCategories, categories["rabbithole"])
+
+	return newCategories, nil
 }
 
 func (category Category) GetCategoryClaims(page int, nsfw bool) ([]Claim, error) {
