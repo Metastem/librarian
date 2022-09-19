@@ -139,8 +139,12 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 	}
 	channels := map[string]Channel{}
 	for _, channelInt := range channelsInt {
-		channel := channelInt.(Channel)
-		channels[channel.Id] = channel
+		//lint:ignore S1034 
+		switch channelInt.(type) {
+		case Channel:
+			channel := channelInt.(Channel)
+			channels[channel.Id] = channel
+		}
 	}
 
 	wg := sync.WaitGroup{}
