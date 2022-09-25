@@ -150,6 +150,8 @@ func main() {
 
 	app.Get("/api/comments", api.CommentsHandler)
 	app.Get("/api/sponsorblock/:id", proxy.ProxySponsorBlock)
+	app.Get("/api/v1/category/:category", pages.CategoryApiHandler)
+	app.Get("/api/v1/channel/:channel", pages.ChannelApiHandler)
 
 	app.Get("/$/invite/:channel", pages.ChannelHandler)
 	app.Get("/$/rss/:channel", pages.ChannelRSSHandler)

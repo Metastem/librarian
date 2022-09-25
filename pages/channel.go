@@ -60,3 +60,56 @@ func ChannelHandler(c *fiber.Ctx) error {
 		},
 	})
 }
+
+func ChannelApiHandler(c *fiber.Ctx) error {
+	c.Set("Access-Control-Allow-Origin", "*")
+	c.Set("Access-Control-Allow-Methods", "GET")
+
+	page := 0
+	pageParam, err := strconv.Atoi(c.Query("page"))
+	if err == nil || pageParam != 0 {
+		page = pageParam
+	}
+
+	channel, err := api.GetChannel(c.Params("channel"))
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+			"status": "500",
+		})
+	}
+	channel.GetFollowers()
+
+	if channel.Id == "" {
+		return c.Status(404).JSON(fiber.Map{
+			"error": "Channel not found",
+			"status": "404",
+		})
+	}
+
+	if channel.ValueType != "channel" {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "Invalid value type, excepted channel",
+			"status": "400",
+		})
+	}
+
+	if page != 0 {
+		claims, err := channel.GetClaims(page)
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{
+				"error": err.Error(),
+				"status": "500",
+			})
+		}
+		sort.Slice(claims, func(i int, j int) bool {
+			return claims[i].Timestamp > claims[j].Timestamp
+		})
+		channel.Claims = claims
+	}
+
+	return c.JSON(fiber.Map{
+		"channel": channel,
+		"status": "200",
+	})
+}

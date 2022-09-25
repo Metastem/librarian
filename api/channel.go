@@ -34,6 +34,7 @@ type Channel struct {
 	Thumbnail      string
 	ValueType      string
 	UploadCount    int64
+	Claims				 []Claim
 }
 
 func GetChannel(channel string) (Channel, error) {
@@ -74,6 +75,7 @@ func ProcessChannel(data gjson.Result) (Channel, error) {
 		Name:           data.Get("name").String(),
 		Title:          data.Get("value.title").String(),
 		Id:             data.Get("claim_id").String(),
+		LbryUrl:				data.Get("canonical_url").String(),
 		CoverImg:       utils.ToProxiedImageUrl(data.Get("value.cover.url").String()),
 		Description:    template.HTML(utils.ProcessText(data.Get("value.description").String(), true)),
 		DescriptionTxt: bluemonday.StrictPolicy().Sanitize(data.Get("value.description").String()),
@@ -162,6 +164,8 @@ func (channel Channel) GetClaims(page int) ([]Claim, error) {
 	sort.Slice(claims, func(i, j int) bool {
 		return claimIds[claims[i].Id] < claimIds[claims[j].Id]
 	})
+
+	channel.Claims = claims
 
 	channelCache.Set(channel.Id+"-claims-"+fmt.Sprint(page), claims, cache.DefaultExpiration)
 	return claims, nil

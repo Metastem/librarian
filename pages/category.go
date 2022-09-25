@@ -47,3 +47,32 @@ func CategoryHandler(c *fiber.Ctx) error {
 		"theme":      c.Cookies("theme"),
 	})
 }
+
+func CategoryApiHandler(c *fiber.Ctx) error {
+	c.Set("Access-Control-Allow-Origin", "*")
+	c.Set("Access-Control-Allow-Methods", "GET")
+
+	categories, err := api.GetCategoryData()
+	if err != nil {
+		return err
+	}
+
+	categoryName := "featured"
+	if c.Params("category") != "" {
+		categoryName = c.Params("category")
+	}
+
+	claims, err := categories[categoryName].GetCategoryClaims(1, c.Query("nsfw") == "true")
+	if err != nil {
+		return err
+	}
+	sort.Slice(claims, func(i int, j int) bool {
+		return claims[i].Timestamp > claims[j].Timestamp
+	})
+
+	return c.JSON(fiber.Map{
+		"category":   categories[categoryName],
+		"claims":     claims,
+		"status": "200",
+	})
+}

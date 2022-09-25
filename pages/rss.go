@@ -70,7 +70,6 @@ func ChannelRSSHandler(c *fiber.Ctx) error {
 			}
 			item.Enclosure.Url = url
 			item.Enclosure.Type = claims[i].MediaType
-			item.Enclosure.Length = claims[i].SrcSize
 		}
 
 		feed.Items = append(feed.Items, item)

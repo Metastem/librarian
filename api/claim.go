@@ -41,7 +41,6 @@ type Claim struct {
 	MediaType    string
 	Repost       string
 	ValueType    string
-	SrcSize      string
 	StreamType   string
 	HasFee       bool
 }
