@@ -70,7 +70,7 @@ Open an issue to have your instance listed here!
 
 | URL                                                             | Country      | Provider         | Privacy               | Livestreams | Notes |
 | :-------------------------------------------------------------- | :----------- | :--------------- | :-------------------- | :---------- | :---- |
-| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇨🇦️ CA, 🇳🇱 NL | Fly.io           | ⚠️ Data collected     | ✅️ |  |
+| [lbry.bcow.xyz](https://lbry.bcow.xyz) (official)               | 🇳🇱 NL        | Fly.io           | ⚠️ Data collected     | ✅️ |  |
 | [odysee.076.ne.jp](https://odysee.076.ne.jp)                    | 🇯🇵 JP        | GMOグローバルサイン | ✅ Data not collected | ✅️ | [Edited source code](https://git.076.ne.jp/TechnicalSuwako/Librarian-mod) |
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE        | Hetzner          | ⚠️ Data collected     | ✅️ |  |
 | [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)         | 🇳🇱 NL        | BuyVM            | ✅ Data not collected | ✅️ |  |
