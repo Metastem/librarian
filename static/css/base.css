@@ -210,6 +210,20 @@ label {
   bottom: -0.75em;
 }
 
+.warningBox {
+  background-color: var(--warning);
+  padding: 1rem;
+  border-radius: 6px
+}
+
+.warningBox h3 {
+  margin: 0
+}
+
+.warningBox p {
+  margin: 0.25em 0
+}
+
 .pageSelector {
   display: flex;
   justify-content: space-between;
