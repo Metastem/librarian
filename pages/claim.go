@@ -2,6 +2,7 @@ package pages
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"codeberg.org/librarian/librarian/api"
@@ -88,6 +89,14 @@ func ClaimHandler(c *fiber.Ctx) error {
 			return c.Status(451).Render("errors/dmca", nil)
 		}
 		return err
+	}
+
+	if viper.GetBool("ENABLE_STREAM_PROXY") && claimData.StreamType != "document" {
+		strUrl, err := url.Parse(stream.URL)
+		if err != nil {
+			return err
+		}
+		stream.URL = "/stream" + strUrl.Path
 	}
 
 	comments := api.Comments{}

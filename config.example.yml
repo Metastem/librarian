@@ -15,13 +15,13 @@ HMAC_KEY: ''
 IMAGE_CACHE: false
 IMAGE_CACHE_DIR: '/var/cache/librarian'
 IMAGE_CACHE_CLEANUP_INTERVAL: 24h
-# Live streams are proxied through the instance and may cause increased bandwidth usage.
-# You will need to set this up as another subdomain in your reverse proxy.
-# Streaming URL can be left blank to disable proxy. Livestreams require a proxy.
-ENABLE_STREAM_PROXY: false
-STREAM_PROXY_ADDR: '' # Cannot be the same as PORT. Example: 127.0.0.1:3001
-LIVE_STREAMING_URL: '' # For livestream proxy: https://proxy.example.com/live
-VIDEO_STREAMING_URL: '' # For video proxy: https://proxy.example.com/stream
+# The next 2 options will proxy video data through the instance.
+# This will cause increased bandwidth usage.
+# ENABLE_STREAM_PROXY proxies videos and ENABLE_LIVESTREAM enables livestreams.
+ENABLE_STREAM_PROXY: true
+ENABLE_LIVESTREAM: true
+# Advanced: Custom video streaming endpoint
+VIDEO_STREAMING_URL: ''
 # Rewrite links to other frontends. example: https://yt.domain.tld
 FRONTEND:
   youtube: ''

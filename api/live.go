@@ -8,7 +8,6 @@ import (
 
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/dustin/go-humanize"
-	"github.com/spf13/viper"
 )
 
 type Live struct {
@@ -41,10 +40,6 @@ func GetLive(claimId string) (Live, error) {
 
 	streamUrl := strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", "/live")
 	streamUrl = strings.ReplaceAll(streamUrl, "https://cdn.odysee.live", "/live")
-	if viper.GetString("LIVE_STREAMING_URL") != "" {
-		streamUrl = strings.ReplaceAll(data.Get("data.VideoURL").String(), "https://cloud.odysee.live", viper.GetString("LIVE_STREAMING_URL"))
-		streamUrl = strings.ReplaceAll(streamUrl, "https://cdn.odysee.live", viper.GetString("LIVE_STREAMING_URL"))
-	}
 
 	return Live{
 		RelTime:      humanize.Time(timestamp),
