@@ -126,10 +126,15 @@
       {{else}}
       <li>Using Cloudflare?: No</li>
       {{/if}}
-      {{#if config.video_streaming_url}}
-      <li>Video streaming URL: {{config.video_streaming_url}} (proxied or using custom video server)</li>
+      {{#if config.enable_stream_proxy}}
+      <li>Stream proxy: Yes</li>
       {{else}}
-      <li>Video streaming URL: https://player.odycdn.com (streaming directly from Odysee)</li>
+      <li>Stream proxy: No</li>
+      {{/if}}
+      {{#if config.enable_livestream}}
+      <li>Livestreams: Yes</li>
+      {{else}}
+      <li>Livestreams: No</li>
       {{/if}}
     </ul>
   </main>
