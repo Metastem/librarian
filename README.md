@@ -109,6 +109,8 @@ Librarian can run on any platform Go compiles on, memory usage varies on instanc
 
 > Make sure to join our [Matrix chat](https://matrix.to/#/#librarian:nitro.chat) to get notified on updates for Odysee API changes.
 
+> It is strongly recommended to use [Caddy](https://caddyserver.com/) as your reverse proxy especially if you have livestreams or video proxy enabled. Caddy is simple to configure, automatically manages your TLS certificates, and provides better performance with support for HTTP/2 and /3 (allow UDP port 443 in your firewall to use HTTP/3).
+
 ### Docker (recommended)
 Install Docker and docker-compose, then clone this repository.
 ```
