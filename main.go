@@ -62,18 +62,6 @@ func main() {
 		}()
 	}
 
-	/*if viper.GetBool("ENABLE_LIVE_STREAM") {
-		fmt.Println("The integrated livestream proxy is deprecated and has been removed.")
-		fmt.Println("To continue using livestreams, follow the steps in the migration guide linked below.")
-		fmt.Println("https://codeberg.org/librarian/librarian/issues/147#issuecomment-607131")
-	}
-
-	if viper.GetBool("ENABLE_STREAM_PROXY") && viper.GetString("STREAM_PROXY_ADDR") != "" {
-		go func() {
-			proxy.NewStreamProxy(viper.GetString("STREAM_PROXY_ADDR"))
-		}()
-	}*/
-
 	engine := handlebars.NewFileSystem(http.FS(views.GetFiles()), ".hbs")
 
 	engine.AddFunc("noteq", func(a interface{}, b interface{}, options *raymond.Options) interface{} {
@@ -129,17 +117,12 @@ func main() {
 	app.Get("/about", pages.AboutHandler)
 	app.Get("/settings", pages.SettingsHandler)
 
-	/*
-	func NewStreamProxy(addr string) {
-	http.HandleFunc("/stream/", HandleStream)
-	http.HandleFunc("/live/", HandleLive)
-
-	fmt.Println("stream-proxy listening on " + addr)
-	http.ListenAndServe(addr, nil)
-}
-	*/
-	app.Get("/stream/+", proxy.HandleStream)
-	app.Get("/live/+", proxy.HandleLive)
+	if viper.GetBool("ENABLE_LIVESTREAM") {
+		app.Get("/live/+", proxy.HandleLive)
+	}
+	if viper.GetBool("ENABLE_STREAM_PROXY") {
+		app.Get("/stream/+", proxy.HandleStream)
+	}
 
 	app.Get("/robots.txt", func(c *fiber.Ctx) error {
 		file, _ := static.GetFiles().ReadFile("robots.txt")
