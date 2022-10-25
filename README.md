@@ -10,20 +10,41 @@ An alternative frontend for LBRY/Odysee. Inspired by [Invidious](https://github.
   <img alt="Matrix" src="https://img.shields.io/badge/chat-matrix-blue">
 </a>
 
+## Table of Contents
+- [Features](#features)
+- [Comparison](#comparison)
+  - [Speed](#speed)
+  - [Privacy](#privacy)
+    - [Odysee](#odysee)
+    - [Librarian](#librarian)
+- [Instances](#instances)
+  - [Clearnet](#clearnet)
+  - [Tor](#tor)
+- [Automatically redirect links](#automatically-redirect-links)
+  - [LibRedirect](#libredirect)
+  - [GreaseMonkey script](#greasemonkey-script)
+- [Install](#install)
+  - [Docker (recommended)](#docker-recommended)
+    - [Automatic updates](#automatic-updates)
+  - [Build from source](#build-from-source)
+    - [Requirements](#requirements)
+  - [go install](#go-install)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
 - Lightweight
-- JavaScript not required*
 - No ads
 - No tracking
 - No crypto garbage
 
-\* JavaScript is required to play livestreams except on Apple devices.
-
 ## Demo
 
-[Video](https://lbry.bcow.xyz/@RetroMusic:d/1987-Rick-Astley-Never-Gonna-Give-You-Up-1920x1080:f)<br>
-[Channel](https://lbry.bcow.xyz/@DistroTube:2)
+[🎞️ Video](https://librarian.codeberg.page/#/@RetroMusic:d/1987-Rick-Astley-Never-Gonna-Give-You-Up-1920x1080:f)
+[📺 Channel](https://librarian.codeberg.page/#/@DistroTube:2)
+[📰 Article](https://librarian.codeberg.page/#/@Odysee:8/spooky:b)
 
 ## Comparison
 Comparing Librarian to Odysee. 
@@ -194,3 +215,12 @@ You can now run Librarian. 🎉
 librarian # If GOBIN is in your PATH
 $HOME/go/bin/librarian # If GOBIN is not in PATH
 ```
+
+## Configuration
+See [config.example.yml](./config.example.yml) for configuration.
+
+## Contributing
+Pull requests are welcome! If you have any questions or bug reports, open an [issue](https://codeberg.org/librarian/librarian/issues/new).
+
+## License
+This software is released under the AGPL-3.0 license. If you make any modifications to the code and distribute it (including use on a network server), you must publicly distribute your changes and release them under the AGPL-3.0.
