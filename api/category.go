@@ -21,6 +21,7 @@ type Category struct {
 	Name          string
 	Path					string
 	ChannelIds    []string
+	NotChannelIds []string
 	ChannelLimit	int64
 	DaysOfContent int64
 	PageSize      int64
@@ -43,6 +44,7 @@ func GetCategoryData() (map[string]Category, error) {
 			categories[value.Get("name").String()] = Category{
 				Name:          value.Get("label").String(),
 				Path: 				 value.Get("name").String(),
+				NotChannelIds: strings.Split(strings.TrimSuffix(strings.TrimPrefix(value.Get("excludedChannelIds").Raw, `["`), `"]`), `","`),
 				ChannelIds:    strings.Split(strings.TrimSuffix(strings.TrimPrefix(value.Get("channelIds").Raw, `["`), `"]`), `","`),
 				ChannelLimit:  value.Get("channelLimit").Int(),
 				DaysOfContent: value.Get("daysOfContent").Int(),
@@ -81,10 +83,10 @@ func GetOrderedCategoriesArray() ([]Category, error) {
 	return newCategories, nil
 }
 
-func (category Category) GetCategoryClaims(page int, nsfw bool) ([]Claim, error) {
+func (category Category) GetCategoryClaims(page int, nsfw bool) ([]interface{}, error) {
 	cacheData, found := fpCache.Get(category.Name)
 	if found {
-		return cacheData.([]Claim), nil
+		return cacheData.([]interface{}), nil
 	}
 
 	nsfwTags := []string{"porn", "porno", "nsfw", "mature", "xxx", "sex", "creampie", "blowjob", "handjob", "vagina", "boobs", "big boobs", "big dick", "pussy", "cumshot", "anal", "hard fucking", "ass", "fuck", "hentai"}
@@ -92,36 +94,60 @@ func (category Category) GetCategoryClaims(page int, nsfw bool) ([]Claim, error)
 		nsfwTags = []string{}
 	}
 
-	claimSearchData := map[string]interface{}{
-		"jsonrpc": "2.0",
-		"id":      1,
-		"method":  "claim_search",
-		"params": map[string]interface{}{
-			"page_size":                category.PageSize,
-			"page":                     page,
-			"no_totals":                true,
-			"claim_type":               []string{"stream"},
-			"any_tags":                 []string{},
-			"not_tags":                 nsfwTags,
-			"channel_ids":              category.ChannelIds,
-			"not_channel_ids":          []string{},
-			"order_by":                 []string{"release_time"},
-			"fee_amount":               "<=0",
-			"remove_duplicates":        true,
-			"has_source":               true,
-			"limit_claims_per_channel": category.ChannelLimit,
-			"release_time":             ">" + fmt.Sprint(time.Now().Unix()-(category.DaysOfContent*24*60*60)),
-			"include_purchase_receipt": true,
-		},
+	claimSearchData := map[string]interface{}{}
+	if category.Name != "Rabbit Hole" {
+		claimSearchData = map[string]interface{}{
+			"jsonrpc": "2.0",
+			"id":      1,
+			"method":  "claim_search",
+			"params": map[string]interface{}{
+				"any_languages":						[]string{"en", "none"},
+				"channel_ids":              category.ChannelIds,
+				"claim_type":               []string{"stream", "channel"},
+				"duration":									">=60",
+				"has_source":               true,
+				"limit_claims_per_channel": category.ChannelLimit,
+				"no_totals":                true,
+				"not_channel_ids":          category.NotChannelIds,
+				"not_tags":                 nsfwTags,
+				"order_by":                 []string{"effective_amount"},
+				"page":                     page,
+				"page_size":                category.PageSize,
+				"fee_amount":               "<=0",
+				"release_time":             ">" + fmt.Sprint(time.Now().Unix()-(category.DaysOfContent*24*60*60)),
+				"remove_duplicates":        true,
+			},
+		}
+	} else {
+		claimSearchData = map[string]interface{}{
+			"jsonrpc": "2.0",
+			"id":      1,
+			"method":  "claim_search",
+			"params": map[string]interface{}{
+				"any_languages":						[]string{"en", "none"},
+				"claim_type":               []string{"stream", "channel"},
+				"has_source":               true,
+				"limit_claims_per_channel": 3,
+				"no_totals":                true,
+				"not_channel_ids":          category.NotChannelIds,
+				"not_tags":                 nsfwTags,
+				"order_by":                 []string{"trending_group", "trending_mixed"},
+				"page":                     page,
+				"page_size":                36,
+				"release_time":             ">" + fmt.Sprint(time.Now().Unix()-518400),
+				"remove_duplicates":        true,
+				"fee_amount":               "<=0",
+			},
+		}
 	}
 	claimSearchReqData, _ := json.Marshal(claimSearchData)
 
 	data, err := utils.RequestJSON(viper.GetString("API_URL")+"?m=claim_search", bytes.NewBuffer(claimSearchReqData))
 	if err != nil {
-		return []Claim{}, err
+		return []interface{}{}, err
 	}
 
-	claims := make([]Claim, 0)
+	claims := make([]interface{}, 0)
 	wg := sync.WaitGroup{}
 	data.Get("result.items").ForEach(
 		func(key gjson.Result, value gjson.Result) bool {
@@ -129,7 +155,12 @@ func (category Category) GetCategoryClaims(page int, nsfw bool) ([]Claim, error)
 			go func() {
 				defer wg.Done()
 
-				claim, _ := ProcessClaim(value)
+				claim, err := ProcessClaim(value)
+				if err != nil {
+					channel, _ := ProcessChannel(value)
+					channel.GetFollowers()
+					claims = append(claims, channel)
+				}
 				claim.GetViews()
 				claims = append(claims, claim)
 			}()

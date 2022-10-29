@@ -1,8 +1,6 @@
 package pages
 
 import (
-	"sort"
-
 	"codeberg.org/librarian/librarian/api"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
@@ -35,9 +33,6 @@ func CategoryHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	sort.Slice(claims, func(i int, j int) bool {
-		return claims[i].Timestamp > claims[j].Timestamp
-	})
 
 	return c.Render("category", fiber.Map{
 		"config":     viper.AllSettings(),
@@ -66,9 +61,6 @@ func CategoryApiHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	sort.Slice(claims, func(i int, j int) bool {
-		return claims[i].Timestamp > claims[j].Timestamp
-	})
 
 	return c.JSON(fiber.Map{
 		"category":   categories[categoryName],

@@ -23,11 +23,8 @@
 
   <main>
     <div class="categoryBar">
-      <!-- Rabbit Hole doesn't work yet -->
       {{#each categories}}
-      {{#noteq this.Path "rabbithole"}}
       <a href="/$/{{this.Path}}" class="categoryLabel {{#equal this.Name category.Name}}categoryLabel--active{{/equal}}">{{this.Name}}</a>
-      {{/noteq}}
       {{/each}}
     </div>
     <div class="categoryItems">
