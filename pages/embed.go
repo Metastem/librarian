@@ -20,7 +20,12 @@ func EmbedHandler(c *fiber.Ctx) error {
 
 	url := "lbry://" + c.Params("claim")
 	if c.Params("id") != "" {
-		url = url + "#" + c.Params("id")
+		if strings.ContainsAny(c.Params("id"), ":") {
+			url = url + "/" + c.Params("id")
+		} else {
+			url = url + "#" + c.Params("id")
+		}
+		
 	}
 	
 	claimData, err := api.GetClaim(url)
