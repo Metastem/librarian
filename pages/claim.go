@@ -57,7 +57,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	related, err := api.Search(claimData.Title, 1, "file", false, claimData.Id, 9)
+	related, err := api.GetRelated(claimData.Title, c.Cookies("nsfw") == "true", claimData.Id)
 	if err != nil {
 		return err
 	}

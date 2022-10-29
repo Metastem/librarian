@@ -45,7 +45,7 @@ func SearchHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	results, err := api.Search(query, page, "file,channel", c.Cookies("nsfw") == "true", "", 12)
+	results, err := api.Search(query, page, "file,channel", c.Cookies("nsfw") == "true", 12)
 	if err != nil {
 		return err
 	}
