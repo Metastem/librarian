@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             break;
           case ' ':
             player.togglePlay();
+            break;
           case 'l':
             player.forward(15);
             break;
