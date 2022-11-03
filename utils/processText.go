@@ -144,17 +144,17 @@ func UrlEncode(link string) (string, error) {
 func ReplaceStickersAndEmotes(text string) string {
 	re := regexp.MustCompile(":(.*?):")
 	emotes := re.FindAllString(text, len(text)/4)
-	for i := 0; i < len(emotes); i++ {
-		emote := strings.ReplaceAll(emotes[i], ":", "")
+	for i, emote := range emotes {
+		emote = strings.ReplaceAll(emote, ":", "")
 		if data.Stickers[emote] != "" {
-			data.Stickers[emote] = base64.URLEncoding.EncodeToString([]byte(data.Stickers[emote]))
-			proxiedImage := "/image?width=0&height=200&url=" + data.Stickers[emote] + "&hash=" + EncodeHMAC(data.Stickers[emote])
+			b64emote := base64.URLEncoding.EncodeToString([]byte(data.Stickers[emote]))
+			proxiedImage := "/image?width=0&height=200&url=" + b64emote + "&hash=" + EncodeHMAC(b64emote)
 			htmlEmote := `<img loading="lazy" src="` + proxiedImage + `" height="200px">`
 
 			text = strings.ReplaceAll(text, emotes[i], htmlEmote)
 		} else if data.Emotes[emote] != "" {
-			data.Emotes[emote] = base64.URLEncoding.EncodeToString([]byte(data.Emotes[emote]))
-			proxiedImage := "/image?url=" + data.Emotes[emote] + "&hash=" + EncodeHMAC(data.Emotes[emote])
+			b64emote := base64.URLEncoding.EncodeToString([]byte(data.Emotes[emote]))
+			proxiedImage := "/image?url=" + b64emote + "&hash=" + EncodeHMAC(b64emote)
 			htmlEmote := `<img loading="lazy" class="emote" src="` + proxiedImage + `" height="24px">`
 
 			text = strings.ReplaceAll(text, emotes[i], htmlEmote)
