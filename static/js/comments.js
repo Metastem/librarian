@@ -1,8 +1,8 @@
 const commentData = JSON.parse(document.getElementById("commentData").innerText)
 
-async function comments(claimId, channelId, channelName, page) {
+async function comments(claimId, channelId, channelName, page, sortBy) {
   document.getElementById("spinner").style.display = "flex"
-  let res = await fetch(`/api/comments?claim_id=${claimId}&channel_id=${channelId}&channel_name=${channelName}&page=${page}&page_size=10`);
+  let res = await fetch(`/api/comments?claim_id=${claimId}&channel_id=${channelId}&channel_name=${channelName}&page=${page}&page_size=10${sortBy ? `&sort_by=${sortBy}` : ''}`);
   let data = await res.json();
 
   document.getElementById('commentsHeader').innerText = `Comments (${data.Items})`
@@ -23,7 +23,7 @@ async function comments(claimId, channelId, channelName, page) {
   commentsElem.appendChild(loadMoreElem)
 
   page = data.Comments.length >= 10 ? page + 1 : page
-  loadMoreBtn(page)
+  loadMoreBtn(page, sortBy)
 }
 
 function generateCommentElem(comment) {
@@ -125,11 +125,11 @@ function generateCommentElem(comment) {
   return commentElem
 }
 
-function loadMoreBtn(page) {
+function loadMoreBtn(page, sortBy) {
   let loadMore = document.getElementById("loadMore");
   loadMore.addEventListener('click', () => {
     loadMore.remove()
-    comments(commentData.claimId, commentData.channelId, commentData.channelName, page)
+    comments(commentData.claimId, commentData.channelId, commentData.channelName, page, sortBy)
   })
 }
 
@@ -137,5 +137,22 @@ const commentWarningBtn = document.getElementById('commentWarningBtn')
 commentWarningBtn.removeAttribute('href')
 commentWarningBtn.addEventListener('click', () => {
   document.getElementById('commentsWarning').style.display = 'none';
+  document.querySelectorAll('.sortBtn--warningActive').forEach(elem => {
+    elem.classList.remove('sortBtn--warningActive')
+  })
   comments(commentData.claimId, commentData.channelId, commentData.channelName, 1)
 })
+
+const bestSortBtn = document.getElementById('bestSortBtn')
+const controversialSortBtn = document.getElementById('controversialSortBtn')
+const newSortBtn = document.getElementById('newSortBtn')
+bestSortBtn.addEventListener('click', () => {sortBtnClick('best', bestSortBtn)})
+controversialSortBtn.addEventListener('click', () => {sortBtnClick('controversial', controversialSortBtn)})
+newSortBtn.addEventListener('click', () => {sortBtnClick('new', newSortBtn)})
+function sortBtnClick(sortBy, sortBtn) {
+  document.querySelector('.sortBtn--active').classList.remove('sortBtn--active')
+  sortBtn.classList.add('sortBtn--active')
+  document.querySelectorAll(".comment").forEach(elem => elem.remove())
+  document.getElementById('loadMore').remove()
+  comments(commentData.claimId, commentData.channelId, commentData.channelName, 1, sortBy)
+}

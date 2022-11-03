@@ -5,10 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"sort"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"codeberg.org/librarian/librarian/utils"
@@ -31,7 +29,7 @@ type Comment struct {
 	Comment   template.HTML
 	CommentId string
 	ParentId  string
-	Pinned		bool
+	Pinned    bool
 	Time      string
 	RelTime   string
 	Replies   int64
@@ -119,20 +117,15 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 	}
 
 	commentIds := []string{}
-	sortOrder := map[string]int64{}
 	data.Get("result.items.#.comment_id").ForEach(
-		func(key gjson.Result, value gjson.Result) bool {
+		func(key, value gjson.Result) bool {
 			commentIds = append(commentIds, value.String())
-			sortOrder[value.String()] = key.Int()
 			return true
 		},
 	)
-
 	likesDislikes := GetCommentLikeDislikes(commentIds)
 
-	comments := []Comment{}
-
-	channelUrls := strings.Split(strings.Trim(strings.ReplaceAll(data.Get("result.items.#.channel_url").Raw, `"`, ""), "[]"),",")
+	channelUrls := strings.Split(strings.Trim(strings.ReplaceAll(data.Get("result.items.#.channel_url").Raw, `"`, ""), "[]"), ",")
 	channelsInt, err := GetClaims(channelUrls, false, false)
 	if err != nil {
 		return Comments{}, err
@@ -147,44 +140,34 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 		}
 	}
 
-	wg := sync.WaitGroup{}
+	comments := []Comment{}
 	data.Get("result.items").ForEach(
 		func(key, value gjson.Result) bool {
-			wg.Add(1)
+			comment := Comment{
+				Comment:   template.HTML(utils.ProcessText(value.Get("comment").String(), false)),
+				CommentId: value.Get("comment_id").String(),
+				ParentId:  value.Get("parent_id").String(),
+				Replies:   value.Get("replies").Int(),
+				Pinned:    value.Get("is_pinned").Bool(),
+			}
 
-			go func() {
-				defer wg.Done()
-				comment := Comment{
-					Comment:   template.HTML(utils.ProcessText(value.Get("comment").String(), false)),
-					CommentId: value.Get("comment_id").String(),
-					ParentId:  value.Get("parent_id").String(),
-					Replies:   value.Get("replies").Int(),
-					Pinned: 	 value.Get("is_pinned").Bool(),
-				}
+			timestamp := time.Unix(value.Get("timestamp").Int(), 0)
+			comment.Time = timestamp.UTC().Format("January 2, 2006 15:04")
+			comment.RelTime = humanize.Time(timestamp)
+			if comment.RelTime == "a long while ago" {
+				comment.RelTime = comment.Time
+			}
 
-				timestamp := time.Unix(value.Get("timestamp").Int(), 0)
-				comment.Time = timestamp.UTC().Format("January 2, 2006 15:04")
-				comment.RelTime = humanize.Time(timestamp)
-				if comment.RelTime == "a long while ago" {
-					comment.RelTime = comment.Time
-				}
+			comment.Likes = likesDislikes[comment.CommentId][0]
+			comment.Dislikes = likesDislikes[comment.CommentId][1]
 
-				comment.Likes = likesDislikes[comment.CommentId][0]
-				comment.Dislikes = likesDislikes[comment.CommentId][1]
+			comment.Channel = channels[strings.Split(value.Get("channel_url").String(), "#")[1]]
 
-				comment.Channel = channels[strings.Split(value.Get("channel_url").String(), "#")[1]]
-
-				comments = append(comments, comment)
-			}()
+			comments = append(comments, comment)
 
 			return true
 		},
 	)
-	wg.Wait()
-
-	sort.Slice(comments, func(i, j int) bool {
-		return sortOrder[comments[i].CommentId] < sortOrder[comments[j].CommentId]
-	})
 
 	returnData := Comments{
 		Comments: comments,
@@ -192,7 +175,7 @@ func (claim Claim) GetComments(parentId string, sortBy int, pageSize int, page i
 		Items:    data.Get("result.total_items").Int(),
 	}
 
-	commentCache.Set(claim.Id+fmt.Sprint(page)+fmt.Sprint(pageSize), returnData, cache.DefaultExpiration)
+	commentCache.Set(claim.Id + parentId + fmt.Sprint(sortBy) + fmt.Sprint(page) + fmt.Sprint(pageSize), returnData, cache.DefaultExpiration)
 	return returnData, nil
 }
 

@@ -38,6 +38,49 @@
   flex-direction: column;
 }
 
+.commentHeader, .sortBtns {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.commentHeader {
+  gap: 1rem;
+}
+
+.sortBtns {
+  background-color: var(--bg-100);
+  padding: 0.4em 0.6rem;
+  border-radius: 6px;
+  gap: 0.8em;
+  height: max-content;
+}
+
+.sortBtn {
+  padding: 0.3em 0.5em;
+  border-radius: 6px;
+  transition: 0.15s;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  background: none;
+}
+
+.sortBtn:hover {
+  background-color: var(--bg-200);
+}
+
+.sortBtn--active {
+  background-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.sortBtn--warningActive {
+  pointer-events: none;
+}
+
 .comment .pfp {
   width: 48px;
   height: 48px;

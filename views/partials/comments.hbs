@@ -1,12 +1,19 @@
 <div class="comments_wrapper">
   <input id="comments__expandBtn" type="checkbox" checked>
   <label class="comments__expandBtn__label" for="comments__expandBtn">
-    <h3 class="claimLink" id="commentsHeader">
-      Comments
-      {{#if settings.nojs}}
-      ({{comments.Items}})
-      {{/if}}
-    </h3>
+    <div class="commentHeader">
+      <h3 id="commentsHeader">
+        Comments
+        {{#if settings.nojs}}
+        ({{comments.Items}})
+        {{/if}}
+      </h3>
+      <div class="sortBtns">
+        <button class="sortBtn sortBtn--warningActive sortBtn--active" id="bestSortBtn">Best</button>
+        <button class="sortBtn sortBtn--warningActive" id="controversialSortBtn">Controversial</button>
+        <button class="sortBtn sortBtn--warningActive" id="newSortBtn">New</button>
+      </div>
+    </div>
     <span class="comments__expandBtn__icon material-icons-outlined"></span>
   </label>
   <div id="comments" class="comments">
@@ -15,7 +22,7 @@
       <div class="comments__warning__msg">
         <span class="material-icons-outlined largeIcon">
           report_problem
-        </span>  
+        </span>
         <p>
           Comments may contain harmful or inappropriate content.<br>
           Are you sure you want to continue?
