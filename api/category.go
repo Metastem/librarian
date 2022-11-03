@@ -64,12 +64,12 @@ func GetOrderedCategoriesArray() ([]Category, error) {
 	}
 
 	newCategories := []Category{}
-	newCategories = append(newCategories, categories["spooky"])
 	newCategories = append(newCategories, categories["featured"])
 	newCategories = append(newCategories, categories["popculture"])
 	newCategories = append(newCategories, categories["artists"])
 	newCategories = append(newCategories, categories["education"])
 	newCategories = append(newCategories, categories["lifestyle"])
+	newCategories = append(newCategories, categories["spooky"])
 	newCategories = append(newCategories, categories["gaming"])
 	newCategories = append(newCategories, categories["tech"])
 	newCategories = append(newCategories, categories["comedy"])
