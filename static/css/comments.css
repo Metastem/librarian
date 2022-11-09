@@ -50,7 +50,7 @@
 
 .sortBtns {
   background-color: var(--bg-100);
-  padding: 0.4em 0.6rem;
+  padding: 0.3em 0.5em;
   border-radius: 6px;
   gap: 0.8em;
   height: max-content;
@@ -62,7 +62,7 @@
   transition: 0.15s;
   border: none;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 0.925em;
   background: none;
 }
 
@@ -166,5 +166,17 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media only screen and (max-width: 812px) {
+  .commentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0.25em 0 1em;
+    gap: 0
+  }
+  .commentHeader h3 {
+    margin: 0.25em 0 0.4em;
   }
 }
