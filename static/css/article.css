@@ -20,6 +20,10 @@ article img {
   max-width: 100%;
 }
 
+.pdf {
+  height: 80vh;
+}
+
 @media only screen and (min-width: 813px) and (max-width: 1366px) {
   main {
     margin: 0 12vw;

@@ -108,44 +108,42 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	switch claimData.StreamType {
 	case "document":
-		dlData := fiber.Map{
+		props := fiber.Map{
 			"stream":   stream,
-			"download": true,
-			"comments": comments,
 			"claim":    claimData,
+			"comments": comments,
 			"settings": settings,
 			"config":   viper.AllSettings(),
 		}
-		if !strings.HasPrefix(stream.Type, "text") {
-			return c.Render("claim", dlData)
-		}
-		body, err := utils.Request(stream.URL, 500000, utils.Data{Bytes: nil})
-		if err != nil {
- 			if strings.ContainsAny(err.Error(), "over byte limit") {
-				return c.Render("claim", dlData)
-			}
-			return err
-		}
 
-		document := ""
+		body := []byte{}
+		if strings.HasPrefix(stream.Type, "text") {
+			body, err = utils.Request(stream.URL, 500000, utils.Data{Bytes: nil})
+			if err != nil {
+				if strings.ContainsAny(err.Error(), "over byte limit") {
+				 props["download"] = true
+				 return c.Render("claim", props)
+			 }
+			 return err
+		 }
+		}
+		
 		switch stream.Type {
 		case "text/html":
-			document = utils.ProcessDocument(string(body), false)
+			props["document"] = utils.ProcessDocument(string(body), false)
 		case "text/plain":
-			document = string(body)
+			props["document"] = string(body)
 		case "text/markdown":
-			document = utils.ProcessDocument(string(body), true)
+			props["document"] = utils.ProcessDocument(string(body), true)
+		case "application/pdf":
+			c.Set("Content-Security-Policy", "default-src 'self'; script-src blob: 'self'; connect-src *; frame-src 'self' https://player.odycdn.com; block-all-mixed-content")
+			props["document"] = `<iframe class="pdf" src="` + stream.URL + `" width="100%"></iframe>`
 		default:
-			return c.Render("claim", dlData)
+			props["download"] = true
+			return c.Render("claim", props)
 		}
 
-		return c.Render("claim", fiber.Map{
-			"document": document,
-			"claim":    claimData,
-			"comments": comments,
-			"settings": settings,
-			"config":   viper.AllSettings(),
-		})
+		return c.Render("claim", props)
 	case "video":
 		if stream.HLS {
 			c.Set("Content-Security-Policy", "default-src 'self'; style-src 'self'; img-src *; script-src blob: 'self'; connect-src *; media-src * data: blob:; block-all-mixed-content")
