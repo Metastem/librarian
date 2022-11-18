@@ -51,6 +51,8 @@ func GetClaim(lbryUrl string) (Claim, error) {
 		return cacheData.(Claim), nil
 	}
 
+	lbryUrl = strings.TrimSuffix(lbryUrl, "/")
+
 	resolveDataMap := map[string]interface{}{
 		"jsonrpc": "2.0",
 		"method":  "resolve",
@@ -69,8 +71,8 @@ func GetClaim(lbryUrl string) (Claim, error) {
 	}
 	data = data.Get("result.lbry*")
 
-	if data.Get("error.name").String() != "" {
-		return Claim{}, fmt.Errorf("API Error: " + data.Get("error.name").String() + data.Get("error.text").String())
+	if data.Get("error").String() != "" {
+		return Claim{}, fmt.Errorf("API Error: " + data.Get("error").String())
 	}
 
 	claim, err := ProcessClaim(data)

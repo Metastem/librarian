@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 
@@ -109,8 +108,22 @@ func ClaimHandler(c *fiber.Ctx) error {
 
 	switch claimData.StreamType {
 	case "document":
+		dlData := fiber.Map{
+			"stream":   stream,
+			"download": true,
+			"comments": comments,
+			"claim":    claimData,
+			"settings": settings,
+			"config":   viper.AllSettings(),
+		}
+		if !strings.HasPrefix(stream.Type, "text") {
+			return c.Render("claim", dlData)
+		}
 		body, err := utils.Request(stream.URL, 500000, utils.Data{Bytes: nil})
 		if err != nil {
+ 			if strings.ContainsAny(err.Error(), "over byte limit") {
+				return c.Render("claim", dlData)
+			}
 			return err
 		}
 
@@ -123,7 +136,7 @@ func ClaimHandler(c *fiber.Ctx) error {
 		case "text/markdown":
 			document = utils.ProcessDocument(string(body), true)
 		default:
-			return fmt.Errorf("document type not supported: " + stream.Type)
+			return c.Render("claim", dlData)
 		}
 
 		return c.Render("claim", fiber.Map{

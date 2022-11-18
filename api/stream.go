@@ -47,6 +47,10 @@ func GetStream(video string) (Stream, error) {
 		return Stream{}, err
 	}
 
+	if data.Get("error.message").String() != "" {
+		return Stream{}, err 
+	}
+
 	streamUrl := data.Get("result.streaming_url").String()
 	streamUrl = strings.ReplaceAll(streamUrl, "source.odycdn.com", "player.odycdn.com")
 	if viper.GetString("VIDEO_STREAMING_URL") != "" {

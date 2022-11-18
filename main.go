@@ -21,6 +21,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/handlebars"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/spf13/viper"
 )
 
@@ -85,8 +86,11 @@ func main() {
 				code = e.Code
 			}
 
+			errString := strings.ReplaceAll(err.Error(), "\n", "<br>")
+			errString = bluemonday.UGCPolicy().Sanitize(errString)
+
 			err = ctx.Status(code).Render("error", fiber.Map{
-				"err": err,
+				"err": errString,
 				"theme": ctx.Cookies("theme"),
 			})
 			if err != nil {

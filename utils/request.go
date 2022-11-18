@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
+	"runtime/debug"
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/tidwall/gjson"
@@ -45,7 +46,7 @@ func Request(url string, byteLimit int64, dataArr ...Data) ([]byte, error) {
 	defer res.Body.Close()
 
 	if res.ContentLength > byteLimit {
-		return []byte{}, fmt.Errorf("rejected response: over byte limit")
+		return []byte{}, fmt.Errorf("rejected response: over byte limit; request url: " + url + "\n\nStack trace:\n" + string(debug.Stack()))
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
