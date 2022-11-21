@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
 )
 
 func ProxySponsorBlock(c *fiber.Ctx) error {
-	url := "https://sponsor.ajay.app/api/skipSegments/" + c.Params("id")
+	url := viper.GetString("SPONSORBLOCK_URL") + "/api/skipSegments/" + c.Params("id")
 	if c.Query("categories") == "" {
-		url = "https://sponsor.ajay.app/api/skipSegments/" + c.Params("id") + "?categories=" + c.Query("categories")
+		url = viper.GetString("SPONSORBLOCK_URL") + "/api/skipSegments/" + c.Params("id") + "?categories=" + c.Query("categories")
 	}
 
 	res, err := http.Get(url)

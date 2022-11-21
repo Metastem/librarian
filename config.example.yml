@@ -20,6 +20,8 @@ IMAGE_CACHE_CLEANUP_INTERVAL: 24h
 # ENABLE_STREAM_PROXY proxies videos and ENABLE_LIVESTREAM enables livestreams.
 ENABLE_STREAM_PROXY: true
 ENABLE_LIVESTREAM: true
+# Set custom SponsorBlock URL (with https://github.com/mchangrh/sb-mirror or other)
+SPONSORBLOCK_URL: 'https://sponsor.ajay.app'
 # Advanced: Custom video streaming endpoint
 VIDEO_STREAMING_URL: ''
 # Rewrite links to other frontends. example: https://yt.domain.tld

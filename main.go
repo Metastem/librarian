@@ -36,6 +36,7 @@ func main() {
 	viper.SetDefault("PORT", "3000")
 	viper.SetDefault("API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
 	viper.SetDefault("STREAMING_API_URL", "https://api.na-backend.odysee.com/api/v1/proxy")
+	viper.SetDefault("SPONSORBLOCK_URL", "https://sponsor.ajay.app")
 
 	err := viper.ReadInConfig()
 	if err != nil {
