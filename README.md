@@ -96,7 +96,7 @@ Open an issue to have your instance listed here!
 | [librarian.pussthecat.org](https://librarian.pussthecat.org/)   | 🇩🇪 DE        | Hetzner          | ⚠️ Data collected     | ✅️ |  |
 | [lbry.projectsegfau.lt](https://lbry.projectsegfau.lt/)         | 🇳🇱 NL        | BuyVM            | ✅ Data not collected | ✅️ |  |
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA        | OVH              | ✅ Data not collected | ✅️ |  |
-| [lbry.vern.cc](https://lbry.vern.cc/)                           | 🇨🇦 CA        | OVHCloud         | ✅ Data not collected | ❌️ | [Edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian) |
+| [lbry.vern.cc](https://lbry.vern.cc/)                           | 🇺🇸 US        | OVHCloud         | ✅ Data not collected | ❌️ | [Edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian) |
 | [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US        | Hetzner          | ✅ Data not collected | ❌️ |  |
 | [lbry.sytes.net](https://lbry.sytes.net)                        | 🇲🇩 MD        | AlexHost         | ✅ Data not collected | ❌️ |  |
 | [lbry.webhop.me](https://lbry.webhop.me)                        | 🇨🇿 CZ        | Smartape         | ✅ Data not collected | ✅️ |  |
