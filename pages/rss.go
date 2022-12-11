@@ -6,7 +6,7 @@ import (
 	"codeberg.org/librarian/librarian/api"
 	"codeberg.org/librarian/librarian/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gorilla/feeds"
+	"codeberg.org/librarian/feeds"
 	"github.com/spf13/viper"
 )
 
