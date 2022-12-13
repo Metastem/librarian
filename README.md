@@ -98,8 +98,6 @@ Open an issue to have your instance listed here!
 | [librarian.esmailelbob.xyz](https://librarian.esmailelbob.xyz/) | 🇨🇦 CA        | OVH              | ✅ Data not collected | ✅️ |  |
 | [lbry.vern.cc](https://lbry.vern.cc/)                           | 🇺🇸 US        | OVHCloud         | ✅ Data not collected | ❌️ | [Edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian) |
 | [lbry.slipfox.xyz](https://lbry.slipfox.xyz)                    | 🇺🇸 US        | Hetzner          | ✅ Data not collected | ❌️ |  |
-| [lbry.sytes.net](https://lbry.sytes.net)                        | 🇲🇩 MD        | AlexHost         | ✅ Data not collected | ❌️ |  |
-| [lbry.webhop.me](https://lbry.webhop.me)                        | 🇨🇿 CZ        | Smartape         | ✅ Data not collected | ✅️ |  |
 | [lbry.mywire.org](https://lbry.mywire.org)                      | 🇷🇺 RU        | justhost.ru      | ✅ Data not collected | ❌️ |  |
 | [lbry.ooguy.com](https://lbry.ooguy.com)                        | 🇸🇰 SK        | STARK INDUSTRIES | ✅ Data not collected | ❌️ |  |
  
@@ -110,7 +108,6 @@ Open an issue to have your instance listed here!
 | [librarian.esmail5pdn24shtvieloeedh7ehz3nrwcdivnfhfcedl7gf4kwddhkqd.onion](http://librarian.esmail5pdn24shtvieloeedh7ehz3nrwcdivnfhfcedl7gf4kwddhkqd.onion/) | ✅ Data not collected | ✅️ | Onion of librarian.esmailelbob.xyz |
 | [lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion](http://lbry.vernccvbvyi5qhfzyqengccj7lkove6bjot2xhh5kajhwvidqafczrad.onion/) | ✅ Data not collected | ❌️ | Onion of lbry.vern.cc. [Edited theme](https://git.vern.cc/root/modifications/src/branch/master/librarian) |
 | [5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion](http://5znbzx2xcymhddzekfjib3isgqq4ilcyxa2bsq6vqmnvbtgu4f776lqd.onion/) | ✅ Data not collected | ❌️ | Onion of lbry.slipfox.xyz |
-| [zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion](http://zjmls4urccc5wxc64ilbv4oqarjab6pbanvmhd2qqt6p7fgqrjjnryqd.onion/) | ✅ Data not collected | ✅️ | Onion of lbry.webhop.me |
 | [bxewpsswttslepw27w2hhxhlizwm7l7y54x3jw5cfrb64hb6lgc557ad.onion](http://bxewpsswttslepw27w2hhxhlizwm7l7y54x3jw5cfrb64hb6lgc557ad.onion/) | ✅ Data not collected | ❌️ | Onion of lbry.ooguy.com |
 
 ### Automatically redirect links
